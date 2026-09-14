@@ -1,4 +1,5 @@
 """Public archive downloads. Small real smoke runs read only requested ZIP members."""
+
 from __future__ import annotations
 
 import hashlib
@@ -76,7 +77,9 @@ class RangeFile(io.RawIOBase):
                 req = urllib.request.Request(url, headers={"Range": f"bytes={lo}-{hi - 1}"})
                 with urllib.request.urlopen(req, timeout=120) as response:
                     if response.status != 206:
-                        raise RuntimeError("Server ignored Range request; refusing a full archive download in sample mode")
+                        raise RuntimeError(
+                            "Server ignored Range request; refusing a full archive download in sample mode"
+                        )
                     if not response.headers.get("Content-Range", "").startswith(f"bytes {lo}-{hi - 1}/"):
                         raise RuntimeError("Range response does not match requested bytes")
                     data = response.read()
@@ -85,7 +88,7 @@ class RangeFile(io.RawIOBase):
                 tmp = dest.with_suffix(".tmp")
                 tmp.write_bytes(data)
                 os.replace(tmp, dest)
-        data = dest.read_bytes()[start-lo:end-lo]
+        data = dest.read_bytes()[start - lo : end - lo]
         self.pos = end
         return data
 

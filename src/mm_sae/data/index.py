@@ -1,4 +1,5 @@
 """Index each image once and retain every caption with an explicit image-row mapping."""
+
 from __future__ import annotations
 
 import json
@@ -41,11 +42,18 @@ def fixture(config):
             size = config.data.fixture_size
             rgb = np.full((size, size, 3), 230, np.uint8)
             mask = np.full((size, size), 255, np.uint8)
-            a = rng.random() < .5
-            b = rng.random() < (.8 if a else .2)
-            flags = [(0, a, (210, 50, 60), (slice(8, size//2), slice(6, size//2))),
-                     (1, b, (40, 100, 210), (slice(8, size//2), slice(size//2+2, size-3))),
-                     (123, rng.random() < .7, (60, 160, 70), (slice(size//2+3, size-2), slice(2, size-2)))]
+            a = rng.random() < 0.5
+            b = rng.random() < (0.8 if a else 0.2)
+            flags = [
+                (0, a, (210, 50, 60), (slice(8, size // 2), slice(6, size // 2))),
+                (1, b, (40, 100, 210), (slice(8, size // 2), slice(size // 2 + 2, size - 3))),
+                (
+                    123,
+                    rng.random() < 0.7,
+                    (60, 160, 70),
+                    (slice(size // 2 + 3, size - 2), slice(2, size - 2)),
+                ),
+            ]
             names = []
             for c, on, color, region in flags:
                 if on:
@@ -86,7 +94,11 @@ def source_records(config, split):
         images = images[:limit]
     image_ids = {r["id"] for r in images}
     captions = [c for c in value["annotations"] if c["image_id"] in image_ids]
-    return images, captions, {"source_images": len(value["images"]), "source_captions": len(value["annotations"])}
+    return (
+        images,
+        captions,
+        {"source_images": len(value["images"]), "source_captions": len(value["annotations"])},
+    )
 
 
 def acquire_pixels(config, split, images):
@@ -154,8 +166,15 @@ def prepare(config, encoder):
                 full[i, columns[c.id]] = np.any(mask == c.id)
                 presence[i, columns[c.id]] = np.any(scoped == c.id)
                 areas[i, columns[c.id]] = np.mean(scoped == c.id)
-            indexed_images.append({"image_id": image_id, "image": str(ip), "mask": str(mp),
-                                   "image_sha256": sha256(ip), "mask_sha256": sha256(mp)})
+            indexed_images.append(
+                {
+                    "image_id": image_id,
+                    "image": str(ip),
+                    "mask": str(mp),
+                    "image_sha256": sha256(ip),
+                    "mask_sha256": sha256(mp),
+                }
+            )
         image_rows = {r["image_id"]: i for i, r in enumerate(indexed_images)}
         indexed_caps, reviews = [], []
         mentions = np.zeros((len(caps), len(concepts)), bool)
@@ -166,28 +185,65 @@ def prepare(config, encoder):
             present, edits, status, unavailable = editor.analyze(cap["id"], cap["caption"])
             for c in present:
                 mentions[i, columns[c]] = True
-            record = {"caption_id": cap["id"], "image_row": image_rows[cap["image_id"]],
-                      "text": cap["caption"], "concept_ids": present, "edits": edits,
-                      "annotation_status": status, "unavailable": unavailable}
+            record = {
+                "caption_id": cap["id"],
+                "image_row": image_rows[cap["image_id"]],
+                "text": cap["caption"],
+                "concept_ids": present,
+                "edits": edits,
+                "annotation_status": status,
+                "unavailable": unavailable,
+            }
             indexed_caps.append(record)
             for c in present:
-                reviews.append({"caption_id": cap["id"], "image_id": cap["image_id"], "concept_id": c,
-                                "original": cap["caption"], "edited": edits.get(c), "status": status})
+                reviews.append(
+                    {
+                        "caption_id": cap["id"],
+                        "image_id": cap["image_id"],
+                        "concept_id": c,
+                        "original": cap["caption"],
+                        "edited": edits.get(c),
+                        "status": status,
+                    }
+                )
         parents = np.array([r["image_row"] for r in indexed_caps], np.int64)
         counts = np.bincount(parents, minlength=len(images))
         if np.any(counts == 0):
             raise ValueError("Every indexed image must have at least one caption")
-        for name, value in [("images", indexed_images), ("captions", indexed_caps), ("concept_ids", list(columns))]:
+        for name, value in [
+            ("images", indexed_images),
+            ("captions", indexed_caps),
+            ("concept_ids", list(columns)),
+        ]:
             atomic_json(out / f"{name}.json", value)
-        for name, value in [("parents", parents), ("presence", presence), ("full_presence", full),
-                            ("areas", areas), ("mentions", mentions)]:
+        for name, value in [
+            ("parents", parents),
+            ("presence", presence),
+            ("full_presence", full),
+            ("areas", areas),
+            ("mentions", mentions),
+        ]:
             np.save(out / f"{name}.npy", value)
         write_csv(out / "caption_edit_review.csv", reviews)
         unique_counts, frequencies = np.unique(counts, return_counts=True)
-        summaries[split] = {**source_counts, "images": len(images), "captions": len(caps), "caption_count_histogram": dict(zip(map(str, unique_counts), map(int, frequencies))),
-                            "label_scope": config.data.label_scope,
-                            "automatic_caption_annotations": sum(c["annotation_status"] != "human_reviewed" for c in indexed_caps),
-                            "captions_with_available_edits": sum(bool(c["edits"]) for c in indexed_caps)}
+        summaries[split] = {
+            **source_counts,
+            "images": len(images),
+            "captions": len(caps),
+            "caption_count_histogram": dict(zip(map(str, unique_counts), map(int, frequencies))),
+            "label_scope": config.data.label_scope,
+            "automatic_caption_annotations": sum(
+                c["annotation_status"] != "human_reviewed" for c in indexed_caps
+            ),
+            "captions_with_available_edits": sum(bool(c["edits"]) for c in indexed_caps),
+        }
         LOG.info("Indexed %s", summaries[split])
-    atomic_json(config.output / "dataset.json", {"splits": summaries, "concepts": [c.__dict__ for c in concepts],
-                "small_subset": bool(config.data.image_limits), "test_only": config.data.source == "synthetic"})
+    atomic_json(
+        config.output / "dataset.json",
+        {
+            "splits": summaries,
+            "concepts": [c.__dict__ for c in concepts],
+            "small_subset": bool(config.data.image_limits),
+            "test_only": config.data.source == "synthetic",
+        },
+    )

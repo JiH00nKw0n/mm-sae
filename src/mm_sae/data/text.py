@@ -3,6 +3,7 @@
 Automatic edits only delete matched spans; they do not claim grammatical or human semantic validation.
 A reviewed JSONL can replace labels and edits without changing the rest of the experiment.
 """
+
 from __future__ import annotations
 
 import json
@@ -33,8 +34,16 @@ def load_concepts(path: Path | None, synthetic=False) -> list[Concept]:
 
 class CaptionEditor:
     def __init__(self, concepts: list[Concept], reviewed: Path | None = None):
-        self.patterns = {c.id: re.compile(r"(?<!\w)(?:" + "|".join(re.escape(x) for x in sorted(c.aliases, key=len, reverse=True)) + r")(?!\w)", re.I)
-                         for c in concepts if c.aliases}
+        self.patterns = {
+            c.id: re.compile(
+                r"(?<!\w)(?:"
+                + "|".join(re.escape(x) for x in sorted(c.aliases, key=len, reverse=True))
+                + r")(?!\w)",
+                re.I,
+            )
+            for c in concepts
+            if c.aliases
+        }
         self.reviewed = {}
         if reviewed:
             for line in reviewed.read_text().splitlines():
@@ -56,15 +65,34 @@ class CaptionEditor:
             if any(c not in present for c in edits) or any(v == text for v in edits.values()):
                 raise ValueError("Reviewed edits must remove a present concept and change the text")
             return present, edits, "human_reviewed", [c for c in present if c not in edits]
-        spans = {c: [(m.start(), m.end()) for m in regex.finditer(text)] for c, regex in self.patterns.items()}
+        spans = {
+            c: [(m.start(), m.end()) for m in regex.finditer(text)] for c, regex in self.patterns.items()
+        }
         spans = {c: s for c, s in spans.items() if s}
         # Overlapping labels (e.g. hot dog/dog) go to the longest phrase, never both.
-        keep = {c: [(a, b) for a, b in ss if not any(x <= a and b <= y and y-x > b-a
-                for other, os in spans.items() if other != c for x, y in os)] for c, ss in spans.items()}
+        keep = {
+            c: [
+                (a, b)
+                for a, b in ss
+                if not any(
+                    x <= a and b <= y and y - x > b - a
+                    for other, os in spans.items()
+                    if other != c
+                    for x, y in os
+                )
+            ]
+            for c, ss in spans.items()
+        }
         keep = {c: s for c, s in keep.items() if s}
         edits, unavailable = {}, []
         for c, ss in keep.items():
-            if any(max(a, x) < min(b, y) for a, b in ss for other, os in keep.items() if other != c for x, y in os):
+            if any(
+                max(a, x) < min(b, y)
+                for a, b in ss
+                for other, os in keep.items()
+                if other != c
+                for x, y in os
+            ):
                 unavailable.append(c)
                 continue
             new = text
