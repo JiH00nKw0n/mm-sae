@@ -1,0 +1,4 @@
+For each supplied category, extract its exact referring expressions from the caption, including synonyms, inflections, and pronouns.
+Return every category in input order.
+Use spans=[] if unmentioned and spans=null if ambiguous between categories.
+Do not infer mentions from the category list. Exclude negated or hypothetical mentions.

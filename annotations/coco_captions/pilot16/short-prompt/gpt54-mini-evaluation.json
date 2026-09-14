@@ -1,0 +1,304 @@
+{
+  "basis": "Same provisional Codex category-state reference as the long-prompt pilot. Includes the parsed category states of the one source-invalid response in the 131-candidate comparison; source validity is separately reported. Not human ground truth or exact masking accuracy.",
+  "evaluated_candidates": 131,
+  "matching_candidates": 125,
+  "agreement": 0.9541984732824428,
+  "unresolved_candidates": 5,
+  "confusion": {
+    "present": {
+      "present": 27,
+      "absent": 0,
+      "ambiguous": 0,
+      "missing": 0
+    },
+    "absent": {
+      "present": 2,
+      "absent": 98,
+      "ambiguous": 0,
+      "missing": 0
+    },
+    "ambiguous": {
+      "present": 3,
+      "absent": 1,
+      "ambiguous": 0,
+      "missing": 0
+    }
+  },
+  "per_expected_state": {
+    "present": {
+      "correct": 27,
+      "total": 27,
+      "agreement": 1.0
+    },
+    "absent": {
+      "correct": 98,
+      "total": 100,
+      "agreement": 0.98
+    },
+    "ambiguous": {
+      "correct": 0,
+      "total": 4,
+      "agreement": 0.0
+    }
+  },
+  "source_valid_captions": 15,
+  "source_invalid_captions": 1,
+  "captions_matching_all_scored_states": 12,
+  "captions_passing_source_and_all_scored_states": 11,
+  "caption_results": [
+    {
+      "caption_id": 1050,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 638,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 249,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 80,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 9797,
+      "source_valid": true,
+      "states_match": false,
+      "source_and_states_match": false,
+      "mismatched_concept_ids": [
+        26,
+        32
+      ]
+    },
+    {
+      "caption_id": 388,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 28,
+      "source_valid": true,
+      "states_match": false,
+      "source_and_states_match": false,
+      "mismatched_concept_ids": [
+        66,
+        164
+      ]
+    },
+    {
+      "caption_id": 2689,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 239297,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 157169,
+      "source_valid": true,
+      "states_match": false,
+      "source_and_states_match": false,
+      "mismatched_concept_ids": [
+        135
+      ]
+    },
+    {
+      "caption_id": 522614,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 557503,
+      "source_valid": true,
+      "states_match": false,
+      "source_and_states_match": false,
+      "mismatched_concept_ids": [
+        153
+      ]
+    },
+    {
+      "caption_id": 370551,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 381033,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 14844,
+      "source_valid": false,
+      "states_match": true,
+      "source_and_states_match": false,
+      "mismatched_concept_ids": []
+    },
+    {
+      "caption_id": 502931,
+      "source_valid": true,
+      "states_match": true,
+      "source_and_states_match": true,
+      "mismatched_concept_ids": []
+    }
+  ],
+  "errors": [
+    {
+      "split": "train2017",
+      "caption_id": 9797,
+      "concept_id": 26,
+      "name": "backpack",
+      "expected_state": "ambiguous",
+      "predicted_state": "absent",
+      "expressions": [],
+      "source_valid": true
+    },
+    {
+      "split": "train2017",
+      "caption_id": 9797,
+      "concept_id": 32,
+      "name": "suitcase",
+      "expected_state": "ambiguous",
+      "predicted_state": "present",
+      "expressions": [
+        "Two pieces of luggage"
+      ],
+      "source_valid": true
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "concept_id": 66,
+      "name": "dining table",
+      "expected_state": "ambiguous",
+      "predicted_state": "present",
+      "expressions": [
+        "table"
+      ],
+      "source_valid": true
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "concept_id": 164,
+      "name": "table",
+      "expected_state": "ambiguous",
+      "predicted_state": "present",
+      "expressions": [
+        "table"
+      ],
+      "source_valid": true
+    },
+    {
+      "split": "train2017",
+      "caption_id": 157169,
+      "concept_id": 135,
+      "name": "mud",
+      "expected_state": "absent",
+      "predicted_state": "present",
+      "expressions": [
+        "puddle"
+      ],
+      "source_valid": true
+    },
+    {
+      "split": "train2017",
+      "caption_id": 557503,
+      "concept_id": 153,
+      "name": "sand",
+      "expected_state": "absent",
+      "predicted_state": "present",
+      "expressions": [
+        "beach"
+      ],
+      "source_valid": true
+    }
+  ],
+  "unresolved": [
+    {
+      "split": "train2017",
+      "caption_id": 80,
+      "concept_id": 166,
+      "name": "textile-other",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "source_valid": true,
+      "reason": "Whether hoodie and pants belong to textile-other needs the category definition."
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "concept_id": 120,
+      "name": "food-other",
+      "expected_state": "unresolved",
+      "predicted_state": "present",
+      "expressions": [
+        "vegetable pizza"
+      ],
+      "source_valid": true,
+      "reason": "Whether vegetable pizza denotes a separate food-other category needs the category definition."
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "concept_id": 74,
+      "name": "remote",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "source_valid": false,
+      "reason": "The vague phrase other technological tools does not identify which device; absent versus ambiguous needs a convention."
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "concept_id": 75,
+      "name": "keyboard",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "source_valid": false,
+      "reason": "The vague phrase other technological tools does not identify which device; absent versus ambiguous needs a convention."
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "concept_id": 76,
+      "name": "cell phone",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "source_valid": false,
+      "reason": "The vague phrase other technological tools does not identify which device; absent versus ambiguous needs a convention."
+    }
+  ],
+  "category_state_changes_vs_long_prompt": []
+}

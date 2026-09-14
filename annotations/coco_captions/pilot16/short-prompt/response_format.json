@@ -1,0 +1,55 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "CaptionAnnotation",
+    "strict": true,
+    "schema": {
+      "$defs": {
+        "ObjectSpans": {
+          "additionalProperties": false,
+          "properties": {
+            "concept_id": {
+              "title": "Concept Id",
+              "type": "integer"
+            },
+            "spans": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Spans"
+            }
+          },
+          "required": [
+            "concept_id",
+            "spans"
+          ],
+          "title": "ObjectSpans",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/ObjectSpans"
+          },
+          "title": "Objects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "objects"
+      ],
+      "title": "CaptionAnnotation",
+      "type": "object"
+    }
+  }
+}

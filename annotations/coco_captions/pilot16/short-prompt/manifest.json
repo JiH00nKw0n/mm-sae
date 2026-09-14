@@ -1,0 +1,188 @@
+{
+  "status": "pilot_only_one_source_failure_full_annotation_not_started",
+  "default_prompt_changed": false,
+  "reference_file": "/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches/provisional-reference.jsonl",
+  "reference_metadata": {
+    "created_at": "2026-09-14T14:14:07.008871+00:00",
+    "source": "Codex inspection of the same 16 captions; earlier pilot outputs were already known; not human ground truth and not an independent held-out evaluation. Written before requesting the all-matches model outputs.",
+    "reference_sha256": "8080059df45dfd889999c77276f53f44e6fd32aa65b23e9c92471bb652792563",
+    "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+    "counts": {
+      "present": 27,
+      "absent": 100,
+      "unresolved": 5,
+      "ambiguous": 4
+    },
+    "metric": "For each caption and image-provided candidate, compare present (nonempty spans), absent ([]), or ambiguous (null). Exclude only the five predeclared unresolved candidates. Also report each state separately to expose majority-absent inflation. This does not score exact expression completeness or token mask boundaries.",
+    "rules": [
+      "Do not infer a material from a place: puddle does not establish mud, and beach does not establish sand.",
+      "A generic table cannot distinguish table from dining table when both are candidates; luggage cannot distinguish backpack from suitcase. Both compatible candidates should be ambiguous.",
+      "The two residual-category cases and three vague device cases remain unresolved; do not count them as correct or incorrect."
+    ],
+    "full_annotation_authorized": false
+  },
+  "long_prompt_file": "/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches/prompt.txt",
+  "long_prompt_sha256": "931f4c584819733ae8be7a3cd4a9cc4b6e9f00198eca15804a16b9c0494e8878",
+  "short_prompt_file": "prompt.txt",
+  "short_prompt_sha256": "d51ea1d2cef0df408f91f09e20d4529a809d72bab183d0b0b2c7ec5a3ed0d779",
+  "prompt_word_counts_whitespace_split": {
+    "long": 92,
+    "short": 46
+  },
+  "changes": "Use exactly the proposed four-line short prompt. Pronouns are explicitly named; distinctness, case, compound words, caption-as-data, JSON-only and no-rewriting instructions are no longer separately stated. No source-normalization or validation changes.",
+  "model": {
+    "finished_at": "2026-09-14T14:25:42.713452+00:00",
+    "annotation_source": "openai_structured_outputs",
+    "input_captions": 16,
+    "successful_captions": 15,
+    "failed_captions": 1,
+    "failures": [
+      {
+        "split": "val2017",
+        "caption_id": 14844,
+        "type": "source_validation",
+        "reason": "The returned expression does not exist in the source caption"
+      }
+    ],
+    "settings": {
+      "model": "gpt-5.4-mini-2026-03-17",
+      "n": 1,
+      "max_completion_tokens": 2048,
+      "store": false,
+      "reasoning_effort": "none",
+      "temperature": 0,
+      "top_p": 1,
+      "concurrency": 512,
+      "captions_per_request": 1,
+      "max_attempts": 5
+    },
+    "usage_this_invocation": {
+      "requests": 16,
+      "retries": 0,
+      "prompt_tokens": 4543,
+      "completion_tokens": 1532,
+      "cached_tokens": 0
+    },
+    "returned_models": [
+      "gpt-5.4-mini-2026-03-17"
+    ],
+    "system_fingerprints": [],
+    "elapsed_seconds": 2.0008391670126002,
+    "output_sha256": "47afdd0b3fd3f9ed8a4b831cd03e0fd4fc683aeded3d6943870ed2c4f9e74516",
+    "complete": false,
+    "request_definition": {
+      "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+      "prompt_sha256": "d51ea1d2cef0df408f91f09e20d4529a809d72bab183d0b0b2c7ec5a3ed0d779",
+      "schema": {
+        "$defs": {
+          "ObjectSpans": {
+            "additionalProperties": false,
+            "properties": {
+              "concept_id": {
+                "title": "Concept Id",
+                "type": "integer"
+              },
+              "spans": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Spans"
+              }
+            },
+            "required": [
+              "concept_id",
+              "spans"
+            ],
+            "title": "ObjectSpans",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "objects": {
+            "items": {
+              "$ref": "#/$defs/ObjectSpans"
+            },
+            "title": "Objects",
+            "type": "array"
+          }
+        },
+        "required": [
+          "objects"
+        ],
+        "title": "CaptionAnnotation",
+        "type": "object"
+      },
+      "settings": {
+        "model": "gpt-5.4-mini-2026-03-17",
+        "n": 1,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "top_p": 1,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      }
+    },
+    "reasoning_tokens": 0,
+    "pricing": {
+      "currency": "USD",
+      "standard_input_per_million": 0.75,
+      "standard_output_per_million": 4.5,
+      "source": "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
+      "checked_on": "2026-09-14"
+    },
+    "cost": {
+      "pilot_usd": 0.01030125,
+      "projected_train_usd": 380.987224453125,
+      "projected_val_usd": 16.104716718749998,
+      "projected_all_usd": 397.09194117187496,
+      "fraction_cheaper_than_long_prompt": 0.05451917119845806,
+      "method": "Cost includes the source-invalid response. Use all 16 requests as denominator. Standard rates, no caching or Batch discount; projection excludes future retries, taxes and servers."
+    }
+  },
+  "baseline_cost": {
+    "pilot_usd": 0.01089525,
+    "projected_train_usd": 402.956054578125,
+    "projected_val_usd": 17.03336146875,
+    "projected_all_usd": 419.989416046875,
+    "fraction_cheaper_than_current_gpt54": 0.7002476098768828,
+    "fraction_cheaper_than_current_gpt51": 0.5291340284155367,
+    "caption_counts": {
+      "train2017": 591753,
+      "val2017": 25014,
+      "total": 616767
+    },
+    "method": "Pilot billed tokens times standard unit prices; divide total by 16 requested captions and multiply population size. Not a representative sample; excludes future retries, taxes and servers; no Batch discount or caching."
+  },
+  "files": {
+    "gpt54-mini-evaluation.json": {
+      "sha256": "9e0d716b2d96e029e252a2f1b4310578070aa172a4f291bd7a9fde33c3468dec"
+    },
+    "gpt54-mini-none-rejected.jsonl": {
+      "sha256": "8def1e2522b576937b5493bb857295e1039e7881bbb76809031077fff2b36515"
+    },
+    "gpt54-mini-none.jsonl": {
+      "sha256": "47afdd0b3fd3f9ed8a4b831cd03e0fd4fc683aeded3d6943870ed2c4f9e74516"
+    },
+    "prompt.txt": {
+      "sha256": "d51ea1d2cef0df408f91f09e20d4529a809d72bab183d0b0b2c7ec5a3ed0d779"
+    },
+    "response_format.json": {
+      "sha256": "eb04a1f8ed639eea3b2f63effbab6050dc95fc79c215c6abb11fa9a4d57ebba9"
+    },
+    "README.md": {
+      "sha256": "b4fb0997578fb94852c2b367351c9047c0ffbf1ff5c0047381297578eadec632"
+    }
+  }
+}

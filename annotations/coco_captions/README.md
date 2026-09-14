@@ -4,6 +4,9 @@
 
 입력은 공식 COCO2017 학습 캡션 591,753개와 검증 캡션 25,014개를 대상으로 준비한다. 현재 API 호출은 고정된 캡션 16개 시험까지만 실행했다. 각 캡션에는 대응 이미지의 COCO-Stuff 원본 픽셀 주석에 실제로 등장하는 범주 번호·이름을 제공한다. 중앙 자르기 전 원본 주석을 사용하며 이미지는 API에 보내지 않는다. 다른 캡션, SAE 활성값과 상관계수도 제공하지 않는다. 문장에 car가 있어도 이미지 후보에 car가 없으면 이번 추출 대상이 아니다.
 
+
+추가로 GPT-5.4 mini에 46단어의 짧은 프롬프트를 같은 16개로 시험했다. 범주 판단은 같았지만 원문 공백을 다르게 복사한 응답 한 개가 위치 검사에 실패했다. 비용은 5.5% 줄어 전체 약 $397로 추정됐다. 이 축약안은 기본값으로 채택하지 않았고 현재 prompt.txt는 기존 92단어 문구를 유지한다. [짧은 프롬프트 비교 기록](/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/short-prompt/README.md)에 실제 응답과 실패 이유를 남겼다.
+
 ## 현재 응답 형식
 
 다음 클래스는 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/src/mm_sae/data/caption_annotations.py`에 있다. API 호출에 `response_format=CaptionAnnotation`을 전달한다.
