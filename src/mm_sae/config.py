@@ -53,9 +53,9 @@ class DataConfig(StrictModel):
     reviewed_captions: Path | None = None
     images_url_pattern: str = "http://images.cocodataset.org/{split}/{image_id:012d}.jpg"
     label_scope: Literal["model_input", "full_image"] = "model_input"
-    fixture_images: int = Field(48, ge=8)
-    fixture_captions: int = Field(5, ge=1)
-    fixture_size: int = Field(64, ge=16)
+    fixture_images: int = Field(default=48, ge=8)
+    fixture_captions: int = Field(default=5, ge=1)
+    fixture_size: int = Field(default=64, ge=16)
     downloads: dict[str, str] = {
         "train2017.zip": "http://images.cocodataset.org/zips/train2017.zip",
         "val2017.zip": "http://images.cocodataset.org/zips/val2017.zip",
@@ -69,16 +69,16 @@ class EncoderConfig(StrictModel):
     model_id: str = "openai/clip-vit-base-patch32"
     revision: str = "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268"
     device: Literal["cuda", "cpu", "mps"] = "cuda"
-    batch_size: int = Field(128, ge=1)
-    text_max_length: int = Field(77, ge=1)
-    synthetic_dim: int = Field(16, ge=6)
+    batch_size: int = Field(default=128, ge=1)
+    text_max_length: int = Field(default=77, ge=1)
+    synthetic_dim: int = Field(default=16, ge=6)
 
 
 class TrainingConfig(StrictModel):
     split: str = "train2017"
     sampling: Literal["unique_image_all_text", "paired_repeat_image"] = "unique_image_all_text"
-    latent_size: int = Field(4096, ge=1)
-    top_k: int = Field(8, ge=1)
+    latent_size: int = Field(default=4096, ge=1)
+    top_k: int = Field(default=8, ge=1)
     arguments: dict = Field(default_factory=default_training_arguments)
 
     @model_validator(mode="after")
@@ -100,13 +100,20 @@ class TrainingConfig(StrictModel):
 
 
 class FeatureConfig(StrictModel):
-    batch_size: int = Field(2048, ge=1)
+    batch_size: int = Field(default=2048, ge=1)
     mask_rgb: tuple[int, int, int] = (255, 255, 255)
 
 
 class ExperimentConfig(StrictModel):
     name: str = "rq1"
     options: dict = {}
+
+
+class ExecutionConfig(StrictModel):
+    progress_interval_seconds: float = Field(default=10, gt=0)
+    require_approval: bool = False
+    approval_file: Path | None = None
+    review_document: Path | None = None
 
 
 class Config(StrictModel):
@@ -117,9 +124,14 @@ class Config(StrictModel):
     training: TrainingConfig = Field(default_factory=TrainingConfig)
     features: FeatureConfig = Field(default_factory=FeatureConfig)
     experiment: ExperimentConfig = Field(default_factory=ExperimentConfig)
+    execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
 
     @model_validator(mode="after")
     def coherent(self):
+        if self.execution.require_approval and (
+            self.execution.approval_file is None or self.execution.review_document is None
+        ):
+            raise ValueError("Approval requires both an approval_file and a review_document")
         if self.training.top_k > self.training.latent_size:
             raise ValueError("top_k cannot exceed latent_size")
         if bool(self.training.image_checkpoint) != bool(self.training.text_checkpoint):
@@ -147,6 +159,7 @@ def load_config(path: str | Path) -> Config:
         (config, ["output", "cache"]),
         (config.data, ["root", "concepts_file", "reviewed_captions"]),
         (config.training, ["image_checkpoint", "text_checkpoint"]),
+        (config.execution, ["approval_file", "review_document"]),
     ]:
         for field in fields:
             value = getattr(model, field)

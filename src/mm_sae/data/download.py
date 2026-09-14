@@ -10,6 +10,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 from ..io import file_lock
+from ..progress import progress_task
 
 LOG = logging.getLogger(__name__)
 
@@ -33,10 +34,16 @@ def _fetch(url: str, path: Path):
             raise IOError("Download resume range does not match the partial file")
         received = 0
         expected = response.headers.get("Content-Length")
-        with partial.open("ab" if append else "wb") as out:
+        initial = offset if append else 0
+        total = initial + int(expected) if expected is not None else None
+        with (
+            progress_task(f"Download {path.name}", total, "bytes", initial=initial) as meter,
+            partial.open("ab" if append else "wb") as out,
+        ):
             while block := response.read(4 << 20):
                 out.write(block)
                 received += len(block)
+                meter.update(initial + received)
         if expected is not None and received != int(expected):
             raise IOError("Incomplete download; the next run will resume it")
     os.replace(partial, path)

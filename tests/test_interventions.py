@@ -31,7 +31,8 @@ def test_no_b_without_a_is_explicitly_unassessable():
 def test_sparse_replacement_does_not_perturb_unedited_rows():
     original = sparse.csr_matrix(np.array([[1.0, 0], [0, 2.0], [0.3, 0.1]], np.float32))
     new = replace_rows(original, [1], sparse.csr_matrix([[9.0, 1.0]]))
-    np.testing.assert_array_equal(new.toarray(), [[1.0, 0], [9.0, 1.0], [np.float32(0.3), np.float32(0.1)]])
+    expected = np.asarray([[1.0, 0], [9.0, 1.0], [np.float32(0.3), np.float32(0.1)]])
+    np.testing.assert_array_equal(new.toarray(), expected)
 
 
 def test_caption_labels_are_not_inherited_from_images_and_spans_do_not_overlap():

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import torch
@@ -15,11 +16,29 @@ from .io import atomic_json, sha256
 from .cache import embedding_directory
 from .models.encoder import device_for
 from .models.sae import SAEConfig, TopKSAE, PairedSAEs
+from .progress import progress_task, TaskProgress
 
 
 class DecoderNormCallback(TrainerCallback):
     def on_step_end(self, args, state, control, model=None, **kwargs):
-        model.normalize_decoder()
+        if model is not None:
+            model.normalize_decoder()
+
+
+class TrainingProgressCallback(TrainerCallback):
+    def __init__(self, meter: TaskProgress):
+        self.meter = meter
+
+    def on_train_begin(self, args, state, control, **kwargs):
+        self.meter.total = state.max_steps
+        self.meter.initial = state.global_step
+        self.meter.update(state.global_step, epoch=state.epoch)
+
+    def on_step_end(self, args, state, control, **kwargs):
+        self.meter.update(state.global_step, epoch=state.epoch)
+
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        self.meter.update(state.global_step, **(logs or {}))
 
 
 def cached_dataset(image, text=None, parents=None):
@@ -30,6 +49,8 @@ def cached_dataset(image, text=None, parents=None):
         rows = np.asarray(batch["row"])
         if text is None:
             return {"inputs": torch.from_numpy(np.array(image[rows], dtype=np.float32))}
+        if parents is None:
+            raise ValueError("Paired training requires caption-to-image row indices")
         return {
             "image": torch.from_numpy(np.array(image[parents[rows]], dtype=np.float32)),
             "text": torch.from_numpy(np.array(text[rows], dtype=np.float32)),
@@ -91,7 +112,9 @@ def train(config):
                 callbacks=[DecoderNormCallback()],
             )
             last = get_last_checkpoint(str(output)) if output.exists() else None
-            trainer.train(resume_from_checkpoint=last)
+            with progress_task(f"Train {name} SAE", unit="optimizer steps") as meter:
+                trainer.add_callback(TrainingProgressCallback(meter))
+                trainer.train(resume_from_checkpoint=last)
             trainer.save_state()
             history[name] = {
                 "rows_per_epoch": len(dataset),
@@ -131,7 +154,9 @@ def assert_frozen(root: Path):
 def load_saes(config):
     assert_frozen(config.output)
     device = device_for(config.encoder.device)
-    return tuple(
-        TopKSAE.from_pretrained(config.output / "models" / side).to(device).eval().requires_grad_(False)
-        for side in ["image", "text"]
-    )
+    models = []
+    for side in ["image", "text"]:
+        model = TopKSAE.from_pretrained(config.output / "models" / side)
+        cast(torch.nn.Module, model).to(device)
+        models.append(model.eval().requires_grad_(False))
+    return tuple(models)

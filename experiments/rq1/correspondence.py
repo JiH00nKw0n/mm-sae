@@ -8,12 +8,13 @@ from mm_sae.features import original_latents
 from mm_sae.io import atomic_json, write_csv
 from mm_sae.metrics.statistics import correlation, bin_summary
 from mm_sae.metrics.matching import match
+from mm_sae.metrics.sparse_ops import take_rows
 
 
 def build_panel(config, options):
     index = Index(config.output, options.correlation_split)
     image, text = original_latents(config, options.correlation_split)
-    panel = correlation(image[index.parents], text)
+    panel = correlation(take_rows(image, index.parents), text)
     np.savez_compressed(config.output / "panel.npz", **panel)
     return panel
 
@@ -33,7 +34,9 @@ def assess(panel, assignment, representatives):
     for i, concepts in sorted(images.items()):
         j = int(assignment[i])
         partner = texts.get(j, set())
-        if j < 0:
+        if not panel["valid_image"][i]:
+            status = "undefined_correlation"
+        elif j < 0:
             status = "unmatched"
         elif not panel["valid_image"][i] or not panel["valid_text"][j]:
             status = "undefined_correlation"
@@ -116,7 +119,9 @@ def experiment2(config, options):
     reps = json.loads((root / "representatives.json").read_text())
     index = Index(root, options.correlation_split)
     labels = correlation(index.presence, index.presence)
-    assignments = match(panel["C"], panel["alive_image"], panel["alive_text"])
+    assignments = match(
+        panel["C"], panel["alive_image"], panel["alive_text"], panel["valid_image"], panel["valid_text"]
+    )
     out = root / "rq1" / "experiment2"
     out.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(out / "all_feature_assignments.npz", **assignments)

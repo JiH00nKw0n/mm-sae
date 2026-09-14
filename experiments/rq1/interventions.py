@@ -10,8 +10,9 @@ from mm_sae.features import original_latents, read_counterfactual
 from mm_sae.io import atomic_json, write_csv
 from mm_sae.metrics.statistics import correlation
 from mm_sae.metrics.matching import match
-from mm_sae.metrics.sparse_ops import replace_rows, activation_changes
+from mm_sae.metrics.sparse_ops import replace_rows, activation_changes, take_rows
 from mm_sae.training import assert_frozen
+from mm_sae.progress import iter_progress, progress_task
 from .correspondence import assess
 
 
@@ -60,11 +61,11 @@ def choose_images(a, b, eligible, areas, caption_counts, mention_counts, budget,
 def altered_activations(index, chosen, original_i, original_t, cf):
     image_rows, text_rows, ci, ct = cf
     image_lookup = {int(row): k for k, row in enumerate(image_rows)}
-    replace_i = ci[[image_lookup[int(i)] for i in chosen]]
+    replace_i = take_rows(ci, [image_lookup[int(i)] for i in chosen])
     chosen_captions = np.isin(index.parents[text_rows], chosen)
     return (
         replace_rows(original_i, chosen, replace_i),
-        replace_rows(original_t, text_rows[chosen_captions], ct[chosen_captions]),
+        replace_rows(original_t, text_rows[chosen_captions], take_rows(ct, np.flatnonzero(chosen_captions))),
     )
 
 
@@ -92,7 +93,7 @@ def experiment3(config, options):
     out.mkdir(parents=True, exist_ok=True)
     caption_counts = np.bincount(index.parents, minlength=len(index.images))
     outcomes, exclusions, eligible_pairs = [], [], []
-    for a, b in pairs:
+    for a, b in iter_progress(pairs, "All original error concept pairs", unit="pairs"):
         ac, bc = index.columns[a], index.columns[b]
         has_a, has_b = index.presence[:, ac], index.presence[:, bc]
         plan = deletion_budget(has_a, has_b)
@@ -111,7 +112,7 @@ def experiment3(config, options):
         mention_counts = np.bincount(
             index.parents, weights=index.mentions[:, bc], minlength=len(index.images)
         ).astype(int)
-        if np.count_nonzero(has_a & has_b & eligible) < plan["n_remove"]:
+        if np.count_nonzero(has_a & has_b & eligible) < int(plan["n_remove"]):
             exclusions.append(
                 {
                     "anchor": a,
@@ -123,7 +124,9 @@ def experiment3(config, options):
             continue
         eligible_pairs.append([a, b])
         cf = read_counterfactual(root, options.correlation_split, b)
-        for repeat in range(options.intervention_repeats):
+        for repeat in iter_progress(
+            range(options.intervention_repeats), f"Removal repetitions for {a}, {b}", unit="repetitions"
+        ):
             case = out / f"{a}-{b}" / str(repeat)
             if (case / "outcomes.json").exists():
                 outcomes.extend(json.loads((case / "outcomes.json").read_text()))
@@ -164,14 +167,22 @@ def experiment3(config, options):
                     panel = base
                 else:
                     xi, yt = altered_activations(index, selected, original_i, original_t, cf)
-                    changes = activation_changes(original_i[selected], xi[selected])
+                    changes = activation_changes(take_rows(original_i, selected), take_rows(xi, selected))
                     mean_off = float(changes["turned_off"].mean())
                     mean_on = float(changes["turned_on"].mean())
-                    panel = correlation(xi[index.parents], yt)
+                    with progress_task(f"Recompute full Pearson matrix for {a}, {b}, {condition}"):
+                        panel = correlation(take_rows(xi, index.parents), yt)
                     # Original candidate universe is fixed, including features that become constant after masking.
                     if options.save_intervention_panels:
                         np.savez_compressed(case / f"{condition}_panel.npz", **panel)
-                assignment = match(panel["C"], base["alive_image"], base["alive_text"])
+                with progress_task(f"Greedy and Hungarian matching for {a}, {b}, {condition}"):
+                    assignment = match(
+                        panel["C"],
+                        base["alive_image"],
+                        base["alive_text"],
+                        panel["valid_image"],
+                        panel["valid_text"],
+                    )
                 np.savez_compressed(case / f"{condition}_assignments.npz", **assignment)
                 after_b = has_b.copy()
                 after_b[selected] = False

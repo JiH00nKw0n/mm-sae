@@ -46,9 +46,19 @@ def test_full_signed_bins_include_boundaries_and_empty_bins():
 
 def test_greedy_reuses_text_hungarian_is_one_to_one_and_signed():
     c = np.array([[0.9, 0.8], [0.85, -0.99]])
-    result = match(c, np.ones(2, bool), np.ones(2, bool))
+    result = match(c, *[np.ones(2, bool) for _ in range(4)])
     assert result["greedy"].tolist() == [0, 0]
     assert result["hungarian"].tolist() == [1, 0]
+
+
+def test_undefined_correlations_cannot_displace_valid_negative_edges():
+    c = np.array([[-0.4, 0.0], [0.0, 0.0]])
+    result = match(c, np.ones(2, bool), np.ones(2, bool), np.array([True, False]), np.array([True, False]))
+    for method in ["greedy", "hungarian"]:
+        assert result[method].tolist() == [0, -1]
+        panel = {"C": c, "valid_image": np.array([True, False]), "valid_text": np.array([True, False])}
+        reps = {"0": {"image": 0, "text": 0}, "1": {"image": 1, "text": 1}}
+        assert [r["status"] for r in assess(panel, result[method], reps)] == ["same", "undefined_correlation"]
 
 
 def test_undefined_and_multi_concept_matches_never_count_as_recovery():

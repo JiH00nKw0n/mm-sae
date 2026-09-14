@@ -10,6 +10,52 @@ import matplotlib.pyplot as plt
 from mm_sae.io import atomic_json
 
 COLORS = ["#217568", "#c7634b", "#a7afa9", "#8d80ab", "#decda1"]
+CONDITIONS = ["original", "random_removal", "cooccurrence_removal"]
+SCORE_METRICS = ["same_concept_score", "wrong_score"]
+
+
+def paired_score_summary(rows):
+    """Compare the same case/repetition units for both scores across every condition."""
+    groups = {}
+    for row in rows:
+        key = (row["anchor"], row["remove"], row["repeat"])
+        groups.setdefault(key, {})[row["condition"]] = row
+    included, excluded = [], []
+    for (anchor, remove, repeat), conditions in sorted(groups.items()):
+        missing = [
+            {"condition": condition, "metric": metric}
+            for condition in CONDITIONS
+            for metric in SCORE_METRICS
+            if condition not in conditions or conditions[condition].get(metric) is None
+        ]
+        if missing:
+            excluded.append({"anchor": anchor, "remove": remove, "repeat": repeat, "missing": missing})
+        else:
+            included.append(conditions)
+    return {
+        "total_case_repetitions": len(groups),
+        "complete_case_repetitions": len(included),
+        "excluded": excluded,
+        "means": {
+            metric: {
+                condition: float(np.mean([unit[condition][metric] for unit in included]))
+                if included
+                else None
+                for condition in CONDITIONS
+            }
+            for metric in SCORE_METRICS
+        },
+        "undefined_counts": {
+            condition: {
+                metric: sum(
+                    condition not in unit or unit[condition].get(metric) is None for unit in groups.values()
+                )
+                for metric in SCORE_METRICS
+            }
+            for condition in CONDITIONS
+        },
+        "scope": "Common complete case/repetition units for both scores in all three conditions; matching outcomes retain all eligible units",
+    }
 
 
 def finish(fig, path, smoke):
@@ -93,7 +139,9 @@ def report(config, options):
     e3 = json.loads((root / "experiment3" / "summary.json").read_text())
     rows = e3["outcomes"]
     fig, axes = plt.subplots(1, 4, figsize=(15, 3.9))
-    conditions = ["original", "random_removal", "cooccurrence_removal"]
+    conditions = CONDITIONS
+    score_summary = paired_score_summary(rows)
+    atomic_json(root / "experiment3" / "paired_score_summary.json", score_summary)
     ticks = ["Original", "Random\nremoval", "Conditional\nremoval"]
     if rows:
         unique = list({(r["anchor"], r["remove"], r["repeat"], r["condition"]): r for r in rows}.values())
@@ -101,11 +149,26 @@ def report(config, options):
             ("same_concept_score", "Same-concept partner", COLORS[0]),
             ("wrong_score", "Original wrong partner", COLORS[1]),
         ]:
-            means = []
-            for condition in conditions:
-                values = [r[metric] for r in unique if r["condition"] == condition and r[metric] is not None]
-                means.append(np.mean(values) if values else np.nan)
+            means = [
+                score_summary["means"][metric][condition]
+                if score_summary["means"][metric][condition] is not None
+                else np.nan
+                for condition in conditions
+            ]
             axes[0].plot(range(3), means, "o-", color=color, label=name)
+        axes[0].set_title(
+            f"Common defined scores: {score_summary['complete_case_repetitions']}/{score_summary['total_case_repetitions']} case-repeats",
+            fontsize=9,
+        )
+        if not score_summary["complete_case_repetitions"]:
+            axes[0].text(
+                0.5,
+                0.5,
+                "No common defined score units",
+                transform=axes[0].transAxes,
+                ha="center",
+                fontsize=8,
+            )
         for method, color in zip(methods, COLORS):
             recovered, damaged = [], []
             for condition in conditions:
@@ -171,6 +234,7 @@ def report(config, options):
             "eligible_error_pairs": len(e3["eligible_pairs"]),
             "experiment1_pairs": e1["pairs"],
             "experiment2": e2,
+            "paired_score_comparison": score_summary,
             "cautions": [
                 "Feature representatives may be weak or shared; inspect representatives.csv and held-out AUROC.",
                 "Automatic caption span labels are not human-verified semantic ground truth.",

@@ -4,6 +4,7 @@ from mm_sae.data.index import prepare
 from mm_sae.features import embed
 from mm_sae.models.encoder import make_encoder
 from mm_sae.training import train, assert_frozen, validate_training_arguments
+from mm_sae.progress import stage_progress, progress_task
 from .config import RQ1Config
 from .selection import select
 from .correspondence import build_panel, experiment1, experiment2
@@ -39,7 +40,8 @@ def run(config, store, stage="all"):
     def get_encoder():
         nonlocal encoder
         if encoder is None:
-            encoder = make_encoder(config.encoder)
+            with progress_task("Load frozen encoder and processor"):
+                encoder = make_encoder(config.encoder)
         return encoder
 
     actions = {
@@ -74,5 +76,6 @@ def run(config, store, stage="all"):
         logging.info("Start stage %s", name)
         if name not in {"prepare", "embed", "train"}:
             assert_frozen(config.output)
-        actions[name]()
-        store.complete(name)
+        with stage_progress(name):
+            actions[name]()
+            store.complete(name)

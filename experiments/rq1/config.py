@@ -8,10 +8,10 @@ class RQ1Config(StrictModel):
     correlation_split: str = "train2017"
     validation_split: str | None = "val2017"
     label_correlation: Literal["image_image", "image_text"] = "image_image"
-    bin_width: float = Field(0.2, gt=0, le=2)
-    intervention_repeats: int = Field(5, ge=1)
-    intervention_seed: int = Field(0, ge=0)
-    area_strata: int = Field(5, ge=1)
+    bin_width: float = Field(default=0.2, gt=0, le=2)
+    intervention_repeats: int = Field(default=5, ge=1)
+    intervention_seed: int = Field(default=0, ge=0)
+    area_strata: int = Field(default=5, ge=1)
     save_intervention_panels: bool = False
 
     @model_validator(mode="after")

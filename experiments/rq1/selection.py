@@ -9,6 +9,8 @@ from mm_sae.features import counterfactual, original_latents, save_changes
 from mm_sae.io import atomic_json, write_csv
 from mm_sae.training import load_saes
 from mm_sae.metrics.statistics import paired_auroc, select_representative
+from mm_sae.metrics.sparse_ops import take_rows
+from mm_sae.progress import iter_progress
 
 
 def select(config, options, encoder):
@@ -24,11 +26,14 @@ def select(config, options, encoder):
     for split in splits:
         index = Index(config.output, split)
         originals = original_latents(config, split, models)
-        for concept in index.concept_ids:
+        for concept in iter_progress(
+            index.concept_ids, f"Representative selection/check {split}", unit="concepts"
+        ):
             concept = int(concept)
             ir, tr, im, tx = counterfactual(config, encoder, index, split, concept, models)
             for side_no, (side, source_rows, edited) in enumerate([("image", ir, im), ("text", tr, tx)]):
                 orig = originals[side_no]
+                assert orig.shape is not None
                 out = config.output / "counterfactual" / split / str(concept)
                 source_ids = (
                     [r["image_id"] for r in index.images]
@@ -37,7 +42,7 @@ def select(config, options, encoder):
                 )
                 save_changes(out / f"{side}_changes.csv", orig, edited, source_rows, source_ids)
                 row = {"split": split, "concept_id": concept, "side": side, "n_pairs": len(source_rows)}
-                aucs = paired_auroc(orig[source_rows], edited) if len(source_rows) else None
+                aucs = paired_auroc(take_rows(orig, source_rows), edited) if len(source_rows) else None
                 if aucs is not None:
                     np.save(out / f"{side}_auroc.npy", aucs)
                 if split == selection:
@@ -59,11 +64,12 @@ def select(config, options, encoder):
                 )
                 if feature is not None and len(source_rows):
                     delta = (
-                        orig[source_rows, feature].toarray().ravel() - edited[:, feature].toarray().ravel()
+                        take_rows(orig, source_rows).getcol(feature).toarray().ravel()
+                        - edited.getcol(feature).toarray().ravel()
                     )
                     row["paired_decrease_fraction"] = float(np.mean(delta > 0))
                     row["mean_paired_decrease"] = float(delta.mean())
-                    row["original_firing_fraction"] = float(orig[:, feature].getnnz() / orig.shape[0])
+                    row["original_firing_fraction"] = float(orig.getcol(feature).getnnz() / orig.shape[0])
                 rows.append(row)
     atomic_json(config.output / "representatives.json", representatives)
     write_csv(config.output / "representatives.csv", rows)

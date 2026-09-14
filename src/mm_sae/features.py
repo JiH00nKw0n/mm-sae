@@ -16,7 +16,8 @@ from .data.index import Index
 from .cache import embedding_directory
 from .io import atomic_json, write_csv, file_lock
 from .training import load_saes
-from .metrics.sparse_ops import activation_changes
+from .metrics.sparse_ops import activation_changes, take_rows
+from .progress import iter_progress
 
 
 def read_image(path):
@@ -60,7 +61,13 @@ def _encode_file(path: Path, n, dim, batch_size, encode_batch):
             raise ValueError("Partial cache has the wrong shape")
     else:
         out = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32, shape=(n, dim))
-    for begin in tqdm(range(start, n, batch_size), desc=path.parent.name + "/" + path.stem, leave=False):
+    for begin in iter_progress(
+        tqdm(range(start, n, batch_size), desc=path.parent.name + "/" + path.stem, leave=False),
+        f"CLIP {path}",
+        total=(n + batch_size - 1) // batch_size,
+        unit="batches",
+        initial=(start + batch_size - 1) // batch_size,
+    ):
         end = min(n, begin + batch_size)
         result = encode_batch(begin, end)
         if result.shape != (end - begin, dim) or not np.isfinite(result).all():
@@ -95,12 +102,14 @@ def embed(config, encoder):
 
 
 @torch.inference_mode()
-def sparse_encode(model, embedding, path, batch_size):
+def sparse_encode(model, embedding, path, batch_size) -> sparse.csr_matrix:
     if path.exists():
-        return sparse.load_npz(path).tocsr()
+        return sparse.csr_matrix(sparse.load_npz(path))
     path.parent.mkdir(parents=True, exist_ok=True)
     parts = []
-    for start in range(0, len(embedding), batch_size):
+    for start in iter_progress(
+        range(0, len(embedding), batch_size), f"SAE activations {path}", unit="batches"
+    ):
         x = torch.from_numpy(np.array(embedding[start : start + batch_size], dtype=np.float32)).to(
             model.device
         )
@@ -111,7 +120,7 @@ def sparse_encode(model, embedding, path, batch_size):
         part.eliminate_zeros()
         parts.append(part)
     result = (
-        sparse.vstack(parts, format="csr")
+        sparse.csr_matrix(sparse.vstack(parts, format="csr"))
         if parts
         else sparse.csr_matrix((0, model.config.latent_size), dtype=np.float32)
     )
@@ -121,10 +130,10 @@ def sparse_encode(model, embedding, path, batch_size):
     return result
 
 
-def original_latents(config, split, models=None):
+def original_latents(config, split, models=None) -> tuple[sparse.csr_matrix, sparse.csr_matrix]:
     models = models or load_saes(config)
     root = config.output
-    return tuple(
+    result = [
         sparse_encode(
             m,
             np.load(embedding_directory(config, split) / f"{side}.npy", mmap_mode="r"),
@@ -132,7 +141,8 @@ def original_latents(config, split, models=None):
             config.features.batch_size,
         )
         for side, m in zip(["image", "text"], models)
-    )
+    ]
+    return result[0], result[1]
 
 
 def counterfactual(config, encoder, index, split, concept, models):
@@ -170,13 +180,13 @@ def read_counterfactual(root, split, concept):
     return (
         np.load(out / "image_rows.npy"),
         np.load(out / "text_rows.npy"),
-        sparse.load_npz(out / "image_activations.npz"),
-        sparse.load_npz(out / "text_activations.npz"),
+        sparse.csr_matrix(sparse.load_npz(out / "image_activations.npz")),
+        sparse.csr_matrix(sparse.load_npz(out / "text_activations.npz")),
     )
 
 
 def save_changes(path, original, changed, source_rows, ids):
-    changes = activation_changes(original[source_rows], changed)
+    changes = activation_changes(take_rows(original, source_rows), changed)
     write_csv(
         path,
         [
@@ -192,4 +202,4 @@ def save_changes(path, original, changed, source_rows, ids):
         ],
         ["source_id", "turned_off", "turned_on", "sum_abs_activation_change"],
     )
-    sparse.save_npz(path.with_suffix(".delta.npz"), changed - original[source_rows])
+    sparse.save_npz(path.with_suffix(".delta.npz"), changed - take_rows(original, source_rows))

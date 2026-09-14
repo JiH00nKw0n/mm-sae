@@ -5,13 +5,15 @@ from __future__ import annotations
 import numpy as np
 from scipy import sparse
 from scipy.stats import rankdata
+from ..progress import iter_progress
 
 
 def correlation(x, y):
-    if x.shape[0] != y.shape[0] or x.shape[0] < 2:
-        raise ValueError("Correlation requires at least two aligned observations")
     x, y = sparse.csr_matrix(x, dtype=np.float64), sparse.csr_matrix(y, dtype=np.float64)
-    n = x.shape[0]
+    shape_x, shape_y = x.shape, y.shape
+    if shape_x is None or shape_y is None or shape_x[0] != shape_y[0] or shape_x[0] < 2:
+        raise ValueError("Correlation requires at least two aligned observations")
+    n = shape_x[0]
     sx, sy = np.asarray(x.sum(0)).ravel(), np.asarray(y.sum(0)).ravel()
     qx, qy = np.asarray(x.power(2).sum(0)).ravel(), np.asarray(y.power(2).sum(0)).ravel()
     vx, vy = qx - sx * sx / n, qy - sy * sy / n
@@ -45,7 +47,7 @@ def paired_auroc(original, removed):
         raise ValueError("Sparse zero shortcut assumes non-negative TopK activations")
     n, features = p.shape
     auc = np.empty(features, np.float64)
-    for f in range(features):
+    for f in iter_progress(range(features), "AUROC over all SAE features", unit="features"):
         a, b = p.data[p.indptr[f] : p.indptr[f + 1]], q.data[q.indptr[f] : q.indptr[f + 1]]
         rank = rankdata(np.concatenate([a, b]), method="average")
         nz_wins = rank[: len(a)].sum() - len(a) * (len(a) + 1) / 2

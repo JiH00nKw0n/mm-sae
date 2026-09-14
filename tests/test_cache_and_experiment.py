@@ -10,6 +10,7 @@ from mm_sae.features import encode_file
 from mm_sae.io import atomic_json
 from mm_sae.metrics.statistics import correlation
 from mm_sae.metrics.matching import match
+from mm_sae.metrics.sparse_ops import take_rows
 from experiments.rq1 import interventions
 from experiments.rq1.config import RQ1Config
 from experiments.rq1.correspondence import assess
@@ -73,14 +74,16 @@ def test_conditional_intervention_recomputes_both_matchings_and_resumes(tmp_path
     base = correlation(image, text)
     np.savez_compressed(tmp_path / "panel.npz", **base)
     atomic_json(tmp_path / "representatives.json", reps)
-    assignments = match(base["C"], base["alive_image"], base["alive_text"])
+    assignments = match(
+        base["C"], base["alive_image"], base["alive_text"], base["valid_image"], base["valid_text"]
+    )
     baseline = [
         {**r, "method": m} for m in ["greedy", "hungarian"] for r in assess(base, assignments[m], reps)
     ]
     assert all(r["status"] == "different" for r in baseline)
     atomic_json(tmp_path / "rq1" / "experiment2" / "assessed_rows.json", baseline)
     edited_rows = np.flatnonzero(b)
-    edited_text = text[edited_rows].toarray()
+    edited_text = take_rows(text, edited_rows).toarray()
     edited_text[:, 1] = 0
     frozen_checks = []
     monkeypatch.setattr(interventions, "Index", lambda *_: index)

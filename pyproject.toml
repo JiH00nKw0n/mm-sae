@@ -14,7 +14,11 @@ dependencies = [
   "tqdm==4.67.1", "accelerate==1.5.2", "datasets==3.4.1"
 ]
 [project.optional-dependencies]
-dev = ["pytest==8.3.5", "ruff==0.11.2"]
+dev = [
+    "pyright==1.1.408",
+    "pytest==8.3.5",
+    "ruff==0.11.2",
+]
 [project.scripts]
 mm-sae = "mm_sae.cli:main"
 [tool.setuptools.packages.find]
@@ -29,3 +33,9 @@ testpaths = ["tests"]
 line-length = 110
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]
+
+[tool.pyright]
+include = ["src", "experiments", "tests", "scripts"]
+extraPaths = ["src"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"

@@ -9,5 +9,6 @@ __pycache__/
 /data/
 /runs/
 /cache/
+/approvals/
 .env
 .DS_Store

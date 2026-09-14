@@ -6,6 +6,7 @@ import csv
 import hashlib
 import json
 import os
+import importlib.metadata
 from pathlib import Path
 from contextlib import contextmanager
 
@@ -69,7 +70,10 @@ def code_digest():
     from importlib.util import find_spec
 
     for name in ["mm_sae", "experiments"]:
-        root = Path(find_spec(name).origin).parent
+        spec = find_spec(name)
+        if spec is None or spec.origin is None:
+            raise RuntimeError(f"Cannot locate installed package {name}")
+        root = Path(spec.origin).parent
         for path in sorted(p for p in root.rglob("*") if p.suffix in {".py", ".yaml"}):
             h.update((name + "/" + path.relative_to(root).as_posix()).encode())
             h.update(path.read_bytes())
@@ -83,14 +87,44 @@ class RunStore:
         self.signature = {
             "config": config.digest(),
             "code": code_digest(),
+            "runtime_packages": {
+                name: importlib.metadata.version(name)
+                for name in [
+                    "torch",
+                    "transformers",
+                    "datasets",
+                    "accelerate",
+                    "numpy",
+                    "scipy",
+                    "Pillow",
+                    "tokenizers",
+                    "safetensors",
+                ]
+            },
             "input_definitions": {
                 str(p): sha256(p)
-                for p in [config.data.concepts_file, config.data.reviewed_captions]
+                for p in [
+                    config.data.concepts_file,
+                    config.data.reviewed_captions,
+                    config.execution.review_document,
+                ]
                 if p is not None
             },
         }
         self.config = config
         self.marks = self.root / "completed"
+
+    def require_approval(self):
+        if not self.config.execution.require_approval:
+            return
+        path = self.config.execution.approval_file
+        if path is None or not path.exists():
+            raise PermissionError(
+                "Full experiment has not been approved. Review the exact setup before starting."
+            )
+        receipt = json.loads(path.read_text())
+        if receipt.get("decision") != "approved" or receipt.get("signature") != self.signature:
+            raise PermissionError("Approval does not match this code, configuration, or review document.")
 
     def initialize(self):
         manifest = self.root / "run.json"

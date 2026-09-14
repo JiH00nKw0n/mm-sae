@@ -13,6 +13,7 @@ from tqdm import tqdm
 from ..io import atomic_json, write_csv, sha256
 from .download import annotation_archive, extract_member, fetch
 from .text import CaptionEditor, load_concepts
+from ..progress import iter_progress
 
 LOG = logging.getLogger(__name__)
 
@@ -115,15 +116,30 @@ def acquire_pixels(config, split, images):
         raise FileNotFoundError("Missing image/mask files. Enable download or mount the full COCO directory.")
     if missing_masks:
         with annotation_archive(config, "stuffthingmaps_trainval2017.zip") as archive:
-            for image_id, path in tqdm(missing_masks, desc=f"Download masks {split}"):
+            for image_id, path in iter_progress(
+                tqdm(missing_masks, desc=f"Download masks {split}"),
+                f"Mask files {split}",
+                total=len(missing_masks),
+                unit="files",
+            ):
                 extract_member(archive, f"{split}/{image_id:012d}.png", path)
     if missing_images:
         if config.data.image_limits:
-            for image_id, path in tqdm(missing_images, desc=f"Download images {split}"):
+            for image_id, path in iter_progress(
+                tqdm(missing_images, desc=f"Download images {split}"),
+                f"Image files {split}",
+                total=len(missing_images),
+                unit="files",
+            ):
                 fetch(config.data.images_url_pattern.format(split=split, image_id=image_id), path)
         else:
             with annotation_archive(config, f"{split}.zip") as archive:
-                for image_id, path in tqdm(missing_images, desc=f"Extract images {split}"):
+                for image_id, path in iter_progress(
+                    tqdm(missing_images, desc=f"Extract images {split}"),
+                    f"Extract images {split}",
+                    total=len(missing_images),
+                    unit="files",
+                ):
                     extract_member(archive, f"{split}/{image_id:012d}.jpg", path)
 
 
@@ -147,7 +163,14 @@ def prepare(config, encoder):
         full = presence.copy()
         areas = np.zeros(presence.shape, np.float32)
         indexed_images = []
-        for i, row in enumerate(tqdm(images, desc=f"Read annotations {split}")):
+        for i, row in enumerate(
+            iter_progress(
+                tqdm(images, desc=f"Read annotations {split}"),
+                f"Read annotations {split}",
+                total=len(images),
+                unit="images",
+            )
+        ):
             image_id = row["id"]
             ip = config.data.root / config.data.images_pattern.format(split=split, image_id=image_id)
             mp = config.data.root / config.data.masks_pattern.format(split=split, image_id=image_id)
@@ -178,7 +201,13 @@ def prepare(config, encoder):
         image_rows = {r["image_id"]: i for i, r in enumerate(indexed_images)}
         indexed_caps, reviews = [], []
         mentions = np.zeros((len(caps), len(concepts)), bool)
-        for i, cap in enumerate(sorted(caps, key=lambda c: (c["image_id"], c["id"]))):
+        for i, cap in enumerate(
+            iter_progress(
+                sorted(caps, key=lambda c: (c["image_id"], c["id"])),
+                f"Index captions {split}",
+                unit="captions",
+            )
+        ):
             if cap["id"] in seen_captions:
                 raise ValueError("Duplicate caption ID")
             seen_captions.add(cap["id"])

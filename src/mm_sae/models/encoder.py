@@ -1,12 +1,12 @@
 """Use Hugging Face CLIPModel/CLIPProcessor, with no reimplementation of the backbone."""
 
 from __future__ import annotations
-from typing import Protocol
+from typing import Protocol, cast, Mapping
 
 import numpy as np
 import torch
 from PIL import Image
-from transformers import CLIPModel, CLIPProcessor
+from transformers import CLIPModel, CLIPProcessor, CLIPImageProcessor
 
 
 class Encoder(Protocol):
@@ -39,36 +39,45 @@ class CLIPEncoder:
     def __init__(self, config):
         self.config = config
         self.device = device_for(config.device)
-        self.processor = CLIPProcessor.from_pretrained(
-            config.model_id, revision=config.revision, use_fast=False
+        self.processor = cast(
+            CLIPProcessor,
+            CLIPProcessor.from_pretrained(config.model_id, revision=config.revision, use_fast=False),
         )
-        self.model = (
-            CLIPModel.from_pretrained(config.model_id, revision=config.revision).to(self.device).eval()
-        )
+        self.image_processor = cast(CLIPImageProcessor, getattr(self.processor, "image_processor"))
+        self.model = CLIPModel.from_pretrained(config.model_id, revision=config.revision)
+        cast(torch.nn.Module, self.model).to(self.device)
+        self.model.eval()
         self.model.requires_grad_(False)
         self.dim = self.model.config.projection_dim
 
     @torch.inference_mode()
     def images(self, images):
-        inputs = self.processor(images=images, return_tensors="pt")
-        out = self.model.get_image_features(pixel_values=inputs["pixel_values"].to(self.device))
+        inputs = cast(Mapping[str, torch.Tensor], self.processor(images=images, return_tensors="pt"))
+        pixels = inputs["pixel_values"].to(self.device)
+        out = self.model.get_image_features(pixel_values=cast(torch.FloatTensor, pixels))
         return normalize(out.float().cpu().numpy())
 
     @torch.inference_mode()
     def texts(self, texts):
-        inputs = self.processor(
-            text=texts,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=self.config.text_max_length,
+        inputs = cast(
+            Mapping[str, torch.Tensor],
+            self.processor(
+                text=texts,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=self.config.text_max_length,
+            ),
         )
-        out = self.model.get_text_features(**{k: v.to(self.device) for k, v in inputs.items()})
+        out = self.model.get_text_features(
+            input_ids=inputs["input_ids"].to(self.device),
+            attention_mask=inputs["attention_mask"].to(self.device),
+        )
         return normalize(out.float().cpu().numpy())
 
     def visible_mask(self, mask: np.ndarray):
         # Apply the actual HF processor's geometry to integer IDs with nearest-neighbor interpolation.
-        p = self.processor.image_processor
+        p = self.image_processor
         value = mask[None, :, :]
         if p.do_resize:
             value = p.resize(

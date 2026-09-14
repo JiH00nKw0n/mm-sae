@@ -16,7 +16,7 @@ def embedding_directory(config, split):
         "encoder": encoder,
         "images": [(r["image_id"], r["image_sha256"]) for r in images],
         "captions": [(r["caption_id"], r["text"]) for r in captions],
-        "libraries": {p: version(p) for p in ["transformers", "numpy", "Pillow"]},
+        "libraries": {p: version(p).split("+")[0] for p in ["torch", "transformers", "numpy", "Pillow"]},
         "normalization": "float32_l2_no_epsilon_v1",
     }
     key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()

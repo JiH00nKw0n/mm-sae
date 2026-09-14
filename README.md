@@ -53,6 +53,7 @@ docker run --rm --gpus all --shm-size=8g \
     features.py    원본·가림 자료의 표현과 희소 활성값 추출
     training.py    Hugging Face Trainer 연결과 모델 저장
     io.py          중단 후 재개, 파일 검증, 동시 쓰기 제어
+    progress.py    진행 상태 저장과 관측 속도에 따른 예상 남은 시간
     cli.py         설정에 지정한 실험 실행
   experiments/rq1/
     run.py         RQ1의 실행 순서
@@ -88,8 +89,12 @@ docker run --rm --gpus all --shm-size=8g \
 ```bash
 uv sync --frozen --extra dev
 uv run pytest -q
-uv run ruff check src experiments tests
+uv run pyright --pythonpath .venv/bin/python
+uv run ruff check src experiments tests scripts
+uv run ruff format --check src experiments tests scripts
 uv run python -m mm_sae --config configs/smoke.yaml
 ```
 
 의존성의 기준은 `pyproject.toml`과 `uv.lock`이다. Docker용 목록은 `uv run python scripts/export_runtime_lock.py`로 만든다. Torch의 CPU·CUDA 배포판은 Docker 빌드 대상에 따라 설치한다. [실행 확인 기록](https://github.com/JiH00nKw0n/mm-sae/blob/main/docs/validation.md)은 실제로 검사한 범위와 아직 실행하지 않은 범위를 구분한다.
+
+서버 전체 실행에는 승인 검사를 켠 `/mnt/working/mm-sae/configs/elice.yaml`을 사용한다. [전체 실행 전 확인할 설정](https://github.com/JiH00nKw0n/mm-sae/blob/main/docs/elice-rq1-review.md)에 자료와 판정 기준, 그림 3개, 해석의 한계를 적었다. [서버 준비와 진행 조회](https://github.com/JiH00nKw0n/mm-sae/blob/main/docs/server.md)에 설치와 조회 명령을 적었다. 상태는 10초마다 저장하며 현재 작업의 예상 남은 시간을 관측 속도로 계산한다. 아직 수행하지 않은 단계의 소요 시간은 미산정으로 남긴다.
