@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-09-14T14:14:07.008871+00:00",
+  "source": "Codex inspection of the same 16 captions; earlier pilot outputs were already known; not human ground truth and not an independent held-out evaluation. Written before requesting the all-matches model outputs.",
+  "reference_sha256": "8080059df45dfd889999c77276f53f44e6fd32aa65b23e9c92471bb652792563",
+  "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+  "counts": {
+    "present": 27,
+    "absent": 100,
+    "unresolved": 5,
+    "ambiguous": 4
+  },
+  "metric": "For each caption and image-provided candidate, compare present (nonempty spans), absent ([]), or ambiguous (null). Exclude only the five predeclared unresolved candidates. Also report each state separately to expose majority-absent inflation. This does not score exact expression completeness or token mask boundaries.",
+  "rules": [
+    "Do not infer a material from a place: puddle does not establish mud, and beach does not establish sand.",
+    "A generic table cannot distinguish table from dining table when both are candidates; luggage cannot distinguish backpack from suitcase. Both compatible candidates should be ambiguous.",
+    "The two residual-category cases and three vague device cases remain unresolved; do not count them as correct or incorrect."
+  ],
+  "full_annotation_authorized": false
+}

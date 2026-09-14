@@ -1,5 +1,7 @@
 # 예시 문장을 삭제하기 전의 COCO 캡션 시험 결과
 
+이 문서는 출현 순번을 사용한 이전 시험 기록이다. 이후 순번을 제거한 시험에서 두 모델 모두 원문 표현 검사 16개를 통과했다. 그 시험의 비용은 GPT-5.4 약 $0.03635, GPT-5.1 약 $0.02314였고 두 모델 모두 의미 오류가 남았다. 이후 비교 결과는 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches/README.md`에 있다. 이 문서 아래 수치와 해석은 당시 시험 기록으로 유지한다.
+
 이 문서는 hot dog 예시 문장을 포함한 이전 프롬프트로 실행한 기록이다. 현재 프롬프트에서는 그 문장을 삭제했다. 같은 16개를 다시 보낸 최신 시험에서 GPT-5.4 `none`은 원문 위치 검사를 16개 모두 통과했고 GPT-5.1 `none`은 12개를 통과했다. 두 모델 모두 의미 오류가 남았다. 최신 상세 기록은 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/without-hot-dog-example/README.md`에 있다.
 
 예시 문장을 삭제하기 전에는 GPT-5.1, GPT-5.4 mini와 GPT-5.4의 `none` 설정도 각각 16개씩 시험했다. 원문 위치 검사를 각각 12개, 16개, 16개 통과했고 실제 사용량으로 계산한 비용은 각각 $0.02652875, $0.01265025, $0.0421675였다. 추론 토큰은 모두 0개였다. 세 모델의 결과와 사용량은 이 폴더의 JSONL 파일과 manifest.json에 보존했다. GPT-5.4 mini는 예시 문장을 삭제한 뒤 다시 호출하지 않았다. 아래 상세 표는 최초 GPT-4o와 GPT-5 low 비교 기록이다.

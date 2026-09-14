@@ -1,0 +1,281 @@
+{
+  "basis": "Provisional Codex reference, not human ground truth; category-state agreement only, not exact span or masking accuracy.",
+  "evaluated_candidates": 131,
+  "matching_candidates": 125,
+  "agreement": 0.9541984732824428,
+  "unresolved_candidates": 5,
+  "confusion": {
+    "present": {
+      "present": 27,
+      "absent": 0,
+      "ambiguous": 0,
+      "missing": 0
+    },
+    "absent": {
+      "present": 2,
+      "absent": 98,
+      "ambiguous": 0,
+      "missing": 0
+    },
+    "ambiguous": {
+      "present": 3,
+      "absent": 1,
+      "ambiguous": 0,
+      "missing": 0
+    }
+  },
+  "per_expected_state": {
+    "present": {
+      "correct": 27,
+      "total": 27,
+      "agreement": 1.0
+    },
+    "absent": {
+      "correct": 98,
+      "total": 100,
+      "agreement": 0.98
+    },
+    "ambiguous": {
+      "correct": 0,
+      "total": 4,
+      "agreement": 0.0
+    }
+  },
+  "positive_prediction_precision": {
+    "correct": 27,
+    "total": 32
+  },
+  "captions_matching_all_scored_states": 12,
+  "caption_count": 16,
+  "caption_results": [
+    {
+      "split": "train2017",
+      "caption_id": 1050,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 638,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 249,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 80,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 9797,
+      "candidate_states_match_on_scored_subset": false,
+      "mismatched_concept_ids": [
+        26,
+        32
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 388,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "candidate_states_match_on_scored_subset": false,
+      "mismatched_concept_ids": [
+        66,
+        164
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 2689,
+      "candidate_states_match_on_scored_subset": false,
+      "mismatched_concept_ids": [
+        122
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 239297,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 157169,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 522614,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 557503,
+      "candidate_states_match_on_scored_subset": false,
+      "mismatched_concept_ids": [
+        153
+      ]
+    },
+    {
+      "split": "val2017",
+      "caption_id": 370551,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "val2017",
+      "caption_id": 381033,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    },
+    {
+      "split": "val2017",
+      "caption_id": 502931,
+      "candidate_states_match_on_scored_subset": true,
+      "mismatched_concept_ids": []
+    }
+  ],
+  "errors": [
+    {
+      "split": "train2017",
+      "caption_id": 9797,
+      "concept_id": 26,
+      "name": "backpack",
+      "expected_state": "ambiguous",
+      "predicted_state": "absent",
+      "expressions": []
+    },
+    {
+      "split": "train2017",
+      "caption_id": 9797,
+      "concept_id": 32,
+      "name": "suitcase",
+      "expected_state": "ambiguous",
+      "predicted_state": "present",
+      "expressions": [
+        "luggage"
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "concept_id": 66,
+      "name": "dining table",
+      "expected_state": "ambiguous",
+      "predicted_state": "present",
+      "expressions": [
+        "table"
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "concept_id": 164,
+      "name": "table",
+      "expected_state": "ambiguous",
+      "predicted_state": "present",
+      "expressions": [
+        "table"
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 2689,
+      "concept_id": 122,
+      "name": "furniture-other",
+      "expected_state": "absent",
+      "predicted_state": "present",
+      "expressions": [
+        "kitchen"
+      ]
+    },
+    {
+      "split": "train2017",
+      "caption_id": 557503,
+      "concept_id": 153,
+      "name": "sand",
+      "expected_state": "absent",
+      "predicted_state": "present",
+      "expressions": [
+        "beach"
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "split": "train2017",
+      "caption_id": 80,
+      "concept_id": 166,
+      "name": "textile-other",
+      "expected_state": "unresolved",
+      "predicted_state": "present",
+      "expressions": [
+        "hoodie",
+        "pants"
+      ],
+      "reason": "Whether hoodie and pants belong to textile-other needs the category definition."
+    },
+    {
+      "split": "train2017",
+      "caption_id": 28,
+      "concept_id": 120,
+      "name": "food-other",
+      "expected_state": "unresolved",
+      "predicted_state": "present",
+      "expressions": [
+        "vegetable pizza"
+      ],
+      "reason": "Whether vegetable pizza denotes a separate food-other category needs the category definition."
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "concept_id": 74,
+      "name": "remote",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "reason": "The vague phrase other technological tools does not identify which device; absent versus ambiguous needs a convention."
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "concept_id": 75,
+      "name": "keyboard",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "reason": "The vague phrase other technological tools does not identify which device; absent versus ambiguous needs a convention."
+    },
+    {
+      "split": "val2017",
+      "caption_id": 14844,
+      "concept_id": 76,
+      "name": "cell phone",
+      "expected_state": "unresolved",
+      "predicted_state": "absent",
+      "expressions": [],
+      "reason": "The vague phrase other technological tools does not identify which device; absent versus ambiguous needs a convention."
+    }
+  ]
+}

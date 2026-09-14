@@ -7,18 +7,11 @@ import re
 from pydantic import BaseModel, ConfigDict
 
 
-class Span(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
-
-    text: str
-    occurrence: int
-
-
 class ObjectSpans(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
     concept_id: int
-    spans: list[Span] | None
+    spans: list[str] | None
 
 
 class CaptionAnnotation(BaseModel):
@@ -47,21 +40,18 @@ def validate_and_locate(source: dict, annotation: CaptionAnnotation) -> dict:
     objects = []
     for obj in annotation.objects:
         located = None if obj.spans is None else []
-        seen = set()
-        for span in obj.spans or []:
-            if not span.text or span.occurrence < 1:
-                raise ValueError("Expression must be nonempty and occurrence must be positive")
-            matches = list(re.finditer(r"(?<!\w)" + re.escape(span.text) + r"(?!\w)", text))
-            if span.occurrence > len(matches):
-                raise ValueError("The returned expression occurrence does not exist in the source caption")
-            match = matches[span.occurrence - 1]
-            interval = (match.start(), match.end())
-            if interval in seen:
-                raise ValueError("The same expression occurrence was returned twice for one category")
-            seen.add(interval)
-            assert text[match.start() : match.end()] == span.text
+        intervals: set[tuple[int, int]] = set()
+        for expression in obj.spans or []:
+            if not expression.strip():
+                raise ValueError("Expression must be nonempty")
+            matches = list(re.finditer(r"(?<!\w)" + re.escape(expression) + r"(?!\w)", text))
+            if not matches:
+                raise ValueError("The returned expression does not exist in the source caption")
+            # All exact matches are intentional, even when their meanings differ.
+            intervals.update((match.start(), match.end()) for match in matches)
+        for start, end in sorted(intervals):
             assert located is not None
-            located.append({"text": span.text, "start": match.start(), "end": match.end()})
+            located.append({"text": text[start:end], "start": start, "end": end})
         objects.append({"concept_id": obj.concept_id, "spans": located})
     return {
         "caption_id": source["caption_id"],

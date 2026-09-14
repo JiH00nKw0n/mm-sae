@@ -16,7 +16,7 @@
               "anyOf": [
                 {
                   "items": {
-                    "type": "string"
+                    "$ref": "#/$defs/Span"
                   },
                   "type": "array"
                 },
@@ -32,6 +32,25 @@
             "spans"
           ],
           "title": "ObjectSpans",
+          "type": "object"
+        },
+        "Span": {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "title": "Text",
+              "type": "string"
+            },
+            "occurrence": {
+              "title": "Occurrence",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "text",
+            "occurrence"
+          ],
+          "title": "Span",
           "type": "object"
         }
       },

@@ -17,7 +17,7 @@ from typing import Any
 from dotenv import dotenv_values
 from openai import APIConnectionError, APIStatusError, AsyncOpenAI, OpenAIError
 
-from mm_sae.data.caption_annotations import CaptionAnnotation, validate_and_locate
+from mm_sae.data.caption_annotations import CaptionAnnotation, response_format, validate_and_locate
 from mm_sae.io import atomic_json, file_lock, sha256
 from mm_sae.progress import ProgressReporter, progress_task, stage_progress
 
@@ -49,6 +49,9 @@ def request_options(args) -> dict[str, Any]:
 
 async def annotate(args):
     prompt = (args.spec / "prompt.txt").read_text()
+    schema_file = args.spec / "response_format.json"
+    if schema_file.exists() and json.loads(schema_file.read_text()) != response_format():
+        raise ValueError("Saved response format differs from the code; use the matching code revision")
     inputs = [json.loads(line) for line in args.input.read_text().splitlines() if line.strip()]
     if len({(r["split"], r["caption_id"]) for r in inputs}) != len(inputs):
         raise ValueError("Duplicate caption identifiers in input")

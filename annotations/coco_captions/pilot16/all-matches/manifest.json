@@ -1,0 +1,295 @@
+{
+  "status": "pilot_only_full_annotation_not_started",
+  "schema_version": "distinct_strings_all_exact_word_boundary_matches",
+  "prompt_change": "Replace every-occurrence numbering with one exact case-sensitive string per distinct expression. No ambiguity example added. No hot dog example.",
+  "reference_metadata": {
+    "created_at": "2026-09-14T14:14:07.008871+00:00",
+    "source": "Codex inspection of the same 16 captions; earlier pilot outputs were already known; not human ground truth and not an independent held-out evaluation. Written before requesting the all-matches model outputs.",
+    "reference_sha256": "8080059df45dfd889999c77276f53f44e6fd32aa65b23e9c92471bb652792563",
+    "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+    "counts": {
+      "present": 27,
+      "absent": 100,
+      "unresolved": 5,
+      "ambiguous": 4
+    },
+    "metric": "For each caption and image-provided candidate, compare present (nonempty spans), absent ([]), or ambiguous (null). Exclude only the five predeclared unresolved candidates. Also report each state separately to expose majority-absent inflation. This does not score exact expression completeness or token mask boundaries.",
+    "rules": [
+      "Do not infer a material from a place: puddle does not establish mud, and beach does not establish sand.",
+      "A generic table cannot distinguish table from dining table when both are candidates; luggage cannot distinguish backpack from suitcase. Both compatible candidates should be ambiguous.",
+      "The two residual-category cases and three vague device cases remain unresolved; do not count them as correct or incorrect."
+    ],
+    "full_annotation_authorized": false
+  },
+  "models": {
+    "gpt54": {
+      "finished_at": "2026-09-14T14:14:33.694842+00:00",
+      "annotation_source": "openai_structured_outputs",
+      "input_captions": 16,
+      "successful_captions": 16,
+      "failed_captions": 0,
+      "failures": [],
+      "settings": {
+        "model": "gpt-5.4-2026-03-05",
+        "n": 1,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "top_p": 1,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      },
+      "usage_this_invocation": {
+        "requests": 16,
+        "retries": 0,
+        "prompt_tokens": 5455,
+        "completion_tokens": 1514,
+        "cached_tokens": 0
+      },
+      "returned_models": [
+        "gpt-5.4-2026-03-05"
+      ],
+      "system_fingerprints": [],
+      "elapsed_seconds": 5.167407125001773,
+      "output_sha256": "f6125a45e09bb8c88041a7b93d6f3bee15b627fa636572b79d1aa3beea557979",
+      "complete": true,
+      "request_definition": {
+        "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+        "prompt_sha256": "931f4c584819733ae8be7a3cd4a9cc4b6e9f00198eca15804a16b9c0494e8878",
+        "schema": {
+          "$defs": {
+            "ObjectSpans": {
+              "additionalProperties": false,
+              "properties": {
+                "concept_id": {
+                  "title": "Concept Id",
+                  "type": "integer"
+                },
+                "spans": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Spans"
+                }
+              },
+              "required": [
+                "concept_id",
+                "spans"
+              ],
+              "title": "ObjectSpans",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "objects": {
+              "items": {
+                "$ref": "#/$defs/ObjectSpans"
+              },
+              "title": "Objects",
+              "type": "array"
+            }
+          },
+          "required": [
+            "objects"
+          ],
+          "title": "CaptionAnnotation",
+          "type": "object"
+        },
+        "settings": {
+          "model": "gpt-5.4-2026-03-05",
+          "n": 1,
+          "max_completion_tokens": 2048,
+          "store": false,
+          "reasoning_effort": "none",
+          "temperature": 0,
+          "top_p": 1,
+          "concurrency": 512,
+          "captions_per_request": 1,
+          "max_attempts": 5
+        }
+      },
+      "reasoning_tokens": 0,
+      "objects_with_repeated_identical_expression_matches": 0,
+      "pricing": {
+        "currency": "USD",
+        "standard_input_per_million": 2.5,
+        "standard_output_per_million": 15,
+        "source": "https://developers.openai.com/api/docs/models/gpt-5.4",
+        "checked_on": "2026-09-14"
+      },
+      "cost": {
+        "pilot_usd": 0.0363475,
+        "projected_train_usd": 1344.29638546875,
+        "projected_val_usd": 56.824772812499994,
+        "projected_all_usd": 1401.12115828125,
+        "fraction_cheaper_than_previous_numbered_pilot": 0.13710012463647703,
+        "caption_counts": {
+          "train2017": 591753,
+          "val2017": 25014,
+          "total": 616767
+        },
+        "method": "Pilot billed tokens times standard unit prices; divide total by 16 requested captions and multiply population size. Not a representative sample; excludes future retries, taxes and servers; no Batch discount or caching."
+      }
+    },
+    "gpt51": {
+      "finished_at": "2026-09-14T14:14:35.258507+00:00",
+      "annotation_source": "openai_structured_outputs",
+      "input_captions": 16,
+      "successful_captions": 16,
+      "failed_captions": 0,
+      "failures": [],
+      "settings": {
+        "model": "gpt-5.1-2025-11-13",
+        "n": 1,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "top_p": 1,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      },
+      "usage_this_invocation": {
+        "requests": 16,
+        "retries": 0,
+        "prompt_tokens": 5455,
+        "completion_tokens": 1632,
+        "cached_tokens": 0
+      },
+      "returned_models": [
+        "gpt-5.1-2025-11-13"
+      ],
+      "system_fingerprints": [],
+      "elapsed_seconds": 6.731060833000811,
+      "output_sha256": "ca881eeb4ea55d0e85cde0b8b8aa70944472c8b871060c3ebbe1fed27f3bc4ab",
+      "complete": true,
+      "request_definition": {
+        "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+        "prompt_sha256": "931f4c584819733ae8be7a3cd4a9cc4b6e9f00198eca15804a16b9c0494e8878",
+        "schema": {
+          "$defs": {
+            "ObjectSpans": {
+              "additionalProperties": false,
+              "properties": {
+                "concept_id": {
+                  "title": "Concept Id",
+                  "type": "integer"
+                },
+                "spans": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Spans"
+                }
+              },
+              "required": [
+                "concept_id",
+                "spans"
+              ],
+              "title": "ObjectSpans",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "objects": {
+              "items": {
+                "$ref": "#/$defs/ObjectSpans"
+              },
+              "title": "Objects",
+              "type": "array"
+            }
+          },
+          "required": [
+            "objects"
+          ],
+          "title": "CaptionAnnotation",
+          "type": "object"
+        },
+        "settings": {
+          "model": "gpt-5.1-2025-11-13",
+          "n": 1,
+          "max_completion_tokens": 2048,
+          "store": false,
+          "reasoning_effort": "none",
+          "temperature": 0,
+          "top_p": 1,
+          "concurrency": 512,
+          "captions_per_request": 1,
+          "max_attempts": 5
+        }
+      },
+      "reasoning_tokens": 0,
+      "objects_with_repeated_identical_expression_matches": 0,
+      "pricing": {
+        "currency": "USD",
+        "standard_input_per_million": 1.25,
+        "standard_output_per_million": 10,
+        "source": "https://developers.openai.com/api/docs/models/gpt-5.1",
+        "checked_on": "2026-09-14"
+      },
+      "cost": {
+        "pilot_usd": 0.02313875,
+        "projected_train_usd": 855.776545546875,
+        "projected_val_usd": 36.17454328125,
+        "projected_all_usd": 891.951088828125,
+        "fraction_cheaper_than_previous_numbered_pilot": 0.11915298596240786,
+        "caption_counts": {
+          "train2017": 591753,
+          "val2017": 25014,
+          "total": 616767
+        },
+        "method": "Pilot billed tokens times standard unit prices; divide total by 16 requested captions and multiply population size. Not a representative sample; excludes future retries, taxes and servers; no Batch discount or caching."
+      }
+    }
+  },
+  "files": {
+    "gpt51-evaluation.json": {
+      "sha256": "a64413b917e5ecf1af39698a51f2b00e1557b7e4ef8209cb1960e17d6576e8c9"
+    },
+    "gpt51-none.jsonl": {
+      "sha256": "ca881eeb4ea55d0e85cde0b8b8aa70944472c8b871060c3ebbe1fed27f3bc4ab"
+    },
+    "gpt54-evaluation.json": {
+      "sha256": "6bb8242d1be05f852f5d83a20534241bd18cda8e98e09a0a80f55da60e5e25b1"
+    },
+    "gpt54-none.jsonl": {
+      "sha256": "f6125a45e09bb8c88041a7b93d6f3bee15b627fa636572b79d1aa3beea557979"
+    },
+    "prompt.txt": {
+      "sha256": "931f4c584819733ae8be7a3cd4a9cc4b6e9f00198eca15804a16b9c0494e8878"
+    },
+    "provisional-reference.jsonl": {
+      "sha256": "8080059df45dfd889999c77276f53f44e6fd32aa65b23e9c92471bb652792563"
+    },
+    "reference-metadata.json": {
+      "sha256": "f86f01abac7d0b75420b86818d59b528f73992e4b22a644f1e5ffafa73511e85"
+    },
+    "response_format.json": {
+      "sha256": "eb04a1f8ed639eea3b2f63effbab6050dc95fc79c215c6abb11fa9a4d57ebba9"
+    },
+    "README.md": {
+      "sha256": "8859c067d3fe01407b06a88d2b6b0afacb343f73300bfba7d762f55bb340e984"
+    }
+  }
+}
