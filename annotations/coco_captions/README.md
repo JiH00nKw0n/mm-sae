@@ -1,6 +1,8 @@
 # 캡션의 객체 표현 추출
 
-**캡션 하나를 요청 하나로 보내며, `AsyncOpenAI`와 `asyncio.Semaphore(512)`로 동시에 처리한다.** 실제 COCO 캡션 16개로 시험했다. GPT-4o는 원문 표현과 위치 검사에서 9개가 통과하고 7개가 실패했다. 같은 프롬프트를 사용한 GPT-5 `low`는 16개 모두 이 검사를 통과했지만, 후보 간 모호성을 처리하는 오류가 남았다. 전체 캡션 추출과 SAE 전체 실험은 시작하지 않았다.
+**캡션 하나를 요청 하나로 보내며, `AsyncOpenAI`와 `asyncio.Semaphore(512)`로 동시에 처리한다.** 프롬프트에서 hot dog와 동물 dog를 구별하는 예시 문장만 삭제한 뒤 같은 실제 COCO 캡션 16개를 다시 시험했다. GPT-5.4 `none`은 원문 위치 검사를 16개 모두 통과했고 GPT-5.1 `none`은 12개를 통과했다. 두 모델 모두 의미 오류가 남았다. 전체 캡션 추출과 SAE 전체 실험은 시작하지 않았다.
+
+최신 비교 결과와 실제 16개 응답은 [GPT-5.4와 GPT-5.1 비교](/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/without-hot-dog-example/README.md)에 정리했다. 두 모델의 실제 사용량으로 계산한 전체 616,767개 비용은 각각 약 $1,624와 $1,013이다. 16개 기능 시험을 전체로 환산한 추정이며 재시도·세금·서버 비용을 포함하지 않는다.
 
 ## 입력과 저장 자료
 
@@ -12,15 +14,17 @@
 
 | 파일 | 기록하는 내용 |
 | --- | --- |
-| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/prompt.txt` | 두 모델의 16개 시험에 실제로 사용한 프롬프트다. |
+| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/prompt.txt` | 지정한 예시 문장만 삭제한 현재 프롬프트다. GPT-5.4와 GPT-5.1 재시험에 사용했다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/prompt.proposed.txt` | 모호한 후보를 하나로 단정한 오류를 줄이기 위한 수정안이다. 승인과 시험을 거치지 않았으며 실행에 사용하지 않았다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/response_format.json` | Pydantic 클래스에서 생성한 엄격한 JSON 응답 형식이다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/examples.jsonl` | 형식을 설명하는 가상 예시 3개다. 실제 API 결과가 아니다. |
-| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/inputs.jsonl` | 실제로 보낸 16개 캡션과 이미지 범주 목록을 담는다. |
+| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/prompt.txt` | 예시 문장을 삭제하기 전 시험에 사용한 프롬프트를 보존했다. |
+| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/without-hot-dog-example/manifest.json` | 예시 문장을 삭제한 뒤 두 모델을 비교한 최신 설정과 비용을 기록한다. |
+| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/inputs.jsonl` | 모든 모델 시험에 공통으로 보낸 16개 캡션과 이미지 범주 목록을 담는다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/gpt4o-accepted.jsonl` | GPT-4o의 원문 위치 검사 통과 결과 9개다. 의미 정답으로 승인한 자료가 아니다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/gpt4o-rejected.jsonl` | GPT-4o의 실패 캡션 7개를 진단용으로 재요청한 응답과 실패 이유를 담는다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/gpt5-low.jsonl` | GPT-5 `low`의 결과 16개다. 알려진 의미 오류를 수정하지 않고 보존했다. |
-| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/manifest.json` | 요청 설정, 사용량, 입력과 출력의 파일 지문, 알려진 오류를 기록한다. |
+| `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/manifest.json` | 예시 문장을 삭제하기 전 요청 설정, 사용량, 입력과 출력의 파일 지문, 알려진 오류를 기록한다. |
 | `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/README.md` | 실제 16개 결과와 검사에서 확인한 범위, 수정이 필요한 이유를 설명한다. |
 
 ## 응답을 정의한 클래스
@@ -58,7 +62,7 @@ class CaptionAnnotation(BaseModel):
 
 ## 실행과 재개
 
-프로그램은 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/scripts/annotate_captions.py`다. 다음 명령은 저장된 입력 16개를 GPT-5 `low`로 처리한다. 동일한 작업 폴더에 이미 완료된 응답이 있으면 API를 다시 호출하지 않는다.
+프로그램은 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/scripts/annotate_captions.py`다. 다음 명령은 예시 문장을 삭제하기 전의 프롬프트로 저장된 입력 16개를 GPT-5 `low`로 처리한다. 동일한 작업 폴더에 이미 완료된 응답이 있으면 API를 다시 호출하지 않는다.
 
 ```bash
 cd /Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae
@@ -68,6 +72,7 @@ uv sync --extra annotation --extra dev
   --output annotations/coco_captions/pilot16/gpt5-low.jsonl \
   --work-dir runs/caption-annotation/pilot16-gpt5-low \
   --env-file /Users/jihoonkwon/Desktop/projects/.env \
+  --spec annotations/coco_captions/pilot16 \
   --model gpt-5-2025-08-07 \
   --reasoning-effort low \
   --max-completion-tokens 4096 \

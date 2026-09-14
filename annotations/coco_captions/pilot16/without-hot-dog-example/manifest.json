@@ -1,0 +1,323 @@
+{
+  "status": "pilot_only_full_annotation_not_started",
+  "quality_review": "Codex inspection of input and returned content; not human ground truth",
+  "prompt_change": "Removed only the sentence A hot dog is not an animal dog. Other instructions and response schema unchanged. The separate ambiguity-example proposal was not used.",
+  "prompt_file": "prompt.txt",
+  "prompt_sha256": "7c4ba64a3240f6574bdf336878b329b71bbe7abf12607e9649ce5d07fa3fb62b",
+  "original_prompt_sha256": "5eefd095a1001edb1cea8ddf8b8f8c717ae4b8b3b2157913d1f9f236f804c450",
+  "input_file": "/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/inputs.jsonl",
+  "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+  "selection": "8 targeted train captions, 4 random train captions, 4 random val captions; 16 distinct images; random seed 0; not a representative accuracy estimate",
+  "schema_sha256": "87bf6734f51a7b3a426f768f7e7f68efbe7b56284d10c869d87f29df1857eb00",
+  "models": {
+    "gpt54": {
+      "finished_at": "2026-09-14T13:43:57.076808+00:00",
+      "annotation_source": "openai_structured_outputs",
+      "input_captions": 16,
+      "successful_captions": 16,
+      "failed_captions": 0,
+      "failures": [],
+      "settings": {
+        "model": "gpt-5.4-2026-03-05",
+        "n": 1,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "top_p": 1,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      },
+      "usage_this_invocation": {
+        "requests": 16,
+        "retries": 0,
+        "prompt_tokens": 6175,
+        "completion_tokens": 1779,
+        "cached_tokens": 0
+      },
+      "returned_models": [
+        "gpt-5.4-2026-03-05"
+      ],
+      "system_fingerprints": [],
+      "elapsed_seconds": 3.3990207909955643,
+      "output_sha256": "d143c6c2c63536babf43a4475f68024a426ca2dee2b17b3a7b5475e5162d5780",
+      "complete": true,
+      "reasoning_tokens": 0,
+      "request_definition": {
+        "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+        "prompt_sha256": "7c4ba64a3240f6574bdf336878b329b71bbe7abf12607e9649ce5d07fa3fb62b",
+        "schema": {
+          "$defs": {
+            "ObjectSpans": {
+              "additionalProperties": false,
+              "properties": {
+                "concept_id": {
+                  "title": "Concept Id",
+                  "type": "integer"
+                },
+                "spans": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "$ref": "#/$defs/Span"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Spans"
+                }
+              },
+              "required": [
+                "concept_id",
+                "spans"
+              ],
+              "title": "ObjectSpans",
+              "type": "object"
+            },
+            "Span": {
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "title": "Text",
+                  "type": "string"
+                },
+                "occurrence": {
+                  "title": "Occurrence",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "text",
+                "occurrence"
+              ],
+              "title": "Span",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "objects": {
+              "items": {
+                "$ref": "#/$defs/ObjectSpans"
+              },
+              "title": "Objects",
+              "type": "array"
+            }
+          },
+          "required": [
+            "objects"
+          ],
+          "title": "CaptionAnnotation",
+          "type": "object"
+        },
+        "settings": {
+          "model": "gpt-5.4-2026-03-05",
+          "n": 1,
+          "max_completion_tokens": 2048,
+          "store": false,
+          "reasoning_effort": "none",
+          "temperature": 0,
+          "top_p": 1,
+          "concurrency": 512,
+          "captions_per_request": 1,
+          "max_attempts": 5
+        }
+      },
+      "pricing": {
+        "currency": "USD",
+        "standard_input_per_million": 2.5,
+        "standard_output_per_million": 15,
+        "source": "https://developers.openai.com/api/docs/models/gpt-5.4",
+        "checked_on": "2026-09-14"
+      },
+      "cost": {
+        "pilot_usd": 0.0421225,
+        "projected_train_usd": 1557.8822339062501,
+        "projected_val_usd": 65.8532634375,
+        "projected_train_and_val_usd": 1623.73549734375,
+        "projection_caption_count": 616767,
+        "projection_method": "Pilot cost divided by 16 requested captions, including failed annotations, times population caption count; excludes retries, taxes, server costs and any discounts. This targeted pilot is not a representative sample."
+      },
+      "output_file": "gpt54-none.jsonl",
+      "rejected_file": null
+    },
+    "gpt51": {
+      "finished_at": "2026-09-14T13:43:56.508635+00:00",
+      "annotation_source": "openai_structured_outputs",
+      "input_captions": 16,
+      "successful_captions": 12,
+      "failed_captions": 4,
+      "failures": [
+        {
+          "split": "val2017",
+          "caption_id": 381033,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "train2017",
+          "caption_id": 557503,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "train2017",
+          "caption_id": 28,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "val2017",
+          "caption_id": 14844,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        }
+      ],
+      "settings": {
+        "model": "gpt-5.1-2025-11-13",
+        "n": 1,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "top_p": 1,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      },
+      "usage_this_invocation": {
+        "requests": 16,
+        "retries": 0,
+        "prompt_tokens": 6175,
+        "completion_tokens": 1855,
+        "cached_tokens": 0
+      },
+      "returned_models": [
+        "gpt-5.1-2025-11-13"
+      ],
+      "system_fingerprints": [],
+      "elapsed_seconds": 2.830861833994277,
+      "output_sha256": "2731c7b8ba7f1df53105c2f17376ce0c7e7bc5fbe8d6bddb88ad7bfcbd9f5ec1",
+      "complete": false,
+      "reasoning_tokens": 0,
+      "request_definition": {
+        "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+        "prompt_sha256": "7c4ba64a3240f6574bdf336878b329b71bbe7abf12607e9649ce5d07fa3fb62b",
+        "schema": {
+          "$defs": {
+            "ObjectSpans": {
+              "additionalProperties": false,
+              "properties": {
+                "concept_id": {
+                  "title": "Concept Id",
+                  "type": "integer"
+                },
+                "spans": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "$ref": "#/$defs/Span"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Spans"
+                }
+              },
+              "required": [
+                "concept_id",
+                "spans"
+              ],
+              "title": "ObjectSpans",
+              "type": "object"
+            },
+            "Span": {
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "title": "Text",
+                  "type": "string"
+                },
+                "occurrence": {
+                  "title": "Occurrence",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "text",
+                "occurrence"
+              ],
+              "title": "Span",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "objects": {
+              "items": {
+                "$ref": "#/$defs/ObjectSpans"
+              },
+              "title": "Objects",
+              "type": "array"
+            }
+          },
+          "required": [
+            "objects"
+          ],
+          "title": "CaptionAnnotation",
+          "type": "object"
+        },
+        "settings": {
+          "model": "gpt-5.1-2025-11-13",
+          "n": 1,
+          "max_completion_tokens": 2048,
+          "store": false,
+          "reasoning_effort": "none",
+          "temperature": 0,
+          "top_p": 1,
+          "concurrency": 512,
+          "captions_per_request": 1,
+          "max_attempts": 5
+        }
+      },
+      "pricing": {
+        "currency": "USD",
+        "standard_input_per_million": 1.25,
+        "standard_output_per_million": 10,
+        "source": "https://developers.openai.com/api/docs/models/gpt-5.1",
+        "checked_on": "2026-09-14"
+      },
+      "cost": {
+        "pilot_usd": 0.02626875,
+        "projected_train_usd": 971.5382261718751,
+        "projected_val_usd": 41.06790703125,
+        "projected_train_and_val_usd": 1012.6061332031251,
+        "projection_caption_count": 616767,
+        "projection_method": "Pilot cost divided by 16 requested captions, including failed annotations, times population caption count; excludes retries, taxes, server costs and any discounts. This targeted pilot is not a representative sample."
+      },
+      "output_file": "gpt51-none.jsonl",
+      "rejected_file": "gpt51-none-rejected.jsonl"
+    }
+  },
+  "files": {
+    "gpt51-none-rejected.jsonl": {
+      "sha256": "62a0ef31d5077e2a1fdf727e5a728388278029b6bc37ef41e99d32b9cbf953cb",
+      "rows": 4
+    },
+    "gpt51-none.jsonl": {
+      "sha256": "2731c7b8ba7f1df53105c2f17376ce0c7e7bc5fbe8d6bddb88ad7bfcbd9f5ec1",
+      "rows": 12
+    },
+    "gpt54-none.jsonl": {
+      "sha256": "d143c6c2c63536babf43a4475f68024a426ca2dee2b17b3a7b5475e5162d5780",
+      "rows": 16
+    }
+  }
+}

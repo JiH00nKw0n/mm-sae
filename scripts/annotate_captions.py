@@ -40,6 +40,8 @@ def request_options(args) -> dict[str, Any]:
     }
     if args.reasoning_effort is not None:
         options["reasoning_effort"] = args.reasoning_effort
+        if args.reasoning_effort == "none":
+            options.update(temperature=0, top_p=1)
     else:
         options.update(temperature=0, top_p=1, seed=0, frequency_penalty=0, presence_penalty=0)
     return options
@@ -250,7 +252,7 @@ def main():
     parser.add_argument("--env-file", type=Path, required=True)
     parser.add_argument("--spec", type=Path, default=Path("annotations/coco_captions"))
     parser.add_argument("--model", default="gpt-4o-2024-11-20")
-    parser.add_argument("--reasoning-effort", choices=["minimal", "low", "medium", "high"])
+    parser.add_argument("--reasoning-effort", choices=["none", "minimal", "low", "medium", "high"])
     parser.add_argument("--max-completion-tokens", type=int, default=2048)
     parser.add_argument("--concurrency", type=int, default=512)
     parser.add_argument("--max-attempts", type=int, default=5)
@@ -261,6 +263,8 @@ def main():
         parser.error("max-completion-tokens must be positive")
     if args.model.startswith("gpt-5") and args.reasoning_effort is None:
         parser.error("GPT-5 requires an explicit --reasoning-effort")
+    if args.reasoning_effort == "none" and (args.model == "gpt-5" or args.model.startswith("gpt-5-")):
+        parser.error("GPT-5 does not support none; use a model that explicitly supports non-reasoning")
     with file_lock(args.work_dir / ".lock", blocking=False):
         asyncio.run(annotate(args))
 

@@ -1,4 +1,8 @@
-# 실제 COCO 캡션 16개 시험 결과
+# 예시 문장을 삭제하기 전의 COCO 캡션 시험 결과
+
+이 문서는 hot dog 예시 문장을 포함한 이전 프롬프트로 실행한 기록이다. 현재 프롬프트에서는 그 문장을 삭제했다. 같은 16개를 다시 보낸 최신 시험에서 GPT-5.4 `none`은 원문 위치 검사를 16개 모두 통과했고 GPT-5.1 `none`은 12개를 통과했다. 두 모델 모두 의미 오류가 남았다. 최신 상세 기록은 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/without-hot-dog-example/README.md`에 있다.
+
+예시 문장을 삭제하기 전에는 GPT-5.1, GPT-5.4 mini와 GPT-5.4의 `none` 설정도 각각 16개씩 시험했다. 원문 위치 검사를 각각 12개, 16개, 16개 통과했고 실제 사용량으로 계산한 비용은 각각 $0.02652875, $0.01265025, $0.0421675였다. 추론 토큰은 모두 0개였다. 세 모델의 결과와 사용량은 이 폴더의 JSONL 파일과 manifest.json에 보존했다. GPT-5.4 mini는 예시 문장을 삭제한 뒤 다시 호출하지 않았다. 아래 상세 표는 최초 GPT-4o와 GPT-5 low 비교 기록이다.
 
 **GPT-5 `low`는 16개 모두 원문 표현과 위치 검사를 통과했지만, 모호한 후보를 한쪽으로 단정한 오류가 남았다. 전체 추출은 시작하지 않았다.** 아래 내용은 Codex가 결과와 입력을 대조한 기록이며 사람이 작성한 정답과 비교한 정확도가 아니다.
 
@@ -23,7 +27,7 @@ GPT-4o 첫 실행에는 원문 검사 실패도 재시도하는 구현 오류가
 If a mention fits multiple candidates, return spans=null for each. For example, "table" is ambiguous between "table" and "dining table" even though one name matches exactly.
 ```
 
-수정안은 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/prompt.proposed.txt`에 있다. 사용한 원본 프롬프트와 실제 응답은 그대로 보존한다.
+수정안은 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/prompt.proposed.txt`에 있다. 당시 원본 프롬프트는 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/prompt.txt`에, 실제 응답은 모델별 JSONL에 그대로 보존한다. 현재 수정안 파일에서는 지정한 hot dog 예시 문장만 삭제했으며 모호성 예시는 여전히 실행에 사용하지 않았다.
 
 ## GPT-5의 16개 결과
 
