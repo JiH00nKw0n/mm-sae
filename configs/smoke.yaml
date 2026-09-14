@@ -1,0 +1,45 @@
+output: ../runs/smoke
+data:
+  source: synthetic
+  root: ../data/synthetic
+  download: false
+  expected_images: {}
+  fixture_images: 32
+  fixture_captions: 5
+  fixture_size: 64
+encoder:
+  backend: synthetic
+  device: cpu
+  synthetic_dim: 16
+  batch_size: 16
+training:
+  latent_size: 12
+  top_k: 3
+  arguments:
+    num_train_epochs: 2
+    per_device_train_batch_size: 16
+    learning_rate: 0.0005
+    weight_decay: 1.0e-05
+    adam_beta1: 0.9
+    adam_beta2: 0.999
+    adam_epsilon: 1.0e-08
+    optim: adamw_torch
+    lr_scheduler_type: cosine
+    warmup_ratio: 0.05
+    max_grad_norm: 1.0
+    seed: 7
+    data_seed: 7
+    eval_strategy: 'no'
+    save_strategy: epoch
+    logging_strategy: epoch
+    save_total_limit: 2
+    dataloader_num_workers: 0
+    dataloader_drop_last: false
+features:
+  batch_size: 32
+experiment:
+  name: rq1
+  options:
+    intervention_repeats: 1
+    area_strata: 2
+cache: ../cache

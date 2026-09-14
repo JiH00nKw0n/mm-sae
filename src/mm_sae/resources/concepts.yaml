@@ -1,0 +1,516 @@
+# IDs are original COCO-Stuff PNG values (official category ID minus one).
+# Conservative lexical aliases are editable, not human-verified caption annotations.
+concepts:
+  - id: 0
+    name: "person"
+    aliases: ["person", "people", "man", "men", "woman", "women", "boy", "boys", "girl", "girls", "child", "children"]
+  - id: 1
+    name: "bicycle"
+    aliases: ["bicycle", "bicycles", "bike", "bikes"]
+  - id: 2
+    name: "car"
+    aliases: ["car", "cars"]
+  - id: 3
+    name: "motorcycle"
+    aliases: ["motorcycle", "motorcycles"]
+  - id: 4
+    name: "airplane"
+    aliases: ["airplane", "airplanes"]
+  - id: 5
+    name: "bus"
+    aliases: ["bus", "buss"]
+  - id: 6
+    name: "train"
+    aliases: ["train", "trains"]
+  - id: 7
+    name: "truck"
+    aliases: ["truck", "trucks"]
+  - id: 8
+    name: "boat"
+    aliases: ["boat", "boats"]
+  - id: 9
+    name: "traffic light"
+    aliases: ["traffic light", "traffic lights"]
+  - id: 10
+    name: "fire hydrant"
+    aliases: ["fire hydrant", "fire hydrants"]
+  - id: 12
+    name: "stop sign"
+    aliases: ["stop sign", "stop signs"]
+  - id: 13
+    name: "parking meter"
+    aliases: ["parking meter", "parking meters"]
+  - id: 14
+    name: "bench"
+    aliases: ["bench", "benchs"]
+  - id: 15
+    name: "bird"
+    aliases: ["bird", "birds"]
+  - id: 16
+    name: "cat"
+    aliases: ["cat", "cats"]
+  - id: 17
+    name: "dog"
+    aliases: ["dog", "dogs"]
+  - id: 18
+    name: "horse"
+    aliases: ["horse", "horses"]
+  - id: 19
+    name: "sheep"
+    aliases: ["sheep", "sheeps"]
+  - id: 20
+    name: "cow"
+    aliases: ["cow", "cows"]
+  - id: 21
+    name: "elephant"
+    aliases: ["elephant", "elephants"]
+  - id: 22
+    name: "bear"
+    aliases: ["bear", "bears"]
+  - id: 23
+    name: "zebra"
+    aliases: ["zebra", "zebras"]
+  - id: 24
+    name: "giraffe"
+    aliases: ["giraffe", "giraffes"]
+  - id: 26
+    name: "backpack"
+    aliases: ["backpack", "backpacks"]
+  - id: 27
+    name: "umbrella"
+    aliases: ["umbrella", "umbrellas"]
+  - id: 30
+    name: "handbag"
+    aliases: ["handbag", "handbags"]
+  - id: 31
+    name: "tie"
+    aliases: ["tie", "ties"]
+  - id: 32
+    name: "suitcase"
+    aliases: ["suitcase", "suitcases"]
+  - id: 33
+    name: "frisbee"
+    aliases: ["frisbee", "frisbees"]
+  - id: 34
+    name: "skis"
+    aliases: ["skis", "skiss"]
+  - id: 35
+    name: "snowboard"
+    aliases: ["snowboard", "snowboards"]
+  - id: 36
+    name: "sports ball"
+    aliases: ["sports ball", "sports balls"]
+  - id: 37
+    name: "kite"
+    aliases: ["kite", "kites"]
+  - id: 38
+    name: "baseball bat"
+    aliases: ["baseball bat", "baseball bats"]
+  - id: 39
+    name: "baseball glove"
+    aliases: ["baseball glove", "baseball gloves"]
+  - id: 40
+    name: "skateboard"
+    aliases: ["skateboard", "skateboards"]
+  - id: 41
+    name: "surfboard"
+    aliases: ["surfboard", "surfboards"]
+  - id: 42
+    name: "tennis racket"
+    aliases: ["tennis racket", "tennis rackets"]
+  - id: 43
+    name: "bottle"
+    aliases: ["bottle", "bottles"]
+  - id: 45
+    name: "wine glass"
+    aliases: ["wine glass", "wine glasss"]
+  - id: 46
+    name: "cup"
+    aliases: ["cup", "cups"]
+  - id: 47
+    name: "fork"
+    aliases: ["fork", "forks"]
+  - id: 48
+    name: "knife"
+    aliases: ["knife", "knifes"]
+  - id: 49
+    name: "spoon"
+    aliases: ["spoon", "spoons"]
+  - id: 50
+    name: "bowl"
+    aliases: ["bowl", "bowls"]
+  - id: 51
+    name: "banana"
+    aliases: ["banana", "bananas"]
+  - id: 52
+    name: "apple"
+    aliases: ["apple", "apples"]
+  - id: 53
+    name: "sandwich"
+    aliases: ["sandwich", "sandwichs"]
+  - id: 54
+    name: "orange"
+    aliases: ["orange", "oranges"]
+  - id: 55
+    name: "broccoli"
+    aliases: ["broccoli", "broccolis"]
+  - id: 56
+    name: "carrot"
+    aliases: ["carrot", "carrots"]
+  - id: 57
+    name: "hot dog"
+    aliases: ["hot dog", "hot dogs"]
+  - id: 58
+    name: "pizza"
+    aliases: ["pizza", "pizzas"]
+  - id: 59
+    name: "donut"
+    aliases: ["donut", "donuts"]
+  - id: 60
+    name: "cake"
+    aliases: ["cake", "cakes"]
+  - id: 61
+    name: "chair"
+    aliases: ["chair", "chairs"]
+  - id: 62
+    name: "couch"
+    aliases: ["couch", "couchs"]
+  - id: 63
+    name: "potted plant"
+    aliases: ["potted plant", "potted plants"]
+  - id: 64
+    name: "bed"
+    aliases: ["bed", "beds"]
+  - id: 66
+    name: "dining table"
+    aliases: ["dining table", "dining tables"]
+  - id: 69
+    name: "toilet"
+    aliases: ["toilet", "toilets"]
+  - id: 71
+    name: "tv"
+    aliases: ["tv", "tvs"]
+  - id: 72
+    name: "laptop"
+    aliases: ["laptop", "laptops"]
+  - id: 73
+    name: "mouse"
+    aliases: ["mouse", "mouses"]
+  - id: 74
+    name: "remote"
+    aliases: ["remote", "remotes"]
+  - id: 75
+    name: "keyboard"
+    aliases: ["keyboard", "keyboards"]
+  - id: 76
+    name: "cell phone"
+    aliases: ["cell phone", "cell phones"]
+  - id: 77
+    name: "microwave"
+    aliases: ["microwave", "microwaves"]
+  - id: 78
+    name: "oven"
+    aliases: ["oven", "ovens"]
+  - id: 79
+    name: "toaster"
+    aliases: ["toaster", "toasters"]
+  - id: 80
+    name: "sink"
+    aliases: ["sink", "sinks"]
+  - id: 81
+    name: "refrigerator"
+    aliases: ["refrigerator", "refrigerators"]
+  - id: 83
+    name: "book"
+    aliases: ["book", "books"]
+  - id: 84
+    name: "clock"
+    aliases: ["clock", "clocks"]
+  - id: 85
+    name: "vase"
+    aliases: ["vase", "vases"]
+  - id: 86
+    name: "scissors"
+    aliases: ["scissors", "scissorss"]
+  - id: 87
+    name: "teddy bear"
+    aliases: ["teddy bear", "teddy bears"]
+  - id: 88
+    name: "hair drier"
+    aliases: ["hair drier", "hair driers"]
+  - id: 89
+    name: "toothbrush"
+    aliases: ["toothbrush", "toothbrushs"]
+  - id: 91
+    name: "banner"
+    aliases: ["banner", "banners"]
+  - id: 92
+    name: "blanket"
+    aliases: ["blanket", "blankets"]
+  - id: 93
+    name: "branch"
+    aliases: ["branch", "branchs"]
+  - id: 94
+    name: "bridge"
+    aliases: ["bridge", "bridges"]
+  - id: 95
+    name: "building-other"
+    aliases: ["building", "buildings"]
+  - id: 96
+    name: "bush"
+    aliases: ["bush", "bushs"]
+  - id: 97
+    name: "cabinet"
+    aliases: ["cabinet", "cabinets"]
+  - id: 98
+    name: "cage"
+    aliases: ["cage", "cages"]
+  - id: 99
+    name: "cardboard"
+    aliases: ["cardboard", "cardboards"]
+  - id: 100
+    name: "carpet"
+    aliases: ["carpet", "carpets"]
+  - id: 101
+    name: "ceiling-other"
+    aliases: ["ceiling other", "ceiling others"]
+  - id: 102
+    name: "ceiling-tile"
+    aliases: ["ceiling tile", "ceiling tiles"]
+  - id: 103
+    name: "cloth"
+    aliases: ["cloth", "cloths"]
+  - id: 104
+    name: "clothes"
+    aliases: ["clothes", "clothess"]
+  - id: 105
+    name: "clouds"
+    aliases: ["clouds", "cloudss"]
+  - id: 106
+    name: "counter"
+    aliases: ["counter", "counters"]
+  - id: 107
+    name: "cupboard"
+    aliases: ["cupboard", "cupboards"]
+  - id: 108
+    name: "curtain"
+    aliases: ["curtain", "curtains"]
+  - id: 109
+    name: "desk-stuff"
+    aliases: ["desk stuff", "desk stuffs"]
+  - id: 110
+    name: "dirt"
+    aliases: ["dirt", "dirts"]
+  - id: 111
+    name: "door-stuff"
+    aliases: ["door stuff", "door stuffs"]
+  - id: 112
+    name: "fence"
+    aliases: ["fence", "fences"]
+  - id: 113
+    name: "floor-marble"
+    aliases: ["floor marble", "floor marbles"]
+  - id: 114
+    name: "floor-other"
+    aliases: ["floor other", "floor others"]
+  - id: 115
+    name: "floor-stone"
+    aliases: ["floor stone", "floor stones"]
+  - id: 116
+    name: "floor-tile"
+    aliases: ["floor tile", "floor tiles"]
+  - id: 117
+    name: "floor-wood"
+    aliases: ["wooden floor", "wood floor"]
+  - id: 118
+    name: "flower"
+    aliases: ["flower", "flowers"]
+  - id: 119
+    name: "fog"
+    aliases: ["fog", "fogs"]
+  - id: 120
+    name: "food-other"
+    aliases: ["food other", "food others"]
+  - id: 121
+    name: "fruit"
+    aliases: ["fruit", "fruits"]
+  - id: 122
+    name: "furniture-other"
+    aliases: ["furniture other", "furniture others"]
+  - id: 123
+    name: "grass"
+    aliases: ["grass", "grassy"]
+  - id: 124
+    name: "gravel"
+    aliases: ["gravel", "gravels"]
+  - id: 125
+    name: "ground-other"
+    aliases: ["ground other", "ground others"]
+  - id: 126
+    name: "hill"
+    aliases: ["hill", "hills"]
+  - id: 127
+    name: "house"
+    aliases: ["house", "houses"]
+  - id: 128
+    name: "leaves"
+    aliases: ["leaves", "leavess"]
+  - id: 129
+    name: "light"
+    aliases: ["light", "lights"]
+  - id: 130
+    name: "mat"
+    aliases: ["mat", "mats"]
+  - id: 131
+    name: "metal"
+    aliases: ["metal", "metals"]
+  - id: 132
+    name: "mirror-stuff"
+    aliases: ["mirror stuff", "mirror stuffs"]
+  - id: 133
+    name: "moss"
+    aliases: ["moss", "mosss"]
+  - id: 134
+    name: "mountain"
+    aliases: ["mountain", "mountains"]
+  - id: 135
+    name: "mud"
+    aliases: ["mud", "muds"]
+  - id: 136
+    name: "napkin"
+    aliases: ["napkin", "napkins"]
+  - id: 137
+    name: "net"
+    aliases: ["net", "nets"]
+  - id: 138
+    name: "paper"
+    aliases: ["paper", "papers"]
+  - id: 139
+    name: "pavement"
+    aliases: ["pavement", "pavements"]
+  - id: 140
+    name: "pillow"
+    aliases: ["pillow", "pillows"]
+  - id: 141
+    name: "plant-other"
+    aliases: ["plant other", "plant others"]
+  - id: 142
+    name: "plastic"
+    aliases: ["plastic", "plastics"]
+  - id: 143
+    name: "platform"
+    aliases: ["platform", "platforms"]
+  - id: 144
+    name: "playingfield"
+    aliases: ["playingfield", "playingfields"]
+  - id: 145
+    name: "railing"
+    aliases: ["railing", "railings"]
+  - id: 146
+    name: "railroad"
+    aliases: ["railroad", "railroads"]
+  - id: 147
+    name: "river"
+    aliases: ["river", "rivers"]
+  - id: 148
+    name: "road"
+    aliases: ["road", "roads"]
+  - id: 149
+    name: "rock"
+    aliases: ["rock", "rocks"]
+  - id: 150
+    name: "roof"
+    aliases: ["roof", "roofs"]
+  - id: 151
+    name: "rug"
+    aliases: ["rug", "rugs"]
+  - id: 152
+    name: "salad"
+    aliases: ["salad", "salads"]
+  - id: 153
+    name: "sand"
+    aliases: ["sand", "sands"]
+  - id: 154
+    name: "sea"
+    aliases: ["sea", "seas"]
+  - id: 155
+    name: "shelf"
+    aliases: ["shelf", "shelfs"]
+  - id: 156
+    name: "sky-other"
+    aliases: ["sky"]
+  - id: 157
+    name: "skyscraper"
+    aliases: ["skyscraper", "skyscrapers"]
+  - id: 158
+    name: "snow"
+    aliases: ["snow", "snows"]
+  - id: 159
+    name: "solid-other"
+    aliases: ["solid other", "solid others"]
+  - id: 160
+    name: "stairs"
+    aliases: ["stairs", "stairss"]
+  - id: 161
+    name: "stone"
+    aliases: ["stone", "stones"]
+  - id: 162
+    name: "straw"
+    aliases: ["straw", "straws"]
+  - id: 163
+    name: "structural-other"
+    aliases: ["structural other", "structural others"]
+  - id: 164
+    name: "table"
+    aliases: ["table", "tables"]
+  - id: 165
+    name: "tent"
+    aliases: ["tent", "tents"]
+  - id: 166
+    name: "textile-other"
+    aliases: ["textile other", "textile others"]
+  - id: 167
+    name: "towel"
+    aliases: ["towel", "towels"]
+  - id: 168
+    name: "tree"
+    aliases: ["tree", "trees"]
+  - id: 169
+    name: "vegetable"
+    aliases: ["vegetable", "vegetables"]
+  - id: 170
+    name: "wall-brick"
+    aliases: ["wall brick", "wall bricks"]
+  - id: 171
+    name: "wall-concrete"
+    aliases: ["wall concrete", "wall concretes"]
+  - id: 172
+    name: "wall-other"
+    aliases: ["wall other", "wall others"]
+  - id: 173
+    name: "wall-panel"
+    aliases: ["wall panel", "wall panels"]
+  - id: 174
+    name: "wall-stone"
+    aliases: ["wall stone", "wall stones"]
+  - id: 175
+    name: "wall-tile"
+    aliases: ["wall tile", "wall tiles"]
+  - id: 176
+    name: "wall-wood"
+    aliases: ["wall wood", "wall woods"]
+  - id: 177
+    name: "water-other"
+    aliases: ["water other", "water others"]
+  - id: 178
+    name: "waterdrops"
+    aliases: ["waterdrops", "waterdropss"]
+  - id: 179
+    name: "window-blind"
+    aliases: ["window blind", "window blinds"]
+  - id: 180
+    name: "window-other"
+    aliases: ["window other", "window others"]
+  - id: 181
+    name: "wood"
+    aliases: ["wood", "woods"]

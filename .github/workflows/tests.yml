@@ -1,0 +1,22 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  unit-and-synthetic-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -r requirements-runtime.lock
+      - run: pip install --no-deps -e .
+      - run: pip install pytest==8.3.5 ruff==0.11.2
+      - run: ruff check src experiments tests
+      - run: ruff format --check src experiments tests scripts
+      - run: pytest -q
+      - run: python -m mm_sae --config configs/smoke.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-smoke-diagnostics-not-research-results
+          path: runs/smoke/rq1/

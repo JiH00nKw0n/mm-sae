@@ -1,0 +1,44 @@
+output: ../runs/smoke-real
+data:
+  source: coco
+  root: ../data/coco
+  download: true
+  image_limits:
+    train2017: 4
+    val2017: 2
+encoder:
+  backend: clip
+  device: cpu
+  batch_size: 4
+training:
+  latent_size: 64
+  top_k: 8
+  arguments:
+    num_train_epochs: 1
+    per_device_train_batch_size: 4
+    learning_rate: 0.0005
+    weight_decay: 1.0e-05
+    adam_beta1: 0.9
+    adam_beta2: 0.999
+    adam_epsilon: 1.0e-08
+    optim: adamw_torch
+    lr_scheduler_type: cosine
+    warmup_ratio: 0.05
+    max_grad_norm: 1.0
+    seed: 0
+    data_seed: 0
+    eval_strategy: 'no'
+    save_strategy: epoch
+    logging_strategy: epoch
+    save_total_limit: 2
+    dataloader_num_workers: 0
+    dataloader_drop_last: false
+    max_steps: 2
+features:
+  batch_size: 16
+experiment:
+  name: rq1
+  options:
+    intervention_repeats: 1
+    area_strata: 2
+cache: ../cache
