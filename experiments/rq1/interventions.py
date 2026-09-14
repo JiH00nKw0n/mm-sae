@@ -1,4 +1,4 @@
-"""Case-specific co-occurrence attenuation with a deletion-budget-matched random control."""
+"""Case-specific co-occurrence attenuation with a removal-budget-matched random control."""
 
 from __future__ import annotations
 
@@ -36,7 +36,9 @@ def deletion_budget(a, b):
     }
 
 
-def choose_images(a, b, eligible, areas, caption_counts, mention_counts, budget, strata, rng):
+def choose_images(
+    a, b, eligible, areas, caption_counts, mention_counts, budget, strata, rng, token_counts=None
+):
     conditional_pool = np.flatnonzero(a & b & eligible)
     if len(conditional_pool) < budget:
         raise ValueError("insufficient_editable_cooccurrences")
@@ -44,7 +46,11 @@ def choose_images(a, b, eligible, areas, caption_counts, mention_counts, budget,
     control_pool = np.flatnonzero(b & eligible)
     boundaries = np.unique(np.quantile(areas[control_pool], np.linspace(0, 1, strata + 1)))
     bins = np.searchsorted(boundaries[1:-1], areas, side="right")
-    keys = [(int(caption_counts[i]), int(mention_counts[i]), int(bins[i])) for i in range(len(a))]
+    token_counts = np.zeros(len(a), dtype=int) if token_counts is None else np.asarray(token_counts)
+    keys = [
+        (int(caption_counts[i]), int(mention_counts[i]), int(token_counts[i]), int(bins[i]))
+        for i in range(len(a))
+    ]
     control = []
     for key in sorted({keys[i] for i in conditional}):
         n = sum(keys[i] == key for i in conditional)
@@ -54,7 +60,9 @@ def choose_images(a, b, eligible, areas, caption_counts, mention_counts, budget,
         control.extend(rng.choice(pool, n, replace=False).tolist())
     control = np.array(sorted(control), np.int64)
     if mention_counts[conditional].sum() != mention_counts[control].sum():
-        raise AssertionError("Caption deletion budgets differ")
+        raise AssertionError("Caption masking budgets differ")
+    if token_counts[conditional].sum() != token_counts[control].sum():
+        raise AssertionError("Unknown-token masking budgets differ")
     return conditional, control, boundaries
 
 
@@ -107,10 +115,15 @@ def experiment3(config, options):
             continue
         eligible = np.ones(len(index.images), bool)
         for cap in index.captions:
-            if b in cap["concept_ids"] and str(b) not in cap["edits"]:
+            if b in cap["concept_ids"] and str(b) not in cap["mask_token_positions"]:
                 eligible[cap["image_row"]] = False
         mention_counts = np.bincount(
             index.parents, weights=index.mentions[:, bc], minlength=len(index.images)
+        ).astype(int)
+        token_counts = np.bincount(
+            index.parents,
+            weights=[len(cap["mask_token_positions"].get(str(b), [])) for cap in index.captions],
+            minlength=len(index.images),
         ).astype(int)
         if np.count_nonzero(has_a & has_b & eligible) < int(plan["n_remove"]):
             exclusions.append(
@@ -142,6 +155,7 @@ def experiment3(config, options):
                 plan["n_remove"],
                 options.area_strata,
                 rng,
+                token_counts=token_counts,
             )
             case.mkdir(parents=True, exist_ok=True)
             selections = {
@@ -222,6 +236,7 @@ def experiment3(config, options):
                         "p_b_given_not_a_after": float(after_b[~has_a].mean()),
                         "images_removed": len(selected),
                         "captions_edited": int(mention_counts[selected].sum()),
+                        "text_tokens_masked": int(token_counts[selected].sum()),
                         "mean_image_features_turned_off": mean_off,
                         "mean_image_features_turned_on": mean_on,
                         "mean_mask_area": float(index.areas[selected, bc].mean()) if len(selected) else 0.0,

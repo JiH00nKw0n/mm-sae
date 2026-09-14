@@ -37,6 +37,7 @@ training:
     dataloader_num_workers: 0
     dataloader_drop_last: false
 features:
+  text_masking: unk_token
   mask_rgb:
   - 255
   - 255

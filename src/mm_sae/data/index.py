@@ -211,7 +211,9 @@ def prepare(config, encoder):
             if cap["id"] in seen_captions:
                 raise ValueError("Duplicate caption ID")
             seen_captions.add(cap["id"])
-            present, edits, status, unavailable = editor.analyze(cap["id"], cap["caption"])
+            present, spans, status, unavailable = editor.analyze(cap["id"], cap["caption"])
+            positions, mask_unavailable = encoder.plan_text_masks(cap["caption"], spans)
+            unavailable = sorted(set(unavailable) | set(mask_unavailable))
             for c in present:
                 mentions[i, columns[c]] = True
             record = {
@@ -219,7 +221,10 @@ def prepare(config, encoder):
                 "image_row": image_rows[cap["image_id"]],
                 "text": cap["caption"],
                 "concept_ids": present,
-                "edits": edits,
+                "mask_spans": spans,
+                "mask_token_positions": positions,
+                "text_masking": config.features.text_masking,
+                "mask_unavailable_reasons": mask_unavailable,
                 "annotation_status": status,
                 "unavailable": unavailable,
             }
@@ -231,7 +236,10 @@ def prepare(config, encoder):
                         "image_id": cap["image_id"],
                         "concept_id": c,
                         "original": cap["caption"],
-                        "edited": edits.get(c),
+                        "source_spans": json.dumps(spans.get(c)),
+                        "mask_token_positions": json.dumps(positions.get(c)),
+                        "masked_tokens": len(positions.get(c, [])),
+                        "mask_unavailable_reason": mask_unavailable.get(c),
                         "status": status,
                     }
                 )
@@ -253,7 +261,7 @@ def prepare(config, encoder):
             ("mentions", mentions),
         ]:
             np.save(out / f"{name}.npy", value)
-        write_csv(out / "caption_edit_review.csv", reviews)
+        write_csv(out / "caption_mask_review.csv", reviews)
         unique_counts, frequencies = np.unique(counts, return_counts=True)
         summaries[split] = {
             **source_counts,
@@ -264,7 +272,7 @@ def prepare(config, encoder):
             "automatic_caption_annotations": sum(
                 c["annotation_status"] != "human_reviewed" for c in indexed_caps
             ),
-            "captions_with_available_edits": sum(bool(c["edits"]) for c in indexed_caps),
+            "captions_with_available_masks": sum(bool(c["mask_token_positions"]) for c in indexed_caps),
         }
         LOG.info("Indexed %s", summaries[split])
     atomic_json(
@@ -274,5 +282,6 @@ def prepare(config, encoder):
             "concepts": [c.__dict__ for c in concepts],
             "small_subset": bool(config.data.image_limits),
             "test_only": config.data.source == "synthetic",
+            "text_masking": encoder.text_mask_info(),
         },
     )

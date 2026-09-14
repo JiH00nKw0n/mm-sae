@@ -66,7 +66,11 @@ def test_conditional_intervention_recomputes_both_matchings_and_resumes(tmp_path
         mentions=np.column_stack([a, b]),
         areas=np.column_stack([a * 0.2, b * 0.2]),
         captions=[
-            {"image_row": i, "concept_ids": [1] if b[i] else [], "edits": {"1": "edited"} if b[i] else {}}
+            {
+                "image_row": i,
+                "concept_ids": [1] if b[i] else [],
+                "mask_token_positions": {"1": [1]} if b[i] else {},
+            }
             for i in range(n)
         ],
     )

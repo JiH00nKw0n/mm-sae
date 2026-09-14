@@ -1,7 +1,7 @@
 """Caption labels come from explicit text spans, never inherited image labels.
 
-Automatic edits only delete matched spans; they do not claim grammatical or human semantic validation.
-A reviewed JSONL can replace labels and edits without changing the rest of the experiment.
+Annotations record character spans. The encoder masks their token IDs without rewriting captions.
+A reviewed JSONL can replace labels and spans without changing the rest of the experiment.
 """
 
 from __future__ import annotations
@@ -61,10 +61,23 @@ class CaptionEditor:
             present = sorted(set(map(int, row["concept_ids"])))
             if any(c not in self.patterns for c in present):
                 raise ValueError("Reviewed caption uses an unknown concept ID")
-            edits = {int(k): v for k, v in row["edits"].items()}
-            if any(c not in present for c in edits) or any(v == text for v in edits.values()):
-                raise ValueError("Reviewed edits must remove a present concept and change the text")
-            return present, edits, "human_reviewed", [c for c in present if c not in edits]
+            if "edits" in row:
+                raise ValueError(
+                    "Rewritten captions are unsupported; provide exact source spans for UNK masking"
+                )
+            spans = {}
+            for key, expressions in row["spans"].items():
+                concept = int(key)
+                if concept not in present or not expressions:
+                    raise ValueError("Reviewed spans must refer to a present concept and be nonempty")
+                spans[concept] = []
+                for expression in expressions:
+                    a, b = expression["start"], expression["end"]
+                    if not (0 <= a < b <= len(text)) or text[a:b] != expression["text"]:
+                        raise ValueError("Reviewed span does not match the original caption")
+                    spans[concept].append((a, b))
+            available, unavailable = self.available_spans(spans)
+            return present, available, "human_reviewed", sorted(set(present) - set(available))
         spans = {
             c: [(m.start(), m.end()) for m in regex.finditer(text)] for c, regex in self.patterns.items()
         }
@@ -84,7 +97,12 @@ class CaptionEditor:
             for c, ss in spans.items()
         }
         keep = {c: s for c, s in keep.items() if s}
-        edits, unavailable = {}, []
+        available, unavailable = self.available_spans(keep)
+        return sorted(keep), available, "automatic_character_spans", unavailable
+
+    @staticmethod
+    def available_spans(keep):
+        available, unavailable = {}, []
         for c, ss in keep.items():
             if any(
                 max(a, x) < min(b, y)
@@ -95,12 +113,5 @@ class CaptionEditor:
             ):
                 unavailable.append(c)
                 continue
-            new = text
-            for a, b in sorted(ss, reverse=True):
-                new = new[:a] + new[b:]
-            new = re.sub(r"\s+", " ", new).strip()
-            if self.patterns[c].search(new):
-                unavailable.append(c)
-                continue
-            edits[c] = new
-        return sorted(keep), edits, "automatic_span_deletion", unavailable
+            available[c] = sorted(set(ss))
+        return available, unavailable

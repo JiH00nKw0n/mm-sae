@@ -1,12 +1,15 @@
 """Use Hugging Face CLIPModel/CLIPProcessor, with no reimplementation of the backbone."""
 
 from __future__ import annotations
+import re
 from typing import Protocol, cast, Mapping
 
 import numpy as np
 import torch
 from PIL import Image
-from transformers import CLIPModel, CLIPProcessor, CLIPImageProcessor
+from transformers import CLIPModel, CLIPProcessor, CLIPImageProcessor, CLIPTokenizer, CLIPTokenizerFast
+
+from .text_masking import clip_pool_positions, plan_masks, project_at_positions, replace_with_unknown
 
 
 class Encoder(Protocol):
@@ -15,7 +18,9 @@ class Encoder(Protocol):
     dim: int
 
     def images(self, images: list[Image.Image]) -> np.ndarray: ...
-    def texts(self, texts: list[str]) -> np.ndarray: ...
+    def texts(self, texts: list[str], mask_positions: list[list[int]] | None = None) -> np.ndarray: ...
+    def plan_text_masks(self, text: str, spans: dict) -> tuple[dict, dict]: ...
+    def text_mask_info(self) -> dict: ...
     def visible_mask(self, mask: np.ndarray) -> np.ndarray: ...
 
 
@@ -44,6 +49,14 @@ class CLIPEncoder:
             CLIPProcessor.from_pretrained(config.model_id, revision=config.revision, use_fast=False),
         )
         self.image_processor = cast(CLIPImageProcessor, getattr(self.processor, "image_processor"))
+        self.tokenizer = cast(CLIPTokenizer, getattr(self.processor, "tokenizer"))
+        self.alignment_tokenizer = CLIPTokenizerFast.from_pretrained(
+            config.model_id, revision=config.revision
+        )
+        if self.tokenizer.unk_token_id is None:
+            raise ValueError("The configured tokenizer must have an existing unknown token")
+        if self.tokenizer.padding_side != "right":
+            raise ValueError("Stored mask token positions require right padding")
         self.model = CLIPModel.from_pretrained(config.model_id, revision=config.revision)
         cast(torch.nn.Module, self.model).to(self.device)
         self.model.eval()
@@ -58,7 +71,7 @@ class CLIPEncoder:
         return normalize(out.float().cpu().numpy())
 
     @torch.inference_mode()
-    def texts(self, texts):
+    def texts(self, texts, mask_positions=None):
         inputs = cast(
             Mapping[str, torch.Tensor],
             self.processor(
@@ -69,11 +82,53 @@ class CLIPEncoder:
                 max_length=self.config.text_max_length,
             ),
         )
-        out = self.model.get_text_features(
-            input_ids=inputs["input_ids"].to(self.device),
-            attention_mask=inputs["attention_mask"].to(self.device),
-        )
+        ids = inputs["input_ids"]
+        attention = inputs["attention_mask"].to(self.device)
+        if mask_positions is None:
+            out = self.model.get_text_features(input_ids=ids.to(self.device), attention_mask=attention)
+        else:
+            pooled_at = clip_pool_positions(ids, self.model.config.text_config.eos_token_id)
+            masked = replace_with_unknown(
+                ids, inputs["attention_mask"], mask_positions, self.tokenizer.unk_token_id, pooled_at
+            )
+            out = project_at_positions(self.model, masked.to(self.device), attention, pooled_at)
         return normalize(out.float().cpu().numpy())
+
+    def plan_text_masks(self, text, spans):
+        if not spans:
+            return {}, {}
+        settings = {"truncation": True, "max_length": self.config.text_max_length}
+        original = self.tokenizer(text, **settings)
+        aligned = self.alignment_tokenizer(
+            text, **settings, return_offsets_mapping=True, return_special_tokens_mask=True
+        )
+        if original["input_ids"] != aligned["input_ids"]:
+            return {}, {c: "fast_slow_tokenizer_mismatch" for c in spans}
+        positions, unavailable = plan_masks(
+            text, aligned["offset_mapping"], aligned["special_tokens_mask"], spans
+        )
+        original_pool = int(
+            clip_pool_positions(
+                torch.tensor([original["input_ids"]]), self.model.config.text_config.eos_token_id
+            )[0]
+        )
+        for concept in list(positions):
+            if any(not 0 < i < original_pool for i in positions[concept]):
+                unavailable[concept] = "target_outside_original_eos"
+                del positions[concept]
+        return positions, unavailable
+
+    def text_mask_info(self):
+        return {
+            "method": "unk_token",
+            "unk_token": self.tokenizer.unk_token,
+            "unk_token_id": self.tokenizer.unk_token_id,
+            "eos_token_id": self.tokenizer.eos_token_id,
+            "pooling": "original_eos_position",
+            "replacement": "one_unk_per_original_target_token",
+            "attention_mask": "unchanged",
+            "text_max_length": self.config.text_max_length,
+        }
 
     def visible_mask(self, mask: np.ndarray):
         # Apply the actual HF processor's geometry to integer IDs with nearest-neighbor interpolation.
@@ -111,12 +166,29 @@ class SyntheticEncoder:
             rows.append(signals + [1.0, float(a.mean()) / 255, float(a.std()) / 255])
         return normalize(np.asarray(rows, dtype=np.float32) @ self.projection)
 
-    def texts(self, texts):
+    def texts(self, texts, mask_positions=None):
+        if mask_positions is not None:
+            masked_texts = []
+            for text, positions in zip(texts, mask_positions):
+                characters = list(text)
+                offsets = list(re.finditer(r"\w+|[^\w\s]", text))
+                for position in positions:
+                    match = offsets[position]
+                    characters[match.start() : match.end()] = "?" * (match.end() - match.start())
+                masked_texts.append("".join(characters))
+            texts = masked_texts
         rows = [
             [float(word in text.lower()) for word in ["person", "bicycle", "grass"]] + [1.0, 0.3, 0.2]
             for text in texts
         ]
         return normalize(np.asarray(rows, dtype=np.float32) @ self.projection)
+
+    def plan_text_masks(self, text, spans):
+        offsets = [(m.start(), m.end()) for m in re.finditer(r"\w+|[^\w\s]", text)]
+        return plan_masks(text, offsets, [0] * len(offsets), spans)
+
+    def text_mask_info(self):
+        return {"method": "synthetic_test_only", "replacement": "suppress_target_signal"}
 
     def visible_mask(self, mask):
         return mask

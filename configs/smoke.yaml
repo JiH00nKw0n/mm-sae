@@ -36,6 +36,7 @@ training:
     dataloader_num_workers: 0
     dataloader_drop_last: false
 features:
+  text_masking: unk_token
   batch_size: 32
 experiment:
   name: rq1

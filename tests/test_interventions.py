@@ -12,14 +12,16 @@ def test_attenuation_and_control_keep_exact_deletion_budgets():
     plan = deletion_budget(a, b)
     assert plan["n_remove"] == 30 and np.isclose(plan["q"], 0.75)
     caps, mentions = np.full(100, 5), np.full(100, 2)
+    token_counts = 2 + np.arange(100) % 3
     conditional, random, _ = choose_images(
-        a, b, np.ones(100, bool), np.ones(100), caps, mentions, 30, 5, np.random.default_rng(0)
+        a, b, np.ones(100, bool), np.ones(100), caps, mentions, 30, 5, np.random.default_rng(0), token_counts
     )
     changed = b.copy()
     changed[conditional] = False
     assert np.isclose(correlation(a[:, None], changed[:, None])["C"][0, 0], 0)
     assert len(random) == len(conditional) == 30
     assert mentions[random].sum() == mentions[conditional].sum()
+    assert token_counts[random].sum() == token_counts[conditional].sum()
     assert b[random].all()
 
 
@@ -43,6 +45,8 @@ def test_caption_labels_are_not_inherited_from_images_and_spans_do_not_overlap()
             Concept(57, "hot dog", ("hot dog",)),
         ]
     )
-    present, edits, _, _ = editor.analyze(1, "A person eats a hot dog.")
-    assert present == [0, 57] and 17 not in edits
-    assert "person" in edits[57] and "hot dog" not in edits[57]
+    text = "A person eats a hot dog."
+    present, spans, _, _ = editor.analyze(1, text)
+    assert present == [0, 57] and 17 not in spans
+    assert [text[a:b] for a, b in spans[57]] == ["hot dog"]
+    assert [text[a:b] for a, b in spans[0]] == ["person"]

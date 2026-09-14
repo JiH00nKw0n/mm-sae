@@ -35,6 +35,7 @@ training:
     dataloader_drop_last: false
     max_steps: 2
 features:
+  text_masking: unk_token
   batch_size: 16
 experiment:
   name: rq1

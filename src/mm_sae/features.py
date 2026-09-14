@@ -150,7 +150,7 @@ def counterfactual(config, encoder, index, split, concept, models):
     out.mkdir(parents=True, exist_ok=True)
     image_rows = np.flatnonzero(index.presence[:, index.columns[concept]])
     text_rows = np.array(
-        [i for i, r in enumerate(index.captions) if str(concept) in r["edits"]], dtype=np.int64
+        [i for i, r in enumerate(index.captions) if str(concept) in r["mask_token_positions"]], dtype=np.int64
     )
     np.save(out / "image_rows.npy", image_rows)
     np.save(out / "text_rows.npy", text_rows)
@@ -168,7 +168,10 @@ def counterfactual(config, encoder, index, split, concept, models):
         len(text_rows),
         encoder.dim,
         config.encoder.batch_size,
-        lambda a, b: encoder.texts([index.captions[int(i)]["edits"][str(concept)] for i in text_rows[a:b]]),
+        lambda a, b: encoder.texts(
+            [index.captions[int(i)]["text"] for i in text_rows[a:b]],
+            [index.captions[int(i)]["mask_token_positions"][str(concept)] for i in text_rows[a:b]],
+        ),
     )
     xi = sparse_encode(models[0], ie, out / "image_activations.npz", config.features.batch_size)
     yt = sparse_encode(models[1], te, out / "text_activations.npz", config.features.batch_size)

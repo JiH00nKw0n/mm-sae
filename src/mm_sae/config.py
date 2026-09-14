@@ -102,6 +102,7 @@ class TrainingConfig(StrictModel):
 class FeatureConfig(StrictModel):
     batch_size: int = Field(default=2048, ge=1)
     mask_rgb: tuple[int, int, int] = (255, 255, 255)
+    text_masking: Literal["unk_token"] = "unk_token"
 
 
 class ExperimentConfig(StrictModel):
