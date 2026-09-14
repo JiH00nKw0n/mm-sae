@@ -19,6 +19,11 @@ dev = [
     "pytest==8.3.5",
     "ruff==0.11.2",
 ]
+annotation = [
+    "jsonschema==4.26.0",
+    "openai==3.13.0",
+    "python-dotenv==1.2.3",
+]
 [project.scripts]
 mm-sae = "mm_sae.cli:main"
 [tool.setuptools.packages.find]

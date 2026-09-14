@@ -1,0 +1,160 @@
+{
+  "status": "pilot_only_full_annotation_not_started",
+  "quality_review": "codex_inspection_not_human_ground_truth",
+  "source": "COCO2017 captions and full-image COCO-Stuff pixel category IDs",
+  "mask_archive": "https://huggingface.co/datasets/JPShi/COCO-Stuff/resolve/b7af13b9d74c9ab4a6e0ffa787a40f0ab8ec1a40/stuffthingmaps_trainval2017.zip",
+  "selection": "8 targeted train captions, 4 random train captions, 4 random val captions; 16 distinct images; random seed 0; not a representative accuracy estimate",
+  "definitions": {
+    "prompt.txt": "5eefd095a1001edb1cea8ddf8b8f8c717ae4b8b3b2157913d1f9f236f804c450",
+    "response_format.json": "87bf6734f51a7b3a426f768f7e7f68efbe7b56284d10c869d87f29df1857eb00"
+  },
+  "gpt4o": {
+    "source_validation_passed": 9,
+    "source_validation_failed": 7,
+    "total_api_requests": 51,
+    "total_prompt_tokens": 19656,
+    "total_completion_tokens": 4755,
+    "first_invocation": {
+      "requests": 44,
+      "retries": 28,
+      "prompt_tokens": 16995,
+      "completion_tokens": 4133
+    },
+    "diagnostic_invocation": {
+      "annotation_source": "openai_structured_outputs",
+      "input_captions": 16,
+      "successful_captions": 9,
+      "failed_captions": 7,
+      "failures": [
+        {
+          "split": "train2017",
+          "caption_id": 157169,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "train2017",
+          "caption_id": 557503,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "val2017",
+          "caption_id": 381033,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "train2017",
+          "caption_id": 80,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "train2017",
+          "caption_id": 638,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "val2017",
+          "caption_id": 14844,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        },
+        {
+          "split": "train2017",
+          "caption_id": 28,
+          "type": "source_validation",
+          "reason": "The returned expression occurrence does not exist in the source caption"
+        }
+      ],
+      "settings": {
+        "model": "gpt-4o-2024-11-20",
+        "temperature": 0,
+        "top_p": 1,
+        "seed": 0,
+        "n": 1,
+        "frequency_penalty": 0,
+        "presence_penalty": 0,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      },
+      "usage_this_invocation": {
+        "requests": 7,
+        "retries": 0,
+        "prompt_tokens": 2661,
+        "completion_tokens": 622,
+        "cached_tokens": 0
+      },
+      "returned_models": [
+        "gpt-4o-2024-11-20"
+      ],
+      "system_fingerprints": [
+        "fp_f9d4aa11a8"
+      ],
+      "elapsed_seconds": 1.9319148330105236,
+      "output_sha256": "4b3b525fa328a27fde2986535749707be85453c92a3c829909a7cbaabe1e5fa7",
+      "complete": false
+    },
+    "retry_note": "First implementation incorrectly retried source validation failures. Fixed before the diagnostic repeat. Diagnostic responses are retained; first rejected responses were not saved."
+  },
+  "gpt5_low": {
+    "finished_at": "2026-09-14T08:07:38.291716+00:00",
+    "annotation_source": "openai_structured_outputs",
+    "input_captions": 16,
+    "successful_captions": 16,
+    "failed_captions": 0,
+    "failures": [],
+    "settings": {
+      "model": "gpt-5-2025-08-07",
+      "n": 1,
+      "max_completion_tokens": 4096,
+      "store": false,
+      "reasoning_effort": "low",
+      "concurrency": 512,
+      "captions_per_request": 1,
+      "max_attempts": 5
+    },
+    "usage_this_invocation": {
+      "requests": 16,
+      "retries": 0,
+      "prompt_tokens": 6319,
+      "completion_tokens": 10987,
+      "cached_tokens": 0
+    },
+    "returned_models": [
+      "gpt-5-2025-08-07"
+    ],
+    "system_fingerprints": [],
+    "elapsed_seconds": 25.134847291003098,
+    "output_sha256": "60e07e2d89672f41a8503cf6942c7d0a842b6a13c01096418e8338a6cdedd311",
+    "complete": true
+  },
+  "known_gpt5_quality_issue": {
+    "caption_id": 28,
+    "observed": "table selected; dining table marked absent",
+    "expected_under_approved_prompt": "spans=null for both compatible candidates"
+  },
+  "files": {
+    "gpt4o-accepted.jsonl": {
+      "sha256": "4b3b525fa328a27fde2986535749707be85453c92a3c829909a7cbaabe1e5fa7",
+      "rows": 9
+    },
+    "gpt4o-rejected.jsonl": {
+      "sha256": "8029cc6395027d77e05515ff1d482cf7c16a36847c3fd9941af651a8313bcc0e",
+      "rows": 7
+    },
+    "gpt5-low.jsonl": {
+      "sha256": "60e07e2d89672f41a8503cf6942c7d0a842b6a13c01096418e8338a6cdedd311",
+      "rows": 16
+    },
+    "inputs.jsonl": {
+      "sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+      "rows": 16
+    }
+  }
+}

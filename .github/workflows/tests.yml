@@ -10,7 +10,7 @@ jobs:
           python-version: '3.11'
       - run: pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
       - run: pip install -r requirements-runtime.lock
-      - run: pip install --no-deps -e .
+      - run: pip install -e ".[annotation]"
       - run: pip install pytest==8.3.5 ruff==0.11.2 pyright==1.1.408
       - run: pyright --pythonpath "$(command -v python)"
       - run: ruff check src experiments tests scripts

@@ -1,0 +1,73 @@
+"""Typed caption annotations and exact validation against source text and image categories."""
+
+from __future__ import annotations
+
+import re
+
+from pydantic import BaseModel, ConfigDict
+
+
+class Span(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    text: str
+    occurrence: int
+
+
+class ObjectSpans(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    concept_id: int
+    spans: list[Span] | None
+
+
+class CaptionAnnotation(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    objects: list[ObjectSpans]
+
+
+def response_format() -> dict:
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": CaptionAnnotation.__name__,
+            "strict": True,
+            "schema": CaptionAnnotation.model_json_schema(),
+        },
+    }
+
+
+def validate_and_locate(source: dict, annotation: CaptionAnnotation) -> dict:
+    expected = [obj["concept_id"] for obj in source["objects"]]
+    actual = [obj.concept_id for obj in annotation.objects]
+    if actual != expected or len(actual) != len(set(actual)):
+        raise ValueError("Returned categories must equal the supplied categories in input order")
+    text = source["original"]
+    objects = []
+    for obj in annotation.objects:
+        located = None if obj.spans is None else []
+        seen = set()
+        for span in obj.spans or []:
+            if not span.text or span.occurrence < 1:
+                raise ValueError("Expression must be nonempty and occurrence must be positive")
+            matches = list(re.finditer(r"(?<!\w)" + re.escape(span.text) + r"(?!\w)", text))
+            if span.occurrence > len(matches):
+                raise ValueError("The returned expression occurrence does not exist in the source caption")
+            match = matches[span.occurrence - 1]
+            interval = (match.start(), match.end())
+            if interval in seen:
+                raise ValueError("The same expression occurrence was returned twice for one category")
+            seen.add(interval)
+            assert text[match.start() : match.end()] == span.text
+            assert located is not None
+            located.append({"text": span.text, "start": match.start(), "end": match.end()})
+        objects.append({"concept_id": obj.concept_id, "spans": located})
+    return {
+        "caption_id": source["caption_id"],
+        "image_id": source["image_id"],
+        "split": source["split"],
+        "original": text,
+        "image_concept_ids": expected,
+        "objects": objects,
+    }
