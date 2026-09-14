@@ -1,6 +1,6 @@
 # 캡션의 객체 표현 추출
 
-**캡션별 객체 표현만 추출하고, 코드가 원문에서 일치하는 모든 위치를 찾는다.** 출현 순번은 모델에 요구하지 않는다. 같은 COCO 캡션 16개로 다시 시험한 결과 GPT-5.4와 GPT-5.1 모두 원문 표현 검사를 통과했다. 의미 판단 오류는 두 모델 모두 남았다. 전체 캡션 추출과 SAE 전체 실험은 시작하지 않았다.
+**캡션별 객체 표현만 추출하고, 코드가 원문에서 일치하는 모든 위치를 찾는다.** 출현 순번은 모델에 요구하지 않는다. 같은 COCO 캡션 16개로 GPT-5.4 mini, GPT-5.4와 GPT-5.1을 시험했고 모두 원문 표현 검사를 통과했다. 의미 판단 오류는 세 모델 모두 남았다. 전체 캡션 추출과 SAE 전체 실험은 시작하지 않았다.
 
 입력은 공식 COCO2017 학습 캡션 591,753개와 검증 캡션 25,014개를 대상으로 준비한다. 현재 API 호출은 고정된 캡션 16개 시험까지만 실행했다. 각 캡션에는 대응 이미지의 COCO-Stuff 원본 픽셀 주석에 실제로 등장하는 범주 번호·이름을 제공한다. 중앙 자르기 전 원본 주석을 사용하며 이미지는 API에 보내지 않는다. 다른 캡션, SAE 활성값과 상관계수도 제공하지 않는다. 문장에 car가 있어도 이미지 후보에 car가 없으면 이번 추출 대상이 아니다.
 
@@ -33,11 +33,11 @@ class CaptionAnnotation(BaseModel):
 
 ## 16개 시험에서 확인한 품질과 비용
 
-원문 표현 검사는 GPT-5.4와 GPT-5.1 모두 16개를 통과했다. Codex가 이번 호출 전에 작성한 임시 범주 기준 131개와는 각각 125개와 122개가 일치했다. 표현 있음 27개는 두 모델 모두 찾았지만 모호한 후보 4개는 두 모델 모두 틀렸다. 범주 정의나 처리 규칙을 더 확인해야 하는 5개 후보는 평가에서 제외하고 별도로 기록했다. 131개 대부분이 표현 없음이므로 95.4%와 93.1%를 전체 추출 정확도로 읽어서는 안 된다. 사람이 검수한 정답과 비교한 결과도 아니다.
+원문 표현 검사는 GPT-5.4 mini, GPT-5.4와 GPT-5.1 모두 16개를 통과했다. Codex가 이 형식의 호출 전에 작성한 임시 범주 기준 131개와는 각각 125개, 125개, 122개가 일치했다. 표현 있음 27개는 세 모델 모두 찾았지만 모호한 후보 4개는 세 모델 모두 틀렸다. 범주 정의나 처리 규칙을 더 확인해야 하는 5개 후보는 평가에서 제외하고 별도로 기록했다. 131개 대부분이 표현 없음이므로 95.4%와 93.1%를 전체 추출 정확도로 읽어서는 안 된다. 사람이 검수한 정답과 비교한 결과도 아니다.
 
-16개 요청 비용은 GPT-5.4가 $0.0363475, GPT-5.1이 $0.02313875였다. 일반 API 요금에 실제 사용량을 적용한 값이다. 같은 평균 길이라고 가정하면 전체 616,767개는 각각 약 $1,401과 $892다. 표본이 전체 평균을 대표하지 않고 재시도·세금·서버 비용도 빠져 있으므로 대략적인 예산으로만 사용한다. [GPT-5.4 공식 요금](https://developers.openai.com/api/docs/models/gpt-5.4), [GPT-5.1 공식 요금](https://developers.openai.com/api/docs/models/gpt-5.1)
+16개 요청 비용은 GPT-5.4 mini가 $0.01089525, GPT-5.4가 $0.0363475, GPT-5.1이 $0.02313875였다. 일반 API 요금에 실제 사용량을 적용한 값이다. 같은 평균 길이라고 가정하면 전체 616,767개는 각각 약 $420, $1,401, $892다. 표본이 전체 평균을 대표하지 않고 재시도·세금·서버 비용도 빠져 있으므로 대략적인 예산으로만 사용한다. [mini 공식 요금](https://developers.openai.com/api/docs/models/gpt-5.4-mini), [GPT-5.4 공식 요금](https://developers.openai.com/api/docs/models/gpt-5.4), [GPT-5.1 공식 요금](https://developers.openai.com/api/docs/models/gpt-5.1)
 
-최신 프롬프트, 실제 응답과 항목별 오류, 비용 계산을 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches`에 저장했다. [상세 비교 문서](/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches/README.md)에는 16개 원문과 두 모델의 실제 추출 표현을 함께 적었다.
+최신 프롬프트, 실제 응답과 항목별 오류, 비용 계산을 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches`에 저장했다. [상세 비교 문서](/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/annotations/coco_captions/pilot16/all-matches/README.md)에는 16개 원문과 세 모델의 실제 추출 표현을 함께 적었다.
 
 ## 실행과 진행 상황 확인
 
@@ -58,7 +58,7 @@ uv sync --extra annotation --extra dev
   --concurrency 512
 ```
 
-GPT-5.1 시험에는 `gpt-5.1-2025-11-13`을 사용하고 출력 파일과 작업 폴더의 gpt54를 gpt51로 바꾼다. 두 모델에 `reasoning_effort="none"`, `temperature=0`, `top_p=1`, `n=1`, `store=false`를 사용했다. API가 보고한 추론 토큰은 모두 0개다. 모델 버전과 요청 내용을 고정하고 결과를 저장하지만 재호출이 항상 같은 답을 낸다고 보장하지 않는다.
+GPT-5.1 시험에는 `gpt-5.1-2025-11-13`을 사용하고 출력 파일과 작업 폴더의 gpt54를 gpt51로 바꾼다. mini 시험에는 `gpt-5.4-mini-2026-03-17`을 사용하고 출력 파일과 작업 폴더의 gpt54를 gpt54-mini로 바꾼다. 세 모델에 `reasoning_effort="none"`, `temperature=0`, `top_p=1`, `n=1`, `store=false`를 사용했다. API가 보고한 추론 토큰은 모두 0개다. 모델 버전과 요청 내용을 고정하고 결과를 저장하지만 재호출이 항상 같은 답을 낸다고 보장하지 않는다.
 
 `AsyncOpenAI`와 `asyncio.Semaphore(512)`를 사용한다. 요청 하나에는 캡션 하나를 넣고 동시에 진행 중인 요청은 프로세스당 최대 512개로 제한한다. API 요청 제한에는 Retry-After와 대기 후 재시도를 적용한다. 최초 요청을 포함해 최대 5회이며 인증·결제 오류와 원문 검사 실패는 반복 재시도하지 않는다. SDK 자체 재시도는 끄고 코드에서만 관리한다.
 

@@ -261,6 +261,127 @@
         },
         "method": "Pilot billed tokens times standard unit prices; divide total by 16 requested captions and multiply population size. Not a representative sample; excludes future retries, taxes and servers; no Batch discount or caching."
       }
+    },
+    "gpt54-mini": {
+      "finished_at": "2026-09-14T14:20:01.403926+00:00",
+      "annotation_source": "openai_structured_outputs",
+      "input_captions": 16,
+      "successful_captions": 16,
+      "failed_captions": 0,
+      "failures": [],
+      "settings": {
+        "model": "gpt-5.4-mini-2026-03-17",
+        "n": 1,
+        "max_completion_tokens": 2048,
+        "store": false,
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "top_p": 1,
+        "concurrency": 512,
+        "captions_per_request": 1,
+        "max_attempts": 5
+      },
+      "usage_this_invocation": {
+        "requests": 16,
+        "retries": 0,
+        "prompt_tokens": 5455,
+        "completion_tokens": 1512,
+        "cached_tokens": 0
+      },
+      "returned_models": [
+        "gpt-5.4-mini-2026-03-17"
+      ],
+      "system_fingerprints": [],
+      "elapsed_seconds": 1.997081249995972,
+      "output_sha256": "1c089e27b9f2d24c3cfae1b27fd8f63b2c29504d019e8782d205c47ff4ab2a89",
+      "complete": true,
+      "request_definition": {
+        "input_sha256": "0a9d93114b9e694fb054fa2e47ce7884bbb877f189148dda328525b4e2c8691d",
+        "prompt_sha256": "931f4c584819733ae8be7a3cd4a9cc4b6e9f00198eca15804a16b9c0494e8878",
+        "schema": {
+          "$defs": {
+            "ObjectSpans": {
+              "additionalProperties": false,
+              "properties": {
+                "concept_id": {
+                  "title": "Concept Id",
+                  "type": "integer"
+                },
+                "spans": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Spans"
+                }
+              },
+              "required": [
+                "concept_id",
+                "spans"
+              ],
+              "title": "ObjectSpans",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "objects": {
+              "items": {
+                "$ref": "#/$defs/ObjectSpans"
+              },
+              "title": "Objects",
+              "type": "array"
+            }
+          },
+          "required": [
+            "objects"
+          ],
+          "title": "CaptionAnnotation",
+          "type": "object"
+        },
+        "settings": {
+          "model": "gpt-5.4-mini-2026-03-17",
+          "n": 1,
+          "max_completion_tokens": 2048,
+          "store": false,
+          "reasoning_effort": "none",
+          "temperature": 0,
+          "top_p": 1,
+          "concurrency": 512,
+          "captions_per_request": 1,
+          "max_attempts": 5
+        }
+      },
+      "reasoning_tokens": 0,
+      "objects_with_repeated_identical_expression_matches": 0,
+      "pricing": {
+        "currency": "USD",
+        "standard_input_per_million": 0.75,
+        "standard_output_per_million": 4.5,
+        "source": "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
+        "checked_on": "2026-09-14"
+      },
+      "cost": {
+        "pilot_usd": 0.01089525,
+        "projected_train_usd": 402.956054578125,
+        "projected_val_usd": 17.03336146875,
+        "projected_all_usd": 419.989416046875,
+        "fraction_cheaper_than_current_gpt54": 0.7002476098768828,
+        "fraction_cheaper_than_current_gpt51": 0.5291340284155367,
+        "caption_counts": {
+          "train2017": 591753,
+          "val2017": 25014,
+          "total": 616767
+        },
+        "method": "Pilot billed tokens times standard unit prices; divide total by 16 requested captions and multiply population size. Not a representative sample; excludes future retries, taxes and servers; no Batch discount or caching."
+      }
     }
   },
   "files": {
@@ -289,7 +410,13 @@
       "sha256": "eb04a1f8ed639eea3b2f63effbab6050dc95fc79c215c6abb11fa9a4d57ebba9"
     },
     "README.md": {
-      "sha256": "8859c067d3fe01407b06a88d2b6b0afacb343f73300bfba7d762f55bb340e984"
+      "sha256": "1bb19e52e3ba343f469f53b10d3257ac66803a79780d0f6e197a3accbba67339"
+    },
+    "gpt54-mini-none.jsonl": {
+      "sha256": "1c089e27b9f2d24c3cfae1b27fd8f63b2c29504d019e8782d205c47ff4ab2a89"
+    },
+    "gpt54-mini-evaluation.json": {
+      "sha256": "0782db9ab9d1ee4d1adfcc8432d2847a03c7d656e96125866ff65d34b23f3e05"
     }
   }
 }
