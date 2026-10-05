@@ -47,3 +47,29 @@ Hugging Face의 COCO-Stuff 자료를 확인할 수 있지만, 화면 표시를 �
 사람이 검토한 파일 경로는 `data.reviewed_captions`에 지정한다. 기본값 `null`이면 자동 규칙만 사용한다. 검토 파일에 없는 캡션은 자동 규칙을 계속 사용하므로 일부 검토 파일을 넣었다고 전체 자료를 사람 검토 결과로 간주하지 않는다. 각 캡션의 `annotation_status`와 전체 자동 주석 수를 저장한다. `/workspace/annotations/coco_captions/pilot16`의 모델 생성 시험 결과는 이 사람 검토 경로에 등록하지 않았다.
 
 다른 용어 사전을 사용하려면 기본 YAML과 같은 `concepts` 목록을 만들어 `data.concepts_file`로 지정한다. 각 항목에는 `id`, `name`, `aliases`를 넣는다. 고유한 범주 번호를 요구하며 모델과 자료를 바꾸지 않고 표현 사전만 교체할 수 있다. 사전이나 검토 파일의 내용이 바뀌면 이전 실행 폴더에 이어 쓰지 않고 새 `output`을 사용한다.
+
+**사전을 바꾼 재실행은 이전 실행의 산출물을 검증한 뒤 선택적으로 가져올 수 있다.** 새 설정에 `reuse.source_run`으로 완료된 이전 실행 폴더를 지정하면, 각 단계가 실행되는 동안 다음 항목을 검사해 통과한 것만 새 `output`으로 복사한다. 검사에 실패한 항목은 다시 계산한다. 완료 표식(`completed/*.json`)은 절대 복사하지 않으며, 각 단계는 스스로 실행을 마친 뒤 자신의 완료 표식을 남긴다. 어떤 항목을 어떤 검사로 가져왔는지, 또는 왜 다시 계산했는지는 `<output>/reuse.json`에 기록한다.
+
+| 항목 | 재사용 조건 |
+| --- | --- |
+| 이미지 쪽 색인(`presence.npy`, `full_presence.npy`, `areas.npy`) | 이미지 번호 순서, 범주 번호 목록, 표지 기준(`label_scope`), 인코더 종류·리비전이 같고, 모든 이미지와 주석 PNG 파일의 SHA-256이 이전 실행 기록과 같을 때. 캡션 색인(`captions.json`, `mentions.npy`)은 항상 새 사전으로 다시 만든다. |
+| 원본 CLIP 표현 | 내용 주소(인코더 설정, 이미지 파일 지문, 캡션 원문, 라이브러리 버전)로 만든 키가 같은 캐시가 `reuse.source_cache`(기본값은 이전 실행의 `cache`)에 있을 때 복사한다. |
+| SAE 가중치 | `reuse.sae_weights`가 참이고 `training.image_checkpoint`를 따로 주지 않으면 이전 실행의 `models/`를 불러와 저장하고, 텐서 단위로 완전히 같은지 확인한다. 다르면 실행을 중단한다. |
+| 원본 활성값(`activations/`) | SAE 가중치 지문과 원본 표현 파일의 바이트가 같을 때. |
+| 이미지 객체 가림 표현·활성값(`counterfactual/<split>/<c>/image*`) | 가릴 이미지 행 목록, 해당 이미지·주석 파일 지문, 가림 색, 인코더가 같을 때. 활성값은 SAE 가중치가 같을 때만 함께 복사한다. AUROC와 변화량 CSV는 항상 다시 계산한다. |
+| 텍스트 가림 표현(`counterfactual/<split>/<c>/text.npy`) | 캡션 행 단위로 캡션 번호, 원문, 가릴 토큰 위치가 정확히 같은 행만 이전 표현을 복사하고 나머지 행은 다시 부호화한다. 모든 행이 같을 때만 텍스트 활성값도 복사한다. |
+| 원본 상관행렬(`panel.npz`) | 복사하지 않고 다시 계산한 뒤 이전 행렬과의 최대 절대 차이를 기록한다. |
+
+대표 특징 선택, 연결 판정, 객체 제거 실험은 텍스트 주석에 따라 달라지므로 항상 다시 계산한다.
+
+```yaml
+reuse:
+  source_run: ../runs/elice-rq1-backup/runs/elice-rq1
+  source_cache: ../runs/elice-rq1-backup/cache   # 생략하면 이전 실행 설정의 cache 경로
+  image_index: true
+  embeddings: true
+  sae_weights: true
+  original_activations: true
+  image_counterfactuals: true
+  text_counterfactual_rows: true
+```

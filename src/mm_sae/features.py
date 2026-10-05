@@ -18,6 +18,7 @@ from .io import atomic_json, write_csv, file_lock
 from .training import load_saes
 from .metrics.sparse_ops import activation_changes, take_rows
 from .progress import iter_progress
+from .reuse import Reuse
 
 
 def read_image(path):
@@ -82,9 +83,13 @@ def _encode_file(path: Path, n, dim, batch_size, encode_batch):
 
 
 def embed(config, encoder):
+    reuse = Reuse.maybe(config)
     for split in config.data.splits:
         index = Index(config.output, split)
         out = embedding_directory(config, split)
+        if reuse is not None:
+            reuse.embeddings(split, "image", out / "image.npy", len(index.images), encoder.dim)
+            reuse.embeddings(split, "text", out / "text.npy", len(index.captions), encoder.dim)
         encode_file(
             out / "image.npy",
             len(index.images),
@@ -130,22 +135,23 @@ def sparse_encode(model, embedding, path, batch_size) -> sparse.csr_matrix:
     return result
 
 
-def original_latents(config, split, models=None) -> tuple[sparse.csr_matrix, sparse.csr_matrix]:
+def original_latents(
+    config, split, models=None, reuse: Reuse | None = None
+) -> tuple[sparse.csr_matrix, sparse.csr_matrix]:
     models = models or load_saes(config)
     root = config.output
-    result = [
-        sparse_encode(
-            m,
-            np.load(embedding_directory(config, split) / f"{side}.npy", mmap_mode="r"),
-            root / "activations" / split / f"{side}.npz",
-            config.features.batch_size,
-        )
-        for side, m in zip(["image", "text"], models)
-    ]
+    reuse = reuse if reuse is not None else Reuse.maybe(config)
+    result = []
+    for side, m in zip(["image", "text"], models):
+        embedding = embedding_directory(config, split) / f"{side}.npy"
+        target = root / "activations" / split / f"{side}.npz"
+        if reuse is not None:
+            reuse.original_activations(split, side, embedding, target, m.config.latent_size)
+        result.append(sparse_encode(m, np.load(embedding, mmap_mode="r"), target, config.features.batch_size))
     return result[0], result[1]
 
 
-def counterfactual(config, encoder, index, split, concept, models):
+def counterfactual(config, encoder, index, split, concept, models, reuse: Reuse | None = None):
     out = config.output / "counterfactual" / split / str(concept)
     out.mkdir(parents=True, exist_ok=True)
     image_rows = np.flatnonzero(index.presence[:, index.columns[concept]])
@@ -154,6 +160,8 @@ def counterfactual(config, encoder, index, split, concept, models):
     )
     np.save(out / "image_rows.npy", image_rows)
     np.save(out / "text_rows.npy", text_rows)
+    if reuse is not None:
+        reuse.image_counterfactual(split, concept, image_rows, index, out, encoder.dim)
     ie = encode_file(
         out / "image.npy",
         len(image_rows),
@@ -163,19 +171,41 @@ def counterfactual(config, encoder, index, split, concept, models):
             [mask_image(index.images[int(i)], concept, config.features.mask_rgb) for i in image_rows[a:b]]
         ),
     )
+
+    def encode_text(rows):
+        return encoder.texts(
+            [index.captions[int(i)]["text"] for i in rows],
+            [index.captions[int(i)]["mask_token_positions"][str(concept)] for i in rows],
+        )
+
+    plan = reuse.text_counterfactual(split, concept, text_rows, index, out, encoder.dim) if reuse else None
     te = encode_file(
         out / "text.npy",
         len(text_rows),
         encoder.dim,
         config.encoder.batch_size,
-        lambda a, b: encoder.texts(
-            [index.captions[int(i)]["text"] for i in text_rows[a:b]],
-            [index.captions[int(i)]["mask_token_positions"][str(concept)] for i in text_rows[a:b]],
-        ),
+        (lambda a, b: encode_text(text_rows[a:b]))
+        if plan is None
+        else (lambda a, b: encode_text_with_reuse(a, b, text_rows, encoder.dim, encode_text, plan)),
     )
     xi = sparse_encode(models[0], ie, out / "image_activations.npz", config.features.batch_size)
     yt = sparse_encode(models[1], te, out / "text_activations.npz", config.features.batch_size)
     return image_rows, text_rows, xi, yt
+
+
+def encode_text_with_reuse(a, b, text_rows, dim, encode_text, plan):
+    """Copy embeddings of rows whose caption and mask positions are unchanged; encode the rest."""
+    reusable, old_embeddings, _ = plan
+    result = np.empty((b - a, dim), np.float32)
+    fresh = [k for k in range(a, b) if k not in reusable]
+    if fresh:
+        encoded = encode_text(text_rows[fresh])
+        for j, k in enumerate(fresh):
+            result[k - a] = encoded[j]
+    for k in range(a, b):
+        if k in reusable:
+            result[k - a] = old_embeddings[reusable[k]]
+    return result
 
 
 def read_counterfactual(root, split, concept):

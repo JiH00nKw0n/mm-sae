@@ -107,6 +107,7 @@ class RunStore:
                     config.data.concepts_file,
                     config.data.reviewed_captions,
                     config.execution.review_document,
+                    *config.data.caption_overrides.values(),
                 ]
                 if p is not None
             },

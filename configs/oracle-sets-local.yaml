@@ -1,0 +1,19 @@
+source_run: ../runs/elice-rq1-lexicon2
+parent_run: ../runs/mapping-suite-2026-10-04
+semantics_run: ../runs/mapping-semantics-2026-10-04
+pruning_run: ../runs/mapping-pruning-2026-10-04
+output: ../runs/oracle-sets-2026-10-04
+budgets: [1, 4, 8, 16]
+include_dense: true
+label_targets: [propagated_presence, caption_mentions]
+ridge: 0.01
+min_gain: 1.0e-12
+output_scaling: fit_unit_variance
+device: cpu
+retrieval_chunk: 256
+progress_interval_seconds: 10
+case_concepts: [dog, skis, snow, grass, road, sand]
+conditional_pairs: [[skis, snow]]
+controls: [cca_171, sparse_cca8_171, sparse_cca16_171]
+control_output_scaling: [native, fit_unit_variance]
+references: [cca_full, sparse_cca_8, sparse_cca_16]

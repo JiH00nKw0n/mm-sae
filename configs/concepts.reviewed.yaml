@@ -1,0 +1,3625 @@
+# Dictionary reviewed from COCO captions. Awaiting user review before experimental use.
+concepts:
+- id: 0
+  name: person
+  aliases:
+  - acrobat
+  - actor
+  - actors
+  - actress
+  - adolescent
+  - adolescents
+  - announcer
+  - artist
+  - athlete
+  - athletes
+  - atlhete
+  - attendant
+  - attendees
+  - audience
+  - baker
+  - bakers
+  - ballplayer
+  - barber
+  - bartender
+  - bater
+  - batter
+  - beachgoers
+  - bicyclist
+  - bicyclists
+  - biker
+  - bikers
+  - boarder
+  - boater
+  - boy
+  - boys
+  - bride
+  - brother
+  - businessman
+  - bystander
+  - bystanders
+  - cameraman
+  - cameramen
+  - campers
+  - catcher
+  - cheerleaders
+  - chef
+  - chefs
+  - chidren
+  - chikd
+  - child
+  - children
+  - citizens
+  - clergyman
+  - clerk
+  - client
+  - climber
+  - clown
+  - clowns
+  - colleagues
+  - commuters
+  - competitor
+  - conductor
+  - consumer
+  - cop
+  - cops
+  - cowboy
+  - cowgirl
+  - crew
+  - crowd
+  - customer
+  - customers
+  - cyclist
+  - cyclists
+  - dad
+  - dancer
+  - dancers
+  - daughter
+  - daughters
+  - demonstrators
+  - diners
+  - doctor
+  - doctors
+  - driver
+  - drivers
+  - dude
+  - dudes
+  - elders
+  - employee
+  - employees
+  - engineer
+  - eople
+  - equestrian
+  - farmer
+  - farmers
+  - father
+  - fellow
+  - fire fighter
+  - fire fighters
+  - firefighter
+  - firefighters
+  - fireman
+  - firemen
+  - fisherman
+  - fishermen
+  - folks
+  - foreman
+  - friend
+  - friends
+  - gardener
+  - gentleman
+  - gentlemen
+  - girl
+  - girlfriend
+  - girls
+  - goalie
+  - goalkeeper
+  - grandfather
+  - grandma
+  - grandmother
+  - grandpa
+  - grandparents
+  - grandson
+  - grils
+  - groom
+  - grown up
+  - grownup
+  - guests
+  - guy
+  - guys
+  - handler
+  - hiker
+  - hikers
+  - hitter
+  - human
+  - humans
+  - husband
+  - infant
+  - infants
+  - instructor
+  - instructors
+  - jockey
+  - jockeys
+  - joggers
+  - journalist
+  - judge
+  - kayaker
+  - kayakers
+  - kid
+  - kids
+  - kiteboarder
+  - kitesurfer
+  - lad
+  - ladies
+  - lady
+  - lerson
+  - lifeguard
+  - littleboy
+  - locals
+  - magicians
+  - man
+  - meen
+  - men
+  - merchant
+  - mna
+  - mom
+  - moms
+  - monk
+  - monks
+  - motorcyclist
+  - motorcyclists
+  - motorist
+  - motorists
+  - mover
+  - musician
+  - news caster
+  - nurse
+  - observer
+  - observers
+  - occupants
+  - oeople
+  - oerson
+  - officer
+  - officers
+  - officials
+  - onlooker
+  - onlookers
+  - opponent
+  - paerson
+  - painter
+  - para sailer
+  - paramedic
+  - parasailer
+  - parasailers
+  - parasailor
+  - parasurfer
+  - parasurfers
+  - passengers
+  - passer-byes
+  - passerby
+  - passersby
+  - patron
+  - patrons
+  - pedestrian
+  - pedestrians
+  - peerson
+  - peeson
+  - peole
+  - peolpe
+  - peoole
+  - peoople
+  - peope
+  - peopel
+  - peopke
+  - peopl
+  - people
+  - peopme
+  - peple
+  - pepole
+  - performer
+  - performers
+  - peron
+  - perosn
+  - person
+  - personnel
+  - persons
+  - peson
+  - photographer
+  - photographers
+  - pilot
+  - pilots
+  - player
+  - players
+  - pleope
+  - plumber
+  - poeple
+  - policeman
+  - policemen
+  - politician
+  - porter
+  - preacher
+  - president
+  - priest
+  - professionals
+  - protester
+  - protesters
+  - protestors
+  - racer
+  - rancher
+  - referee
+  - referees
+  - repairman
+  - reporter
+  - reporters
+  - reveler
+  - rider
+  - riders
+  - ringleader
+  - roommate
+  - rowers
+  - runner
+  - runners
+  - sailor
+  - sailors
+  - salesman
+  - schoolchildren
+  - scientist
+  - sellers
+  - shopkeeper
+  - shopowner
+  - shopper
+  - shoppers
+  - sibling
+  - singer
+  - sister
+  - sisters
+  - skate boarders
+  - skateboarder
+  - skateboarders
+  - skater
+  - skaters
+  - skier
+  - skiers
+  - skiier
+  - skiiers
+  - skydiver
+  - skydivers
+  - snow boarders
+  - snowboader
+  - snowboarder
+  - snowboarders
+  - solders
+  - soldier
+  - soldiers
+  - sombody
+  - some one
+  - somebody
+  - someone
+  - son
+  - spectator
+  - spectators
+  - staff member
+  - student
+  - students
+  - stylist
+  - surfboader
+  - surfer
+  - surfers
+  - surgeon
+  - swimmer
+  - swimmers
+  - teacher
+  - teachers
+  - technicians
+  - teen
+  - teenaged
+  - teenager
+  - teenagers
+  - teens
+  - toddle
+  - toddler
+  - toddlers
+  - tourist
+  - tourists
+  - traveler
+  - travelers
+  - travellers
+  - umpire
+  - umpires
+  - vendor
+  - vendors
+  - victim
+  - violinist
+  - visitor
+  - visitors
+  - volunteer
+  - voy
+  - waiter
+  - waitress
+  - wake boarders
+  - wakeboarder
+  - wife
+  - windsurfer
+  - woma
+  - womab
+  - woman
+  - womans
+  - womean
+  - women
+  - womn
+  - womqn
+  - worker
+  - workers
+  - wrestler
+  - zookeeper
+  - zookeepers
+- id: 1
+  name: bicycle
+  aliases:
+  - bicycle
+  - bicycles
+  - bicylce
+  - biek
+  - biike
+  - bike
+  - bikes
+  - bime
+  - bycicle
+  - bycycle
+- id: 2
+  name: car
+  aliases:
+  - auto mobile
+  - automobile
+  - automobiles
+  - autos
+  - bentley
+  - camaro
+  - car
+  - cars
+  - convertible
+  - hatchback
+  - jeep
+  - limo
+  - limousine
+  - lotus elise
+  - minivan
+  - motorcar
+  - police cruiser
+  - porsche
+  - racecar
+  - roadster
+  - rolls royce
+  - s.u.v
+  - sedan
+  - sedans
+  - sports utility vehicle
+  - sportscar
+  - station wagon
+  - studebaker
+  - suv
+  - suvs
+  - taxi
+  - taxicabs
+  - taxis
+  - van
+  - vans
+- id: 3
+  name: motorcycle
+  aliases:
+  - dirt bike
+  - dirt bikes
+  - dirtbike
+  - dirtbikes
+  - minibike
+  - moped
+  - mopeds
+  - mortorcycle
+  - moterbikes
+  - motercycle
+  - motercycles
+  - motircycle
+  - moto bike
+  - moto cylce
+  - motocycle
+  - motocycles
+  - motocylce
+  - motor bike
+  - motor bikes
+  - motor bile
+  - motor bke
+  - motor cycle
+  - motor cycles
+  - motor cylce
+  - motorbike
+  - motorbikes
+  - motorccle
+  - motorcyce
+  - motorcycle
+  - motorcycles
+  - motorcycyle
+  - motorcylce
+  - motorcylces
+  - motorcyle
+  - motorcyles
+  - motorcysle
+  - motorized bicycle
+  - motorized bike
+  - motorized bikes
+  - motorycles
+  - scooter
+  - scooters
+  - sport bike
+  - sports bike
+  - street bike
+  - vespa
+- id: 4
+  name: airplane
+  aliases:
+  - aeroplane
+  - aeroplanes
+  - aiplane
+  - aiprlanes
+  - air craft
+  - air crafts
+  - aircraft
+  - aircrafts
+  - airliner
+  - airliners
+  - airlplane
+  - airpane
+  - airplae
+  - airplain
+  - airplane
+  - airplanes
+  - airpline
+  - biplane
+  - biplanes
+  - jet
+  - jetliner
+  - jetliners
+  - jets
+  - monoplane
+  - palne
+  - plane
+  - planes
+  - seaplane
+  - sirplane
+  - warplane
+- id: 5
+  name: bus
+  aliases:
+  - bus
+  - buses
+  - busing
+  - buss
+  - busses
+  - double decker
+  - double-decker
+  - doubledecker
+  - motor coach
+  - omnibus
+  - schoolbus
+  - tourbus
+- id: 6
+  name: train
+  aliases:
+  - box cars
+  - caboose
+  - locamotive
+  - locomotive
+  - locomotives
+  - monorail
+  - monorial
+  - rail car
+  - railcars
+  - railway cars
+  - street car
+  - streetcar
+  - subway car
+  - train
+  - traing
+  - trainl
+  - trains
+  - traisn
+  - tram
+  - tranes
+  - trolley car
+  - trolly car
+  - truing
+  - ttrain
+  - twain
+- id: 7
+  name: truck
+  aliases:
+  - 18 wheeler
+  - 18-wheeler
+  - 18-wheelers
+  - big rig
+  - dumptruck
+  - eighteen wheeler
+  - eightteen wheeler
+  - fire engine
+  - firetruck
+  - firetrucks
+  - garbage tuck
+  - lorries
+  - lorry
+  - pick-up
+  - pickup
+  - ruck
+  - semi
+  - semitruck
+  - tanker trunk
+  - towtruck
+  - tractor trailer
+  - tractor-trailer
+  - truce
+  - truch
+  - truck
+  - trucks
+- id: 8
+  name: boat
+  aliases:
+  - baot
+  - barge
+  - barges
+  - biats
+  - bloat
+  - boat
+  - boates
+  - boats
+  - canoe
+  - canoes
+  - catamaran
+  - catamarans
+  - ferries
+  - ferry
+  - houseboat
+  - houseboats
+  - kayak
+  - kayaks
+  - kyack
+  - lifeboat
+  - motorboat
+  - motorboats
+  - paddleboats
+  - raft
+  - rafts
+  - riverboat
+  - rowboat
+  - rowboats
+  - sailboat
+  - sailboats
+  - saliboat
+  - ship
+  - ships
+  - skiff
+  - skiffs
+  - speedboat
+  - speedboats
+  - steamboat
+  - tugboat
+  - tugboats
+  - water taxis
+  - yacht
+  - yachts
+- id: 9
+  name: traffic light
+  aliases:
+  - crossing signal
+  - signal light
+  - signal lights
+  - stop and go light
+  - stop and go lights
+  - stop ight
+  - stop light
+  - stop lights
+  - stop lite
+  - stop signal
+  - stoplight
+  - stoplights
+  - street signal
+  - trafffic lights
+  - traffic control light
+  - traffic ight
+  - traffic light
+  - traffic lights
+  - traffic lite
+  - traffic signal
+  - traffic signals
+  - traffice light
+  - walk signal
+- id: 10
+  name: fire hydrant
+  aliases:
+  - fire hidrent
+  - fire hydran
+  - fire hydrant
+  - fire hydration
+  - fire hydrgon
+  - fire hydrogen
+  - fire hyrdant
+  - fire hyrdrant
+  - fire plug
+  - fire plugs
+  - firehydrant
+  - fireplug
+  - hydrant
+  - hydrants
+- id: 12
+  name: stop sign
+  aliases:
+  - sop sign
+  - sotp sign
+  - spot sign
+  - stip sign
+  - stop sgn
+  - stop sigh
+  - stop sighn
+  - stop sight
+  - stop sigm
+  - stop sign
+  - stop signs
+  - stop sin
+  - stop sing
+  - stop sogn
+  - stops sign
+  - stops signs
+  - stopsign
+- id: 13
+  name: parking meter
+  aliases:
+  - meter
+  - meters
+  - parking meater
+  - parking meeter
+  - parking meter
+  - parking meteres
+  - parking meters
+  - parking metter
+  - parkng metter
+- id: 14
+  name: bench
+  aliases:
+  - beanch
+  - bench
+  - benched
+  - benches
+  - parkbench
+  - pench
+  - pews
+- id: 15
+  name: bird
+  aliases:
+  - avocet
+  - biird
+  - bird
+  - birds
+  - birtd
+  - blackbird
+  - blue jay
+  - bluebird
+  - bluejay
+  - buzzards
+  - canary
+  - cardinal
+  - chick
+  - chickens
+  - chicks
+  - cockateil
+  - cockatiel
+  - cockatoo
+  - cormorants
+  - cowbird
+  - crow
+  - crows
+  - dove
+  - doves
+  - duck
+  - duckling
+  - ducklings
+  - ducks
+  - eagle
+  - eagles
+  - egret
+  - emu
+  - falcon
+  - finch
+  - finches
+  - finchs
+  - flamingo
+  - flamingoes
+  - flamingos
+  - fowl
+  - geese
+  - goose
+  - goslings
+  - gull
+  - gulls
+  - hawk
+  - hawks
+  - hen
+  - hens
+  - heron
+  - herons
+  - hummingbird
+  - macaw
+  - ostrich
+  - ostriches
+  - owl
+  - owls
+  - parakeet
+  - parakeets
+  - paraket
+  - parrot
+  - parrots
+  - peacock
+  - peacocks
+  - pelican
+  - pelicans
+  - pengin
+  - penguin
+  - penguins
+  - pheasant
+  - pheasants
+  - pidgeons
+  - pidgin
+  - pigeon
+  - pigeons
+  - plican
+  - puffins
+  - quail
+  - raptor
+  - raven
+  - robin
+  - rooster
+  - roosters
+  - sand piper
+  - sandpiper
+  - seabird
+  - seagels
+  - seagul
+  - seagull
+  - seagulls
+  - shorebird
+  - songbird
+  - sparrow
+  - sparrows
+  - stork
+  - storks
+  - swan
+  - swans
+  - tern
+  - turkeys
+  - turkies
+  - vulture
+  - vultures
+  - water foul
+  - waterbirds
+  - waterfowl
+  - wood-pecker
+  - woodpecker
+  - woodpeckers
+- id: 16
+  name: cat
+  aliases:
+  - ca
+  - caat
+  - cants
+  - cat
+  - cats
+  - catt
+  - cay
+  - cvat
+  - feline
+  - housecat
+  - kitteh
+  - kitten
+  - kittens
+  - kittien
+  - kitties
+  - kitty
+  - pussycat
+- id: 17
+  name: dog
+  aliases:
+  - airedale
+  - alsation
+  - australian shepherd
+  - beagle
+  - boxer
+  - bulldog
+  - bulldogs
+  - canine
+  - chiguagua
+  - chihuahua
+  - collie
+  - corgi
+  - corgy
+  - dachshund
+  - dachshunds
+  - dachund
+  - dalmatian
+  - dalmation
+  - dauchsand
+  - do9g
+  - doberman
+  - dog
+  - doge
+  - dogg
+  - doggie
+  - doggy
+  - dogs
+  - german shepard
+  - german shephard
+  - german shepherd
+  - german sherpard
+  - great dane
+  - greyhound
+  - hound
+  - hounds
+  - huskie
+  - huskies
+  - husky
+  - irish setter
+  - lab
+  - labrador
+  - lapdog
+  - lhasa apso
+  - mutt
+  - papillon
+  - pekinese
+  - pit bull
+  - pitbull
+  - pomeranian
+  - poodle
+  - pug
+  - pugs
+  - pup
+  - puppeh
+  - puppies
+  - puppy
+  - retriever
+  - rotweiler
+  - saint bernard
+  - schnauzer
+  - sheepdog
+  - shiba inu
+  - shih-tzu
+  - spaniel
+  - spaniels
+  - st bernard
+  - terrier
+  - watchdog
+  - weirmarana
+  - whippet
+  - yorkie
+- id: 18
+  name: horse
+  aliases:
+  - clydedales
+  - clydesdale
+  - clydesdales
+  - clydsdale
+  - clyesdales
+  - clysdale
+  - clysdales
+  - horese
+  - horse
+  - horseback
+  - horsed
+  - horses
+  - horsss
+  - hourses
+  - mare
+  - mustangs
+  - ponies
+  - pony
+  - racehorse
+  - racehorses
+  - stallion
+- id: 19
+  name: sheep
+  aliases:
+  - ewe
+  - ewes
+  - lamb
+  - lambs
+  - ram
+  - rams
+  - she eps
+  - sheep
+  - sheeps
+- id: 20
+  name: cow
+  aliases:
+  - bull
+  - bulls
+  - cattle
+  - cow
+  - cows
+  - heffer
+  - heifer
+  - holstein
+  - longhorn
+  - longhorns
+  - ox
+  - oxan
+  - oxen
+  - oxes
+  - steer
+  - steers
+- id: 21
+  name: elephant
+  aliases:
+  - eephant
+  - eephants
+  - elefant
+  - elepahnt
+  - elepants
+  - elephan
+  - elephant
+  - elephants
+  - elephatns
+  - elephnat
+  - elepwhnt
+  - elphant
+  - elphants
+- id: 22
+  name: bear
+  aliases:
+  - bear
+  - bears
+  - grizzly
+  - panda
+  - pandas
+  - polar pear
+- id: 23
+  name: zebra
+  aliases:
+  - debra
+  - zeba
+  - zebas
+  - zebera
+  - zeberas
+  - zebra
+  - zebras
+  - zebre
+  - zeebra
+  - zeebras
+  - zerba
+  - zerbas
+  - zerbra
+  - zerbras
+  - zibras
+  - zieber
+- id: 24
+  name: giraffe
+  aliases:
+  - gariffs
+  - giaraffe
+  - gifaffes
+  - giraaffes
+  - girafe
+  - girafee
+  - girafees
+  - girafes
+  - giraff
+  - giraffe
+  - giraffee
+  - giraffees
+  - giraffes
+  - giraffestanding
+  - girafffe
+  - giraffis
+  - giraffs
+  - gireffes
+  - girraf
+  - girrafe
+  - girrafes
+  - girraffe
+  - griaffe
+  - griaffes
+  - griffa
+  - griffes
+- id: 26
+  name: backpack
+  aliases:
+  - back back
+  - back backs
+  - back bag
+  - back pack
+  - back packs
+  - backback
+  - backpac
+  - backpacj
+  - backpack
+  - backpacks
+  - book bag
+  - book bags
+  - book bog
+  - book-bag
+  - bookbag
+  - knapsack
+  - knapsacks
+  - rucksack
+  - school bag
+  - school bags
+  - travel pack
+- id: 27
+  name: umbrella
+  aliases:
+  - aumbrella
+  - embrella
+  - parasol
+  - parasols
+  - parisol
+  - umbella
+  - umbellas
+  - umberall
+  - umberella
+  - umberellas
+  - umberlla
+  - umbrealla
+  - umbreallas
+  - umbrela
+  - umbrella
+  - umbrellas
+  - umbrellla
+  - umbrells
+  - umbrila
+  - unbrella
+  - unbrellas
+- id: 30
+  name: handbag
+  aliases:
+  - clutch bag
+  - hand bag
+  - hand bags
+  - handbag
+  - handbags
+  - messenger bag
+  - pocket book
+  - pocketbook
+  - purse
+  - purses
+  - satchel
+  - shoulder bag
+  - tote
+- id: 31
+  name: tie
+  aliases:
+  - bowtie
+  - bowties
+  - necktie
+  - neckties
+  - tie
+  - ties
+- id: 32
+  name: suitcase
+  aliases:
+  - baggage
+  - luggage
+  - luggages
+  - pullman bag
+  - roller bag
+  - suit case
+  - suit cases
+  - suitcase
+  - suitcases
+  - suite case
+  - suite cases
+  - suitecase
+  - suitecases
+  - suticase
+  - valise
+- id: 33
+  name: frisbee
+  aliases:
+  - firsbee
+  - fisbee
+  - fisby
+  - flying disk
+  - flying disks
+  - freesbe
+  - freesbee
+  - freesby
+  - freez be
+  - freez bee
+  - freeze be
+  - freeze bee
+  - fresbee
+  - fribe
+  - fribee
+  - frisbbe
+  - frisbe
+  - frisbee
+  - frisbees
+  - frisbey
+  - frisbie
+  - frisby
+  - frisk bee
+  - frissbee
+  - friz bee
+  - frizbe
+  - frizbee
+  - frizbees
+  - frizzbe
+  - frizzbee
+  - frizzebe
+  - frizzebee
+  - throwing disk
+- id: 34
+  name: skis
+  aliases:
+  - ski's
+  - skiies
+  - skiis
+  - skis
+- id: 35
+  name: snowboard
+  aliases:
+  - ski board
+  - ski boards
+  - skiing board
+  - snow board
+  - snow boards
+  - snowbaord
+  - snowboard
+  - snowboards
+- id: 36
+  name: sports ball
+  aliases:
+  - ball
+  - balll
+  - balls
+  - baseballs
+  - soccerball
+  - sports ball
+  - sports balls
+  - tennis all
+- id: 37
+  name: kite
+  aliases:
+  - kite
+  - kites
+- id: 38
+  name: baseball bat
+  aliases:
+  - baseball bat
+  - baseball bats
+  - basebat
+  - bat
+  - bate
+  - bats
+  - batt
+- id: 39
+  name: baseball glove
+  aliases:
+  - ball glove
+  - base ball gloves
+  - baseball catching mitt
+  - baseball glove
+  - baseball gloves
+  - baseball mit
+  - baseball mits
+  - baseball mitt
+  - baseball mitts
+  - catcher mitt
+  - catcher's glove
+  - catcher's mitt
+  - catchers glove
+  - catchers mit
+  - catchers mits
+  - catchers mitt
+  - catchers mitts
+  - pitchers mit
+  - pitchers mitt
+  - softball glove
+  - softball gloves
+  - softball mitt
+- id: 40
+  name: skateboard
+  aliases:
+  - kate board
+  - mountain board
+  - sakeboard
+  - skaeboard
+  - skat board
+  - skatboard
+  - skatboards
+  - skate baord
+  - skate bard
+  - skate biard
+  - skate boar
+  - skate board
+  - skate boards
+  - skate boars
+  - skate-board
+  - skatebaord
+  - skateboaard
+  - skateboad
+  - skateboads
+  - skateboard
+  - skateboards
+  - skatebord
+  - skating board
+  - skatingboard
+  - stake board
+- id: 41
+  name: surfboard
+  aliases:
+  - serf board
+  - sirf board
+  - sufboard
+  - suftboard
+  - suftboards
+  - sur fboard
+  - surboard
+  - surboards
+  - surd board
+  - surf baord
+  - surf beard
+  - surf boad
+  - surf boar
+  - surf board
+  - surf boards
+  - surf boars
+  - surf-board
+  - surfbaord
+  - surfboad
+  - surfboard
+  - surfboards
+  - surfing board
+  - surfing boards
+  - surfobard
+- id: 42
+  name: tennis racket
+  aliases:
+  - racket
+  - rackets
+  - rackett
+  - racquet
+  - racquets
+  - racquette
+  - raqcuet
+  - raquet
+  - raquett
+  - tennis bracket
+  - tennis raacket
+  - tennis rack
+  - tennis racker
+  - tennis racket
+  - tennis rackets
+  - tennis racketts
+  - tennis racking
+  - tennis rackt
+  - tennis racqet
+  - tennis racquet
+  - tennis racquete
+  - tennis racquets
+  - tennis raket
+  - tennis rakett
+  - tennis raquets
+  - tennis ratchet
+  - tennis recquet
+  - tennis tacquet
+  - tennis wrack
+- id: 43
+  name: bottle
+  aliases:
+  - bootle
+  - botle
+  - botles
+  - bottle
+  - bottled beverage
+  - bottled drinks
+  - bottled water
+  - bottles
+  - botttle
+  - water bpttle
+  - waterbottle
+- id: 45
+  name: wine glass
+  aliases:
+  - champagne class
+  - champagne flute
+  - champagne flutes
+  - champagne glass
+  - champagne glasses
+  - glass of champagne
+  - glass of red wine
+  - glass of whine
+  - glass of white wine
+  - glass of wine
+  - glasses of red wine
+  - glasses of white wine
+  - glasses of wine
+  - goblet
+  - goblets
+  - stemmed glass
+  - stemware
+  - whine glass
+  - whine glasses
+  - win glass
+  - win glasses
+  - wine gglass
+  - wine glases
+  - wine glass
+  - wine glasses
+  - wine tasting glass
+  - wineglass
+  - wineglasses
+  - wines glasses
+- id: 46
+  name: cup
+  aliases:
+  - cup
+  - cups
+  - muf
+  - mug
+  - mugs
+  - teacup
+  - teacups
+- id: 47
+  name: fork
+  aliases:
+  - fork
+  - forks
+- id: 48
+  name: knife
+  aliases:
+  - cleaver
+  - kinife
+  - knfe
+  - knife
+  - knifes
+  - knive
+  - knives
+  - machete
+  - pocketknife
+  - switch blades
+- id: 49
+  name: spoon
+  aliases:
+  - spoon
+  - spoons
+  - spork
+  - tablespoon
+  - teaspoon
+  - teaspoons
+- id: 50
+  name: bowl
+  aliases:
+  - boul
+  - bowel
+  - bowl
+  - bowle
+  - bowles
+  - bowls
+  - dowl
+  - ramekins
+- id: 51
+  name: banana
+  aliases:
+  - banaas
+  - banan
+  - banana
+  - bananas
+  - bananasand
+  - bananna
+  - banannas
+  - banans
+  - banansas
+  - banna
+  - bannana
+  - bannanas
+  - bannans
+  - bannas
+  - banns
+- id: 52
+  name: apple
+  aliases:
+  - apple
+  - apples
+  - appples
+- id: 53
+  name: sandwich
+  aliases:
+  - blt
+  - blts
+  - burger
+  - burgers
+  - cheese steak
+  - cheeseburger
+  - cheeseburgers
+  - cheesesteak
+  - hamburger
+  - hamburgers
+  - hoagie
+  - panini
+  - paninis
+  - sand which
+  - sandwhich
+  - sandwhiches
+  - sandwich
+  - sandwiches
+  - sandwitch
+  - sanwich
+  - sloppy joe
+  - sloppy joes
+- id: 54
+  name: orange
+  aliases:
+  - clementine
+  - clementines
+  - mandarins
+  - oragnes
+  - orange segments
+  - orange slice
+  - orange slices
+  - orange wedge
+  - orange wedges
+  - oranges
+  - peeled orange
+  - satsumas
+  - sliced orange
+  - tangelos
+  - tangerine
+  - tangerines
+- id: 55
+  name: broccoli
+  aliases:
+  - bloccoli
+  - broccili
+  - brocclie
+  - broccoili
+  - broccoli
+  - broccolis
+  - broccoliw
+  - broccolli
+  - broccoloi
+  - broccoly
+  - broccooli
+  - brocelli
+  - brocoli
+  - brocolii
+  - brocolli
+  - brokerly
+- id: 56
+  name: carrot
+  aliases:
+  - carror
+  - carrot
+  - carrots
+  - carrotts
+  - carrrots
+- id: 57
+  name: hot dog
+  aliases:
+  - cheese dog
+  - cheese dogs
+  - chili dog
+  - chili dogs
+  - chilli dog
+  - chilli dogs
+  - coney dog
+  - corn dog
+  - corn dogs
+  - corndogs
+  - franks
+  - hog dog
+  - hog dogs
+  - hot dog
+  - hot dogs
+  - hot dot
+  - hot-dog
+  - hot-dogs
+  - hotdog
+  - hotdogs
+  - pigs in a blanket
+  - weenie
+  - weenies
+  - weiner
+  - weiners
+  - wiener
+  - wieners
+- id: 58
+  name: pizza
+  aliases:
+  - piazza
+  - piazzas
+  - piza
+  - pizz
+  - pizza
+  - pizzaa
+  - pizzas
+  - pizzaz
+  - pizzia
+  - pizzza
+- id: 59
+  name: donut
+  aliases:
+  - cdonuts
+  - cronut
+  - cronuts
+  - cruller
+  - crullers
+  - d9ughnut
+  - do nut
+  - do nuts
+  - do-nut
+  - donoguht
+  - donoughts
+  - donughts
+  - donut
+  - donute
+  - donutes
+  - donuts
+  - dough nut
+  - dough nuts
+  - doughnout
+  - doughnouts
+  - doughntus
+  - doughnut
+  - doughnutes
+  - doughnuts
+  - doughtnuts
+  - doughuts
+  - dougnut
+  - dougnuts
+  - douhnut
+  - dounts
+  - dounuts
+- id: 60
+  name: cake
+  aliases:
+  - cake
+  - cakes
+  - cheesecake
+  - cupcake
+  - cupcakes
+  - shortcake
+- id: 61
+  name: chair
+  aliases:
+  - achair
+  - armchair
+  - armchairs
+  - barstool
+  - barstools
+  - cahir
+  - chair
+  - chaird
+  - chaires
+  - chairs
+  - chait
+  - chaits
+  - char
+  - chars
+  - chary
+  - chiar
+  - chirs
+  - highchair
+  - highchairs
+  - lawnchair
+  - lawnchairs
+  - loungchairs
+  - recliner
+  - stool
+  - stools
+- id: 62
+  name: couch
+  aliases:
+  - chaise lounge
+  - conch
+  - corch
+  - couch
+  - couche
+  - couches
+  - couh
+  - counch
+  - courch
+  - davenport
+  - futon
+  - love seat
+  - love seats
+  - love-seat
+  - loveseat
+  - ouch
+  - sectional
+  - settee
+  - sofa
+  - sofas
+  - sofe
+  - soffa
+  - souch
+- id: 63
+  name: potted plant
+  aliases:
+  - bonsai plant
+  - house plant
+  - house plants
+  - houseplant
+  - houseplants
+  - plant in a container
+  - plant in a pot
+  - plant inside a ceramic pot
+  - plants in pots
+  - plants rest in pots
+  - pot filled with plants
+  - pot of flowers
+  - pots of flowers
+  - pots of plants
+  - pots with plants
+  - potted Christmas tree
+  - potted basil plant
+  - potted flower
+  - potted flowers
+  - potted palm
+  - potted pant
+  - potted plant
+  - potted plants
+  - potted plats
+  - potted roses
+  - potted tree
+  - potted trees
+  - potty plant
+- id: 64
+  name: bed
+  aliases:
+  - abed
+  - bd
+  - bed
+  - beds
+  - bef
+  - besd
+  - bunkbed
+  - bunkbeds
+  - cot
+  - cots
+  - cradle
+  - crib
+  - cribs
+  - daybed
+  - matress
+  - mattress
+  - mattresses
+  - waterbed
+- id: 66
+  name: dining table
+  aliases:
+  - banquet table
+  - breakfast table
+  - dinette table
+  - dinging table
+  - dining room table
+  - dining room tables
+  - dining table
+  - dining tables
+  - dining talbe
+  - dining tale
+  - dinner table
+  - dinner tables
+  - dinning room table
+  - dinning table
+  - dinning tables
+  - dinning-room  table
+  - kitchen table
+  - lunch table
+  - picnic table
+  - restaurant table
+- id: 69
+  name: toilet
+  aliases:
+  - commode
+  - comode
+  - latrine
+  - poitty
+  - potties
+  - potty
+  - tiolet
+  - toiled
+  - toiler
+  - toilet
+  - toilets
+  - toilette
+  - toleit
+  - tolet
+  - toliet
+  - tolit
+  - tolite
+- id: 71
+  name: tv
+  aliases:
+  - monitor
+  - monitors
+  - t,v
+  - t.v
+  - telelvision
+  - televising
+  - television
+  - televisions
+  - televisison
+  - televison
+  - televsion
+  - telivision
+  - tv
+  - tvs
+- id: 72
+  name: laptop
+  aliases:
+  - lab top
+  - labtop
+  - labtops
+  - laop
+  - lap top
+  - lap tops
+  - lap-tops
+  - lapop
+  - lapt op
+  - lapt otp
+  - lapt top
+  - laptaops
+  - lapto
+  - lapton
+  - laptoo
+  - laptop
+  - laptops
+  - laptp
+  - lapyop
+  - latop
+  - loptop
+  - mac book
+  - macbook
+  - macbooks
+  - net book
+  - netbook
+  - notebook computer
+  - notebook computers
+  - notebook pc
+  - portable computer
+  - taptops
+  - think pad
+  - thinkpad
+- id: 73
+  name: mouse
+  aliases:
+  - mice
+  - mouse
+  - mouses
+- id: 74
+  name: remote
+  aliases:
+  - channel changer
+  - channel selector
+  - emote
+  - nintendo wii game controller
+  - remot
+  - remote
+  - remoter
+  - remotes
+  - remotw
+  - remove control
+  - remove controls
+  - wii control
+  - wii controller
+  - wii controllers
+  - wii controls
+  - wii mote
+  - wii motes
+  - wii-mote
+  - wiimote
+  - wiimotes
+- id: 75
+  name: keyboard
+  aliases:
+  - jeyboard
+  - keboard
+  - kewboard
+  - key board
+  - key boards
+  - keybard
+  - keyboard
+  - keyboards
+  - keybooard
+  - keyborard
+  - keys boards
+- id: 76
+  name: cell phone
+  aliases:
+  - blackberry
+  - cell hone
+  - cell ohone
+  - cell phone
+  - cell phones
+  - cell pone
+  - cellophone
+  - cellphone
+  - cellphones
+  - cellpoen
+  - cellular telephone
+  - dellphone
+  - iphone
+  - iphones
+  - mobile phone
+  - mobile phones
+  - phone
+  - phones
+  - phune
+  - smart ohone
+  - smart phon
+  - smartphone
+  - smartphones
+- id: 77
+  name: microwave
+  aliases:
+  - michrowave
+  - micro wave
+  - microve
+  - microwave
+  - microwaves
+  - microwve
+  - mircowave
+- id: 78
+  name: oven
+  aliases:
+  - oven
+  - ovens
+  - overn
+  - stove
+  - stoves
+- id: 79
+  name: toaster
+  aliases:
+  - toaster
+  - toasters
+- id: 80
+  name: sink
+  aliases:
+  - basin
+  - basins
+  - dink
+  - sikn
+  - sink
+  - sinka
+  - sinks
+  - stink
+  - wash bowl
+  - washbasin
+  - washbasins
+- id: 81
+  name: refrigerator
+  aliases:
+  - dridge
+  - fride
+  - fridge
+  - fridgerator
+  - fridges
+  - frig
+  - frisge
+  - ice box
+  - icebox
+  - referigator
+  - refg
+  - refidgerator
+  - refidguator
+  - refigeratator
+  - refigerator
+  - refirgerator
+  - refreigerator
+  - refridgerater
+  - refridgeratio
+  - refridgerator
+  - refrigator
+  - refrigeration unit
+  - refrigeration units
+  - refrigerator
+  - refrigerators
+  - regrigerator
+  - rfrigerator
+- id: 83
+  name: book
+  aliases:
+  - abook
+  - almanac
+  - bible
+  - book
+  - booklet
+  - booklets
+  - books
+  - boos
+  - catalog
+  - cookbook
+  - cookbooks
+  - dictionary
+  - manuals
+  - nooks
+  - notebook
+  - novel
+  - novels
+  - paperback
+  - songbook
+  - telephone directories
+  - textbook
+  - textbooks
+  - user's guide
+  - workbook
+- id: 84
+  name: clock
+  aliases:
+  - clcktower
+  - clo0ck
+  - clock
+  - clocked
+  - clockface
+  - clocking
+  - clocks
+  - clocktower
+  - clocktowner
+  - clok
+  - clots
+  - clowcl
+  - time piece
+  - time pieces
+- id: 85
+  name: vase
+  aliases:
+  - urn
+  - urns
+  - vace
+  - vase
+  - vases
+  - vasses
+- id: 86
+  name: scissors
+  aliases:
+  - sciccors
+  - scicors
+  - sciorrs
+  - scisoors
+  - scisors
+  - scissor
+  - scissorces
+  - scissors
+  - scissorss
+  - scissos
+  - scizzos
+  - shears
+  - siccors
+  - sicorss
+  - sisscors
+  - sissors
+  - sizzor
+  - sizzors
+- id: 87
+  name: teddy bear
+  aliases:
+  - bear toy
+  - bear toys
+  - care bear
+  - carebear
+  - carebears
+  - eddy bears
+  - paddington bear
+  - plush bear
+  - plush bears
+  - pooh bear
+  - stuff bear
+  - stuff bears
+  - stuffed bear
+  - stuffed bears
+  - stuffed panda
+  - stuffed pandas
+  - teddies
+  - teddy
+  - teddy bear
+  - teddy bears
+  - teddybear
+  - teddybears
+  - toy bear
+  - toy bears
+  - winnie the pooh
+- id: 88
+  name: hair drier
+  aliases:
+  - blow drier
+  - blow dryer
+  - blowdryer
+  - hair drier
+  - hair driver
+  - hair dryer
+  - hair dyer
+  - hairdryer
+- id: 89
+  name: toothbrush
+  aliases:
+  - teethrbushes
+  - tooh brushes
+  - tootbrush
+  - tootgbrush
+  - tooth  brush
+  - tooth brush
+  - tooth brushes
+  - toothbrush
+  - toothbrushes
+  - toothbush
+  - toothrbush
+- id: 91
+  name: banner
+  aliases:
+  - banner
+  - banners
+- id: 92
+  name: blanket
+  aliases:
+  - bed spread
+  - bed spreads
+  - bedspread
+  - blancket
+  - blanet
+  - blanket
+  - blankets
+  - comforter
+  - comforters
+  - coverlet
+  - duvet
+  - duvets
+  - quilt
+- id: 93
+  name: branch
+  aliases:
+  - brances
+  - branch
+  - branches
+  - brench
+  - ranches
+  - tree limb
+  - tree limbs
+  - twig
+  - twigs
+- id: 94
+  name: bridge
+  aliases:
+  - abridge
+  - birdge
+  - bridege
+  - bridge
+  - bridges
+  - brige
+  - drawbridge
+  - footbridge
+  - over pass
+  - overpass
+  - overpasses
+  - sky walk
+  - tressle
+  - trestle
+  - trussle
+  - viaduct
+- id: 95
+  name: building-other
+  aliases:
+  - abuilding
+  - airport terminal
+  - apartment block
+  - apartment complex
+  - barn
+  - barns
+  - barracks
+  - buiding
+  - buidling
+  - buiildings
+  - buildig
+  - building
+  - buildings
+  - buildling
+  - builing
+  - bulding
+  - buldings
+  - buliding
+  - bulidings
+  - castle
+  - cathedral
+  - chapel
+  - chaple
+  - church
+  - churches
+  - court house
+  - courthouse
+  - edifice
+  - factory
+  - fire station
+  - fort
+  - garage
+  - hangar
+  - light house
+  - lighthouse
+  - lite house
+  - monastery
+  - mosque
+  - office complex
+  - outbuilding
+  - pagoda
+  - palace
+  - shed
+  - sheds
+  - stable
+  - stables
+  - steeple
+  - steeples
+  - tower
+  - towers
+  - warehouse
+  - wharehouse
+- id: 96
+  name: bush
+  aliases:
+  - brambles
+  - brushy
+  - bush
+  - bushes
+  - bushy
+  - hedge
+  - hedgerow
+  - hedgerows
+  - hedges
+  - shrub
+  - shrubbed
+  - shrubberies
+  - shrubbery
+  - shrubs
+  - thicket
+  - underbrush
+  - undergrowth
+- id: 97
+  name: cabinet
+  aliases:
+  - cabinents
+  - cabinet
+  - cabinetry
+  - cabinets
+  - cabinettes
+  - cabits
+  - cabniets
+  - capinets
+- id: 98
+  name: cage
+  aliases:
+  - birdcage
+  - birdcages
+  - cage
+  - caged
+  - cages
+  - encaged
+- id: 99
+  name: cardboard
+  aliases:
+  - carboard
+  - card board
+  - card broad
+  - card-board
+  - cardboard
+- id: 100
+  name: carpet
+  aliases:
+  - carpet
+  - carpeted
+  - carpeting
+  - carpets
+- id: 101
+  name: ceiling-other
+  aliases:
+  - ceiling
+  - ceilings
+  - cieling
+- id: 102
+  name: ceiling-tile
+  aliases:
+  - drop ceiling
+  - tiled ceiling
+- id: 103
+  name: cloth
+  aliases:
+  - cloth
+  - cloths
+  - piece of fabric
+  - tablecloth
+  - tablecloths
+- id: 104
+  name: clothes
+  aliases:
+  - clolthing
+  - closthes
+  - clothes
+  - clothing
+  - garment
+  - garments
+- id: 105
+  name: clouds
+  aliases:
+  - cloud
+  - clouded
+  - cloudily
+  - clouds
+  - cloudy
+  - overcast
+  - stormclouds
+- id: 106
+  name: counter
+  aliases:
+  - counter
+  - counterop
+  - counters
+  - countertop
+  - countertops
+  - kitchen island
+- id: 107
+  name: cupboard
+  aliases:
+  - armoir
+  - armoire
+  - capboard
+  - china cabinet
+  - cup board
+  - cupboard
+  - cupboards
+  - wardrobe
+- id: 108
+  name: curtain
+  aliases:
+  - curtain
+  - curtained
+  - curtains
+  - drape
+  - draperies
+  - drapery
+  - drapes
+- id: 109
+  name: desk-stuff
+  aliases:
+  - computer table
+  - desk
+  - desks
+  - desl
+  - dexk
+  - study table
+- id: 110
+  name: dirt
+  aliases:
+  - bare earth
+  - clay area
+  - dirt
+  - dirty field
+  - red clay
+  - soil
+- id: 111
+  name: door-stuff
+  aliases:
+  - doog
+  - door
+  - doors
+  - doorway
+  - doorways
+  - doot
+  - trapdoor
+- id: 112
+  name: fence
+  aliases:
+  - barbed wire
+  - fenc
+  - fence
+  - fenced
+  - fences
+  - fench
+  - fenchh
+  - fencing
+  - fening
+- id: 113
+  name: floor-marble
+  aliases:
+  - floor made out of marble
+  - marble floor
+  - marble floored
+  - marble flooring
+  - marble floors
+  - marble ground
+  - marbled floor
+- id: 114
+  name: floor-other
+  aliases:
+  - floor
+  - flooring
+  - floors
+- id: 115
+  name: floor-stone
+  aliases:
+  - brick courtyard
+  - brick floor
+  - brick ground
+  - brick path
+  - brick pathway
+  - brick patio
+  - brick walkway
+  - paving stones
+  - slate floor
+  - stone floor
+  - stone flooring
+  - stone floors
+  - stone path
+  - stone pathway
+  - stone patio
+  - stone paved
+  - stone walk
+  - stone walkway
+- id: 116
+  name: floor-tile
+  aliases:
+  - floor tile
+  - floor tiles
+  - tile covered floor
+  - tile floor
+  - tile flooring
+  - tile floors
+  - tile foloor
+  - tile walkway
+  - tiled bathroom floor
+  - tiled floor
+  - tiled flooring
+  - tiled floors
+  - tiled walkway
+  - tiles on the floor
+  - tule floor
+- id: 117
+  name: floor-wood
+  aliases:
+  - hard wood flour
+  - hardwood floor
+  - hardwood flooring
+  - hardwood floors
+  - hardwood flors
+  - hardwood foors
+  - parquet floor
+  - parquet floors
+  - woo flooring
+  - wood floor
+  - wood floored
+  - wood flooring
+  - wood floorings
+  - wood floors
+  - wood parkay floor
+  - wood-floored
+  - wooden brown floors
+  - wooden floor
+  - wooden floored
+  - wooden flooring
+  - wooden floors
+  - wooden plank floor
+- id: 118
+  name: flower
+  aliases:
+  - amaryllis
+  - bloom
+  - blooms
+  - blossom
+  - blossoms
+  - bouquet
+  - carnation
+  - carnations
+  - daffodil
+  - daffodils
+  - dahlias
+  - daises
+  - daisies
+  - daisy
+  - dandelions
+  - flosers
+  - floweers
+  - flower
+  - flowering
+  - flowers
+  - gerania
+  - geraniums
+  - gladiolas
+  - hyacinths
+  - hydrangeas
+  - inf lowers
+  - irises
+  - lfowers
+  - lilacs
+  - lilies
+  - lillies
+  - lily
+  - orchid
+  - orchids
+  - pansies
+  - pansy
+  - peonies
+  - peony
+  - petunias
+  - rose
+  - roses
+  - sunflower
+  - sunflowers
+  - thistle
+  - tulip
+  - tulips
+  - wildflower
+  - wildflowers
+- id: 119
+  name: fog
+  aliases:
+  - fog
+  - foggy
+  - fogy
+  - haze
+  - hazy
+  - mist
+  - misty
+- id: 120
+  name: food-other
+  aliases:
+  - appetizer
+  - appetizers
+  - bacon
+  - bagel
+  - bagels
+  - baked goods
+  - bread
+  - breads
+  - breakfast
+  - broth
+  - brownie
+  - brownies
+  - burrito
+  - cal zones
+  - calzone's
+  - candies
+  - candy
+  - casserole
+  - cereal
+  - cheese
+  - cheeses
+  - chips
+  - chocolate
+  - churros
+  - cookie
+  - cookies
+  - couscous
+  - cracker
+  - crackers
+  - croissant
+  - croissants
+  - delicacies
+  - dessert
+  - desserts
+  - dinner
+  - dumpling
+  - dumplings
+  - eatables
+  - eclairs
+  - edible items
+  - edibles
+  - egg
+  - eggs
+  - entree
+  - entrees
+  - food
+  - foods
+  - foodstuffs
+  - fries
+  - gravy
+  - grits
+  - hashbrowns
+  - ice cream
+  - icecream
+  - jam
+  - jelly
+  - lasagna
+  - lunch
+  - macaroni
+  - marmalade
+  - marzipan
+  - meal
+  - meals
+  - meat
+  - meatballs
+  - meats
+  - muffin
+  - muffins
+  - noodle
+  - noodles
+  - nourishment
+  - oatmeal
+  - omelet
+  - omelette
+  - pancake
+  - pancakes
+  - pasta
+  - pastas
+  - pasteries
+  - pastries
+  - pastry
+  - peanuts
+  - polents
+  - popsicle
+  - pretzels
+  - quesadilla
+  - quesadillas
+  - quiche
+  - ramen
+  - rice
+  - salsa
+  - sauce
+  - sauces
+  - sausage
+  - sausages
+  - scallops
+  - scone
+  - scones
+  - seafood
+  - shrimp
+  - snack
+  - snacks
+  - soup
+  - soups
+  - stew
+  - stuffing
+  - sushi
+  - sustenance
+  - sweets
+  - taco
+  - tacos
+  - toast
+  - tofu
+  - tortilla
+  - tortillas
+  - waffle
+  - waffles
+  - yogurt
+- id: 121
+  name: fruit
+  aliases:
+  - apricot
+  - avocado
+  - berries
+  - black berry
+  - blackberries
+  - boysenberry
+  - bruit
+  - cherries
+  - coconut
+  - frui
+  - fruist
+  - fruit
+  - fruits
+  - frutis
+  - grapefruit
+  - grapes
+  - kiwi
+  - kiwis
+  - kumquats
+  - lemon
+  - lemons
+  - lime
+  - limes
+  - mango
+  - nectarines
+  - papia
+  - peaches
+  - pears
+  - pineapple
+  - pineapples
+  - plums
+  - strawberries
+  - strawberry
+  - watermelon
+  - watermelons
+- id: 122
+  name: furniture-other
+  aliases:
+  - automan
+  - bean bag
+  - beanbag
+  - booth
+  - chest of drawers
+  - dresser
+  - dressers
+  - entertain center
+  - entertainment center
+  - entertainment centers
+  - entertainment stand
+  - entertainment unit
+  - foot stool
+  - footstool
+  - fruiture
+  - furinture
+  - furnishing
+  - furnishings
+  - furnitre
+  - furniture
+  - furnitures
+  - hutch
+  - ironing board
+  - nigh stands
+  - night stand
+  - night stands
+  - nightstand
+  - nightstands
+  - ottoman
+  - ottomans
+  - plant stand
+  - side board
+  - sideboard
+  - t.v. stand
+  - television stand
+  - toy chest
+  - tv stand
+  - vanity
+- id: 123
+  name: grass
+  aliases:
+  - frass
+  - gassy
+  - glass field
+  - graass
+  - gras
+  - grass
+  - grasses
+  - grassin
+  - grassl
+  - grassland
+  - grasslands
+  - grassy
+  - grazzy
+  - lawn
+  - meadow
+  - meadows
+  - pastour
+  - pasturage
+  - pasture
+  - pastures
+  - prairie
+  - turf
+- id: 124
+  name: gravel
+  aliases:
+  - gravel
+  - graveled driveway
+  - graveled road
+  - gravelly
+  - gravely
+  - pebbled beach
+  - pebbly beach
+- id: 125
+  name: ground-other
+  aliases:
+  - earth
+  - ground
+  - grounds
+  - terrain
+- id: 126
+  name: hill
+  aliases:
+  - foothill
+  - foothills
+  - hill
+  - hills
+  - hillside
+  - hilltop
+  - hilly
+  - knoll
+- id: 127
+  name: house
+  aliases:
+  - cabin
+  - cabins
+  - cottage
+  - cottages
+  - dwelling
+  - farmhouse
+  - home
+  - homes
+  - house
+  - houses
+  - housing unit
+  - hut
+  - mansion
+  - residence
+  - shack
+  - townhouse
+  - townhouses
+  - villa
+- id: 128
+  name: leaves
+  aliases:
+  - foliage
+  - leaf
+  - leafed
+  - leafs
+  - leafy
+  - leaves
+- id: 129
+  name: light
+  aliases:
+  - LED lights
+  - bathroom light
+  - bedside lights
+  - building light
+  - candle
+  - candles
+  - car lights
+  - ceiling light
+  - ceiling lights
+  - chandalier
+  - chandelier
+  - chandeliers
+  - chandler
+  - chandlier
+  - christmas lights
+  - city lights
+  - colored lights
+  - corner light
+  - fairy lights
+  - flash light
+  - flashlight
+  - floodlights
+  - fluorescent light
+  - hanging light
+  - hanging lights
+  - headlights
+  - holiday lights
+  - hood light
+  - lamp
+  - lampo
+  - lamppost
+  - lamps
+  - lantern
+  - lanterns
+  - light bulb
+  - light bulbs
+  - light fixture
+  - light fixtures
+  - light pole
+  - light poles
+  - light post
+  - light tower
+  - lighting fixture
+  - lighting fixtures
+  - lights of vehicles
+  - neon lights
+  - night light
+  - nightlight
+  - overhead light
+  - overhead lighting
+  - overhead lights
+  - parking lights
+  - peacock light
+  - pendant light
+  - pendant lights
+  - porch light
+  - portable light
+  - post light
+  - pot lighting
+  - recessed lighting
+  - room lights
+  - round light
+  - runway lights
+  - search lights
+  - spot lights
+  - spotlight
+  - spotlights
+  - stage lights
+  - street light
+  - street lighting
+  - street lights
+  - streetlamps
+  - streetlight
+  - streetlights
+  - taillights
+  - track lighting
+  - vanity lights
+  - wall light
+- id: 130
+  name: mat
+  aliases:
+  - bathmat
+  - doormat
+  - floormat
+  - mat
+  - mats
+- id: 131
+  name: metal
+  aliases:
+  - aluminium
+  - aluminum
+  - brass
+  - bronze
+  - chrome
+  - copper
+  - foil
+  - iron
+  - metal
+  - metalic
+  - metallic
+  - metals
+  - stainless steal
+  - steel
+  - tin
+  - tinfoil
+- id: 132
+  name: mirror-stuff
+  aliases:
+  - amirror
+  - miroor
+  - miror
+  - mirri
+  - mirrior
+  - mirrir
+  - mirroe
+  - mirror
+  - mirrored
+  - mirrorl
+  - mirrors
+  - mirros
+  - mirrow
+  - mirrpr
+  - morror
+- id: 133
+  name: moss
+  aliases:
+  - moss
+  - mossy
+- id: 134
+  name: mountain
+  aliases:
+  - mountain
+  - mountaineous
+  - mountainn
+  - mountainous
+  - mountains
+  - mountainside
+  - mountaintop
+  - mountanous
+  - mountian
+  - moutains
+- id: 135
+  name: mud
+  aliases:
+  - mucky
+  - mud
+  - muddy
+- id: 136
+  name: napkin
+  aliases:
+  - napkin
+  - napkins
+- id: 137
+  name: net
+  aliases:
+  - mesh
+  - net
+  - nets
+  - netted
+  - netting
+- id: 138
+  name: paper
+  aliases:
+  - brochures
+  - magazine
+  - magazines
+  - news print
+  - newspaper
+  - newspapers
+  - note pads
+  - notepad
+  - paper
+  - papered
+  - papers
+  - paperwork
+  - passport
+  - tickets
+- id: 139
+  name: pavement
+  aliases:
+  - asphalt walk
+  - cement path
+  - concrete walkway
+  - paved path
+  - paved pedestrian area
+  - paved walkway
+  - pavement
+  - pavements
+  - pedestrian pathway
+  - pedestrian thoroughfare
+  - pedestrian walk-way
+  - side walk
+  - side walks
+  - sidewalk
+  - sidewalks
+  - sidwalk
+- id: 140
+  name: pillow
+  aliases:
+  - cushion
+  - cushions
+  - pillow
+  - pillows
+  - pilow
+- id: 141
+  name: plant-other
+  aliases:
+  - bamboo
+  - cacti
+  - cactus
+  - cattails
+  - crops
+  - fern
+  - ferns
+  - field of wheat
+  - greenery
+  - ivy
+  - lily pad
+  - lily pads
+  - plant
+  - plantlife
+  - plants
+  - reeds
+  - stalks of wheat
+  - succulents
+  - vegetation
+  - vine
+  - vines
+  - weed
+  - weeds
+  - wheat field
+- id: 142
+  name: plastic
+  aliases:
+  - plastic
+  - plastics
+  - polythenes
+- id: 143
+  name: platform
+  aliases:
+  - deck
+  - dock
+  - docks
+  - jetty
+  - pedestal
+  - pier
+  - piers
+  - plaform
+  - plat form
+  - platform
+  - platforms
+  - platfrom
+  - podium
+  - stage
+  - wharf
+- id: 144
+  name: playingfield
+  aliases:
+  - athletic field
+  - ball field
+  - base ball diamond
+  - basebal lfield
+  - baseball diamond
+  - baseball field
+  - baseball ground
+  - baseball park
+  - court
+  - courts
+  - field of play
+  - football field
+  - game field
+  - hardcourt
+  - infield
+  - outfield
+  - play field
+  - playing field
+  - soccer field
+  - soccer pitch
+  - sport field
+  - sports field
+  - tennis courst
+  - tennis field
+- id: 145
+  name: railing
+  aliases:
+  - balcony rail
+  - banister
+  - banisters
+  - bannister
+  - fence rail
+  - guard rail
+  - guard rails
+  - guardrail
+  - hand rail
+  - hand rails
+  - handrail
+  - handrails
+  - porch rail
+  - rail guard
+  - railing
+  - railings
+  - stair rail
+  - stair rails
+- id: 146
+  name: railroad
+  aliases:
+  - rail line
+  - rail lines
+  - rail raod tracks
+  - rail road
+  - rail roads
+  - rail track
+  - rail way
+  - rail ways
+  - railoroad tracks
+  - railroad
+  - railroads
+  - railway
+  - railways
+  - train rail
+  - train tack
+  - train tacks
+  - train track
+  - train tracks
+  - traintrack
+  - traintracks
+- id: 147
+  name: river
+  aliases:
+  - brook
+  - creek
+  - rapids
+  - rappids
+  - river
+  - rivers
+  - rivet
+  - stream
+- id: 148
+  name: road
+  aliases:
+  - alley
+  - alleyway
+  - avenue
+  - boulevard
+  - driveway
+  - express way
+  - expressway
+  - free way
+  - freeway
+  - freeways
+  - highway
+  - interstate
+  - lane
+  - lanes
+  - motorway
+  - onramp
+  - orad
+  - raod
+  - road
+  - roads
+  - roadway
+  - roadways
+  - rroad
+  - sreet
+  - steet
+  - stree
+  - streed
+  - streeet
+  - streer
+  - street
+  - streets
+  - stret
+  - thoroughfare
+  - thruway
+- id: 149
+  name: rock
+  aliases:
+  - bolders
+  - boulder
+  - boulders
+  - pebble
+  - pebbles
+  - rock
+  - rocks
+  - rocky
+- id: 150
+  name: roof
+  aliases:
+  - roof
+  - roofa
+  - roofing
+  - roofs
+  - rooftop
+  - rooftops
+- id: 151
+  name: rug
+  aliases:
+  - rug
+  - rugs
+- id: 152
+  name: salad
+  aliases:
+  - coleslaw
+  - salad
+  - salade
+  - salads
+  - salas
+  - salid
+  - slaw
+- id: 153
+  name: sand
+  aliases:
+  - sand
+  - sandcastles
+  - sandpit
+  - sands
+  - sandy
+  - sane
+- id: 154
+  name: sea
+  aliases:
+  - ocean
+  - oceans
+  - sea
+  - seas
+  - seashore
+  - seaside
+  - seawater
+- id: 155
+  name: shelf
+  aliases:
+  - book case
+  - book cases
+  - book rack
+  - book self
+  - bookcase
+  - bookcases
+  - bookshelf
+  - bookshelve
+  - bookshelves
+  - shelf
+  - shelfing
+  - shelfs
+  - shelve
+  - shelves
+  - shelving
+  - shleves
+- id: 156
+  name: sky-other
+  aliases:
+  - sk
+  - skies
+  - sku
+  - sky
+  - skyh
+  - skys
+- id: 157
+  name: skyscraper
+  aliases:
+  - high rise
+  - high rises
+  - high-rise
+  - highrise
+  - highrises
+  - sky scraper
+  - sky scrapers
+  - sky scrapper
+  - sky scrappers
+  - sky skrapers
+  - skyrise
+  - skyscraper
+  - skyscrapers
+  - skyscrapper
+- id: 158
+  name: snow
+  aliases:
+  - anow
+  - blizzard
+  - snow
+  - snowbank
+  - snowbanks
+  - snowed in
+  - snowfall
+  - snowing
+  - snowly
+  - snows
+  - snowstorm
+  - snowwy
+  - snowy
+  - sonow
+- id: 159
+  name: solid-other
+  aliases:
+  - cement
+  - concrete
+  - glacier
+  - ice
+  - rubble
+- id: 160
+  name: stairs
+  aliases:
+  - stair
+  - staircase
+  - stairs
+  - stairway
+  - stairways
+  - stairwell
+  - steps
+- id: 161
+  name: stone
+  aliases:
+  - cobblestone
+  - cobblestones
+  - gravestone
+  - headstone
+  - headstones
+  - stone
+  - stones
+  - tombstone
+  - tombstones
+- id: 162
+  name: straw
+  aliases:
+  - hay
+  - hays
+  - haystacks
+  - straw
+  - thatched
+- id: 163
+  name: structural-other
+  aliases:
+  - arch
+  - arches
+  - archway
+  - archways
+  - beam
+  - beams
+  - column
+  - columns
+  - framework
+  - pillar
+  - pillars
+  - scaffold
+- id: 164
+  name: table
+  aliases:
+  - atable
+  - sidetable
+  - tab.e
+  - tabe
+  - tabel
+  - tabke
+  - tabl
+  - table
+  - tablebb
+  - tables
+  - tabletop
+  - tablr
+  - tablwe
+  - talbe
+  - tasble
+  - worktable
+  - worktables
+- id: 165
+  name: tent
+  aliases:
+  - tent
+  - tented
+  - tents
+- id: 166
+  name: textile-other
+  aliases:
+  - bed cover
+  - bed sheet
+  - bed sheets
+  - bedding
+  - bedsheet
+  - burlap
+  - canvas
+  - doilies
+  - doily
+  - fabric
+  - fabrics
+  - flag
+  - flags
+  - handkerchief
+  - hot pads
+  - kerchief
+  - knit cover
+  - knit item
+  - knitted item
+  - knitted laptop cover
+  - lace
+  - linen
+  - linens
+  - oven glove
+  - oven mitt
+  - oven mitten
+  - pillow cases
+  - pillowcases
+  - place mats
+  - placemat
+  - potholders
+  - rag
+  - rags
+  - ribbon
+  - ribbons
+  - seat covers
+  - silk
+  - sleeping bag
+  - sleeping bags
+  - table runner
+  - tapestries
+  - tapestry
+  - tarp
+  - tarps
+  - textiles
+  - thread
+  - tulle
+  - yarn
+- id: 167
+  name: towel
+  aliases:
+  - towel
+  - toweling
+  - towell
+  - towels
+  - towl
+  - towls
+  - washcloth
+- id: 168
+  name: tree
+  aliases:
+  - atree
+  - forest
+  - sapling
+  - tree
+  - treed area
+  - treees
+  - treeline
+  - treelined
+  - trees
+  - treetop
+  - treetops
+  - tress
+  - wooded area
+  - woods
+- id: 169
+  name: vegetable
+  aliases:
+  - artichokes
+  - asparagus
+  - beans
+  - beet
+  - beets
+  - bok choy
+  - brussel sprout
+  - brussels sprout
+  - cabbage
+  - cabbages
+  - cauliflower
+  - celery
+  - corn
+  - cucumber
+  - cucumbers
+  - egg plant
+  - egg plants
+  - eggplant
+  - eggplants
+  - fennel
+  - garlic
+  - gourd
+  - gourds
+  - greens
+  - kale
+  - kales
+  - leek
+  - leeks
+  - lettuce
+  - mushroom
+  - mushrooms
+  - onion
+  - onions
+  - parsnip
+  - parsnips
+  - peas
+  - pepper
+  - peppers
+  - pickles
+  - potato
+  - potatoes
+  - pumpkin
+  - pumpkins
+  - radish
+  - radishes
+  - scallions
+  - spinach
+  - sprouts
+  - squash
+  - tomato
+  - tomatoes
+  - turnip
+  - turnips
+  - veg tables
+  - vegeatables
+  - vegetabes
+  - vegetable
+  - vegetables
+  - vegetale
+  - vegetales
+  - veggie
+  - veggies
+  - vegitables
+  - vegtable
+  - vegtables
+  - vehetable
+  - vetegables
+  - yams
+  - zucchini
+- id: 170
+  name: wall-brick
+  aliases:
+  - brick bathroom wall
+  - brick facade
+  - brick wall
+  - brick walls
+  - brick-walled
+  - bricked wall
+  - brickl wall
+  - brickwall
+- id: 171
+  name: wall-concrete
+  aliases:
+  - cement block wall
+  - cement store wall
+  - cement wall
+  - cement walled
+  - cement walls
+  - cinder block wall
+  - concrete stunt wall
+  - concrete wall
+  - concrete walled
+  - concrete walls
+  - wall of concrete
+- id: 172
+  name: wall-other
+  aliases:
+  - wall
+  - wallpaper
+  - walls
+- id: 173
+  name: wall-panel
+  aliases:
+  - paneled wall
+  - paneled walls
+  - panelled wall
+  - wall panel
+  - wood paneling
+- id: 174
+  name: wall-stone
+  aliases:
+  - cobblestone wall
+  - rock wall
+  - rock walls
+  - stone wall
+  - stone walled
+  - stone walls
+  - wall of rocks
+- id: 175
+  name: wall-tile
+  aliases:
+  - tile back splash
+  - tile backsplash
+  - tile covered wall
+  - tile on the walls
+  - tile on wall
+  - tile shower wall
+  - tile wales
+  - tile wall
+  - tile walled
+  - tile walls
+  - tiled back splash
+  - tiled backsplash
+  - tiled bathroom wall
+  - tiled wall
+  - tiled walls
+  - tiles wall
+  - tiles walls
+  - wall tile
+  - wall tiles
+  - wall with tiles
+- id: 176
+  name: wall-wood
+  aliases:
+  - wall made of wood planks
+  - wall of dark wood
+  - wood covered wall
+  - wood on the wall
+  - wood paneled wall
+  - wood paneled walls
+  - wood paneling on the walls
+  - wood plank walls
+  - wood wall
+  - wood walls
+  - wood-panelled wall
+  - wooden paneled walls
+  - wooden wall
+  - wooden walls
+- id: 177
+  name: water-other
+  aliases:
+  - canal
+  - lake
+  - lakes
+  - pond
+  - pool
+  - pools
+  - puddle
+  - puddles
+  - reservoir
+  - water
+  - waterfall
+  - waterfalls
+  - waterhole
+  - watering hole
+  - waters
+- id: 178
+  name: waterdrops
+  aliases:
+  - dew
+  - downpour
+  - drip
+  - drizzle
+  - droplets
+  - rain
+  - raindrop
+  - raindrops
+  - water droplets
+  - water drops
+  - water spray
+- id: 179
+  name: window-blind
+  aliases:
+  - blinds
+  - shutter
+  - shutters
+  - window blind
+  - window blinds
+  - window shade
+  - window shades
+- id: 180
+  name: window-other
+  aliases:
+  - port hole
+  - sky light
+  - skylight
+  - widow
+  - winddow
+  - windo
+  - windoe
+  - window
+  - windown
+  - windowpane
+  - windows
+  - windowsill
+  - windwo
+  - wondow
+- id: 181
+  name: wood
+  aliases:
+  - driftwood
+  - firewood
+  - log
+  - logs
+  - lumber
+  - planks
+  - timber
+  - tree stump
+  - wood
+  - wooden sticks

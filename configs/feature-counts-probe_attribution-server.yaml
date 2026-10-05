@@ -1,0 +1,15 @@
+diagnosis_config: representation-diagnosis-server.yaml
+output: ../runs/feature-counts-probe_attribution-2026-09-29
+baseline_run: ../runs/selection-comparison-2026-09-29/probe_attribution/diagnosis
+feature_counts:
+- 8
+- 16
+- 64
+objectives:
+- presence
+- removal
+device: cuda
+categories: null
+report_exclude_categories:
+- 102
+feature_run: ../runs/selection-comparison-2026-09-29/probe_attribution

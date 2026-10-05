@@ -1,0 +1,19 @@
+source_run: ../runs/cc3m-smoke-2026-10-04
+parent_run: ../runs/mapping-suite-cc3m-smoke-2026-10-04
+output: ../runs/mapping-ablation-cc3m-smoke-2026-10-04
+device: cuda
+retrieval_chunk: 128
+progress_interval_seconds: 10
+preprocessing:
+- raw
+- centered
+- standardized
+dimensions:
+- 4
+- full
+ridge: 0.01
+group_conditions:
+- unnormalized_mapping
+- raw_factors
+- weighted_average
+- unit_variance

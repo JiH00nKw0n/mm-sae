@@ -1,0 +1,34 @@
+source_run: ../runs/elice-rq1-lexicon2
+parent_run: ../runs/mapping-suite-2026-10-04
+output: ../runs/representative-agreement-2026-10-04
+populations: [tune, test]
+seed: 0
+min_positive: 50
+auc_chunk: 32
+n_null: 1000
+models:
+  - key: hungarian
+    label: 헝가리안 일대일 대응
+    kind: permutation
+    path: ../runs/mapping-suite-2026-10-04/candidates/hungarian_000.npz
+  - key: cca_256
+    label: CCA 256개 가중합
+    kind: projection
+    path: ../runs/mapping-pruning-2026-10-04/transforms/cca_full.npz
+  - key: sparse_cca_4
+    label: Sparse CCA 가중합마다 최대 4개 특징
+    kind: projection
+    path: ../runs/mapping-semantics-2026-10-04/sparse-fit/sparse_cca_k4.npz
+  - key: sparse_cca_8
+    label: Sparse CCA 가중합마다 최대 8개 특징
+    kind: projection
+    path: ../runs/mapping-semantics-2026-10-04/sparse-fit/sparse_cca_k8.npz
+  - key: sparse_cca_16
+    label: Sparse CCA 가중합마다 최대 16개 특징
+    kind: projection
+    path: ../runs/mapping-semantics-2026-10-04/sparse-fit/sparse_cca_k16.npz
+  - key: cca_437
+    label: CCA 437개 가중합
+    kind: projection
+    candidate_control: true
+    path: ../runs/mapping-ablation-2026-10-04/transforms/cca_437.npz

@@ -1,0 +1,38 @@
+output: ../runs/representation-diagnosis-2026-09-28-smoke-v2
+source_run: ../runs/elice-rq1-lexicon2
+feature_run: ../runs/feature-set-suite-server-2026-09-28
+original_embeddings:
+  train2017: ../cache/embeddings/82ba1d1005b209ac5b3de2b4bfada697eb2af08adc037e2ee80fdb87b2d3d788/train2017/image.npy
+  val2017: ../cache/embeddings/e908eb66bf4828139673abd191f0379e51d943a3fba8ebf61dd01c8a90e7144e/val2017/image.npy
+splits:
+  fit_and_tune: train2017
+  evaluation: val2017
+  tune_image_fraction: 0.2
+  seed: 0
+  grouping: image_id
+categories:
+- 0
+- 41
+- 110
+- 154
+representations:
+- embedding
+- reconstruction
+- all_sae
+- selected_five
+objectives:
+- removal
+- presence
+feature_count: 5
+penalties:
+- 0.0001
+- 0.001
+- 0.01
+- 0.1
+- 1.0
+- 10.0
+- 100.0
+device: cuda
+maxiter: 10000
+bootstrap_resamples: 50
+bootstrap_seed: 42

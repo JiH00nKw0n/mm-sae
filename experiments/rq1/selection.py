@@ -11,11 +11,13 @@ from mm_sae.training import load_saes
 from mm_sae.metrics.statistics import paired_auroc, select_representative
 from mm_sae.metrics.sparse_ops import take_rows
 from mm_sae.progress import iter_progress
+from mm_sae.reuse import Reuse
 
 
 def select(config, options, encoder):
     models = load_saes(config)
-    train_i, train_t = original_latents(config, options.correlation_split, models)
+    reuse = Reuse.maybe(config)
+    train_i, train_t = original_latents(config, options.correlation_split, models, reuse)
     alive = [train_i.getnnz(axis=0) > 0, train_t.getnnz(axis=0) > 0]
     selection = options.selection_split
     splits = list(
@@ -25,12 +27,12 @@ def select(config, options, encoder):
     rows = []
     for split in splits:
         index = Index(config.output, split)
-        originals = original_latents(config, split, models)
+        originals = original_latents(config, split, models, reuse)
         for concept in iter_progress(
             index.concept_ids, f"Representative selection/check {split}", unit="concepts"
         ):
             concept = int(concept)
-            ir, tr, im, tx = counterfactual(config, encoder, index, split, concept, models)
+            ir, tr, im, tx = counterfactual(config, encoder, index, split, concept, models, reuse)
             for side_no, (side, source_rows, edited) in enumerate([("image", ir, im), ("text", tr, tx)]):
                 orig = originals[side_no]
                 assert orig.shape is not None

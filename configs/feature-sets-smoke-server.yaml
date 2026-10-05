@@ -1,0 +1,146 @@
+output: ../runs/feature-set-smoke-server-2026-09-28
+cache: ../cache
+experiment:
+  name: feature_sets
+  options:
+    source_run: ../runs/elice-rq1-lexicon2
+    suites:
+    - original_rq2
+    - refined_rq2
+    - multi_feature_rq1
+    source_policy: require_complete_cache
+    splits:
+      fit_and_tune: train2017
+      evaluation: val2017
+      tune_image_fraction: 0.2
+      seed: 0
+      grouping: image_id
+    feature_counts:
+    - 1
+    - 2
+    selection:
+      task: original_vs_category_removed
+      metric: pooled_auroc
+      split: fit
+      candidates: fit_alive
+      tie_break: feature_id
+      minimum_auroc: null
+    linear_models:
+      standardization: fit_original_mean_std
+      classification: logistic_l2
+      regression: ridge
+      penalties:
+      - 0.01
+      - 1.0
+      classification_penalty_selection: tune_log_loss
+      regression_penalty_selection: tune_mse
+    removal_readout:
+      feature_pool: removal_auroc_top_n
+      coefficient_constraint: nonnegative
+      n1: original_feature
+      output_for_correlation: linear_score
+      fit_labels: original_one_removed_zero
+      controls:
+      - equal_weight_standardized_sum
+      - top1_plus_matched_random
+    controls:
+      random_seeds:
+      - 11
+      random_matching: fit_original_firing_rate
+      random_nearest_candidates: 20
+      best_single: all_fit_alive
+      cooccurring_category: highest_positive_fit_image_label_correlation
+    original_rq2:
+      concept_prediction: true
+      raw_activation_prediction: true
+      target_set_size: 2
+      pair_population: all_original_image_caption_pairs
+      decoder_contribution_error: true
+    refined_rq2:
+      shared_top1_pairs: all_fit_selected
+      direct_pair_labels: a_only_vs_b_only
+      pair_candidate_union: deduplicate_top_n_of_both_categories
+      intervention_prediction: true
+      pair_population: category_present_and_mentioned
+      target_pool: deduplicate_all_category_top8
+      input_pool: deduplicate_all_category_top8
+      observation_weighting: equal_category_equal_image_within_category
+      connections:
+      - one_to_one
+      - reusable_one
+      - reusable_multi
+      unmatched_prediction: fit_mean
+      evaluate_all_fixed_targets: true
+      multi_input_selection: forward_ridge_fit_error
+      shuffle: image_groups_within_category
+    multi_feature_rq1:
+      category_population: all_171
+      directions:
+      - image_to_text
+      - text_to_image
+      score: pearson_of_frozen_removal_readouts
+      score_population: all_original_image_caption_pairs
+      annotation_bins:
+      - -1.0
+      - -0.8
+      - -0.6
+      - -0.4
+      - -0.2
+      - 0.0
+      - 0.2
+      - 0.4
+      - 0.6
+      - 0.8
+      - 1.0
+      quality_strata: fixed_n1_tune_auroc_by_anchor_modality
+      descriptive_auroc_thresholds:
+      - 0.6
+      - 0.7
+      - 0.8
+      include_category_presence_auroc_of_same_readout: true
+      decorrelation: pairwise_positive_only_preserve_marginals
+      empty_stratum_policy: not_estimable
+      empirical_weight_diagnostics:
+      - stratum_image_counts
+      - effective_sample_size
+      - maximum_weight
+      main_comparison:
+      - 1
+      - 5
+      auxiliary_feature_counts:
+      - 2
+      - 4
+      - 8
+      legacy_n1_reproduction: true
+    uncertainty:
+      bootstrap_unit: image_id
+      resamples: 10
+      seed: 42
+      refit_models: false
+      metrics:
+      - classification_auroc
+      - prediction_error
+    runtime:
+      resume: true
+      workers: 2
+      blas_threads_per_worker: 1
+      missing_cache: stop
+    report:
+      format:
+      - png
+      - pdf
+      - svg
+      - csv
+      - json
+      - markdown
+      font: NanumGothic
+      main_figure_count: 8
+    smoke_categories:
+    - 23
+    - 41
+    - 110
+    - 124
+    - 153
+    - 154
+execution:
+  progress_interval_seconds: 10

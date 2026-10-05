@@ -5,6 +5,17 @@ from mm_sae.metrics.matching import match
 from experiments.rq1.correspondence import assess
 
 
+def test_correlation_does_not_mutate_unsorted_float32_sparse_inputs():
+    x = sparse.csr_matrix((np.array([1, 3, 4, 2, 5, 6], dtype=np.float32),
+                           np.array([1, 0, 1, 0, 1, 0]), np.array([0, 2, 4, 6])), shape=(3, 2))
+    y = x.copy()
+    before_x, before_y = x.toarray(), y.toarray()
+    result = correlation(x, y)
+    np.testing.assert_array_equal(x.toarray(), before_x)
+    np.testing.assert_array_equal(y.toarray(), before_y)
+    np.testing.assert_allclose(result["C"], np.corrcoef(before_x.T), atol=1e-12)
+
+
 def test_signed_pearson_and_constant_status():
     x = np.array([[0, 7], [1, 7], [2, 7], [3, 7]])
     y = np.array([[3, 0], [2, 1], [1, 2], [0, 3]])

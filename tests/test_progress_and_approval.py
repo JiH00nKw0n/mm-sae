@@ -65,3 +65,18 @@ def test_approval_is_required_and_bound_to_exact_config_and_review(tmp_path):
     with pytest.raises(PermissionError, match="does not match"):
         RunStore(config).require_approval()
     assert json.loads(receipt.read_text())["signature"] == store.signature
+
+
+def test_heartbeat_survives_a_partially_imported_torch_module(tmp_path, monkeypatch):
+    import sys
+    from types import SimpleNamespace
+
+    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace())
+    with ProgressReporter(tmp_path, ['probe'], [], interval=.01):
+        with stage_progress('probe'), progress_task('fit', 2) as task:
+            task.update(1)
+            time.sleep(.04)
+            status = read_status(tmp_path)
+            assert status['tasks'][0]['completed'] == 1
+            assert status['gpu_allocator'] is None
+    assert read_status(tmp_path)['state'] == 'completed'

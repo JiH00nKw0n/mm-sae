@@ -9,6 +9,7 @@ from mm_sae.io import atomic_json, write_csv
 from mm_sae.metrics.statistics import correlation, bin_summary
 from mm_sae.metrics.matching import match
 from mm_sae.metrics.sparse_ops import take_rows
+from mm_sae.reuse import Reuse
 
 
 def build_panel(config, options):
@@ -16,6 +17,9 @@ def build_panel(config, options):
     image, text = original_latents(config, options.correlation_split)
     panel = correlation(take_rows(image, index.parents), text)
     np.savez_compressed(config.output / "panel.npz", **panel)
+    reuse = Reuse.maybe(config)
+    if reuse is not None:
+        reuse.compare_panel(panel)
     return panel
 
 

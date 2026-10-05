@@ -1,0 +1,79 @@
+output: ../runs/sharegpt4v-sequence-2026-09-29
+jobs:
+- name: source-prepare
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - prepare
+- name: caption-coverage
+  argv:
+  - scripts/summarize_caption_coverage.py
+  - --source
+  - runs/sharegpt4v-2026-09-29
+  - --baseline
+  - runs/elice-rq1-lexicon2
+- name: source-embed
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - embed
+- name: source-train
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - train
+- name: source-select
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - select
+- name: source-correlate
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - correlate
+- name: source-experiment1
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - experiment1
+- name: source-experiment2
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-server.yaml
+  - experiment2
+- name: feature-sets
+  argv:
+  - -m
+  - mm_sae.cli
+  - --config
+  - configs/sharegpt4v-feature-sets-server.yaml
+  - all
+- name: summary
+  argv:
+  - scripts/summarize_feature_sets.py
+  - runs/sharegpt4v-feature-sets-2026-09-29
+- name: train-independence
+  argv:
+  - scripts/analyze_feature_set_split.py
+  - --config
+  - configs/sharegpt4v-feature-sets-server.yaml
+  - --split
+  - train2017
+  - --counts
+  - '1'
+  - '5'

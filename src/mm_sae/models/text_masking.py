@@ -28,9 +28,17 @@ def positions_for_spans(text, offsets, special, spans):
     return positions
 
 
-def plan_masks(text, offsets, special, spans_by_concept):
+def plan_masks(text, offsets, special, spans_by_concept, visible_only=False):
     positions, unavailable = {}, {}
+    end_of_input = max((end for (_, end), s in zip(offsets, special) if not s), default=0)
     for concept, spans in spans_by_concept.items():
+        if visible_only:
+            # A repeated mention beyond the prefix must not invalidate visible occurrences.
+            # A partially truncated occurrence is still rejected, rather than partly masked.
+            spans = [(a, b) for a, b in spans if a < end_of_input]
+            if not spans:
+                unavailable[concept] = "target_outside_model_input"
+                continue
         try:
             positions[concept] = positions_for_spans(text, offsets, special, spans)
         except ValueError as exc:

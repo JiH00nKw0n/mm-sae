@@ -7,6 +7,9 @@ __pycache__/
 /build/
 /dist/
 /data/
+/asset/sharegpt4v*.json
+# Intermediate lexicon review; only concepts.reviewed.yaml is an experiment input.
+/configs/concepts.review.yaml
 /runs/
 /cache/
 /approvals/

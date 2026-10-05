@@ -78,11 +78,13 @@ class ProgressReporter:
         with self._mutex:
             peak_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             gpu = None
-            torch = sys.modules.get("torch")
-            if torch is not None and torch.cuda.is_initialized():
+            # A heartbeat can observe torch while another thread is still importing it.
+            cuda = getattr(sys.modules.get("torch"), "cuda", None)
+            is_initialized = getattr(cuda, "is_initialized", None)
+            if cuda is not None and callable(is_initialized) and is_initialized():
                 gpu = {
-                    "allocated_bytes": torch.cuda.memory_allocated(),
-                    "reserved_bytes": torch.cuda.memory_reserved(),
+                    "allocated_bytes": cuda.memory_allocated(),
+                    "reserved_bytes": cuda.memory_reserved(),
                 }
             atomic_json(
                 self.root / "progress.json",

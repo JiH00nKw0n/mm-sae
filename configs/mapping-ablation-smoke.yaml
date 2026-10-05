@@ -1,0 +1,12 @@
+source_run: ../runs/elice-rq1-lexicon2
+parent_run: ../runs/mapping-suite-2026-10-04
+output: ../runs/mapping-ablation-smoke-2026-10-04
+device: cpu
+retrieval_chunk: 32
+progress_interval_seconds: 10
+families: [hungarian, sinkhorn, sparse_factorization]
+smoke_images: 32
+preprocessing: [raw, centered, standardized]
+dimensions: [8]
+ridge: 0.01
+group_conditions: [unnormalized_mapping, raw_factors, weighted_average, unit_variance]

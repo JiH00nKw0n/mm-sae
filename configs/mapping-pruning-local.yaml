@@ -1,0 +1,8 @@
+source_run: ../runs/elice-rq1-lexicon2
+parent_run: ../runs/mapping-suite-2026-10-04
+projection_run: ../runs/mapping-ablation-2026-10-04
+output: ../runs/mapping-pruning-2026-10-04
+device: cpu
+retrieval_chunk: 256
+dimensions: 256
+k_grid: [1, 2, 4, 8, 16, 32, 64]

@@ -1,0 +1,19 @@
+source_run: ../runs/elice-rq1-lexicon2
+parent_run: ../runs/mapping-suite-2026-10-04
+reference_run: ../runs/oracle-sets-2026-10-04
+semantics_run: ../runs/mapping-semantics-2026-10-04
+output: ../runs/concept-probe-comparison-2026-10-05
+budgets: [8, 16, 32]
+label_targets: [propagated_presence]
+ridge: 0.01
+logistic_penalty: 0.01
+logistic_maxiter: 1000
+logistic_device: cpu
+swap_max_passes: 50
+swap_tolerance: 1.0e-10
+min_gain: 1.0e-12
+sparse_cca_maxiter: 1000
+sparse_cca_tolerance: 1.0e-7
+device: cuda
+retrieval_chunk: 256
+progress_interval_seconds: 10

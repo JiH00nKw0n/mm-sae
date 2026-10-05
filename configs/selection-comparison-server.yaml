@@ -1,0 +1,11 @@
+output: ../runs/selection-comparison-2026-09-29
+base_config: feature-sets-server.yaml
+baseline_run: ../runs/feature-set-suite-server-2026-09-28
+diagnosis_config: representation-diagnosis-server.yaml
+diagnosis_run: ../runs/representation-diagnosis-2026-09-28
+embedding_directories:
+  train2017: ../cache/embeddings/82ba1d1005b209ac5b3de2b4bfada697eb2af08adc037e2ee80fdb87b2d3d788/train2017
+  val2017: ../cache/embeddings/e908eb66bf4828139673abd191f0379e51d943a3fba8ebf61dd01c8a90e7144e/val2017
+device: cuda
+categories: null
+bootstrap_resamples: 1000

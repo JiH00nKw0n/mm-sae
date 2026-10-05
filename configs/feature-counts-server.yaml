@@ -1,0 +1,9 @@
+diagnosis_config: representation-diagnosis-server.yaml
+output: ../runs/feature-counts-2026-09-29
+baseline_run: ../runs/representation-diagnosis-2026-09-28
+feature_counts: [8, 16, 64]
+objectives: [presence, removal]
+device: cuda
+categories: null
+# Fit every category; report the same 80 objects and 90 backgrounds as RQ1.
+report_exclude_categories: [102]

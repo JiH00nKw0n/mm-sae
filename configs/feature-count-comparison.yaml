@@ -1,0 +1,8 @@
+output: ../runs/feature-count-comparison-2026-09-29
+runs:
+  pooled_auroc: ../runs/feature-counts-2026-09-29
+  paired_mean_drop: ../runs/feature-counts-paired_mean_drop-2026-09-29
+  single_logistic: ../runs/feature-counts-single_logistic-2026-09-29
+  probe_attribution: ../runs/feature-counts-probe_attribution-2026-09-29
+feature_counts: [5, 8, 16, 64]
+exclude_categories: [102]

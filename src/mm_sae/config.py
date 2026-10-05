@@ -48,6 +48,8 @@ class DataConfig(StrictModel):
     images_pattern: str = "images/{split}/{image_id:012d}.jpg"
     masks_pattern: str = "annotations/{split}/{image_id:012d}.png"
     captions_pattern: str = "annotations/captions_{split}.json"
+    caption_overrides: dict[str, Path] = Field(default_factory=dict)
+    text_label_scope: Literal["full_caption", "maskable_input"] = "full_caption"
     image_limits: dict[str, int] = {}
     concepts_file: Path | None = None
     reviewed_captions: Path | None = None
@@ -117,6 +119,23 @@ class ExecutionConfig(StrictModel):
     review_document: Path | None = None
 
 
+class ReuseConfig(StrictModel):
+    """Import verified artifacts from a finished run of the same data and frozen models.
+
+    Every item is checked before it is copied and recorded in <output>/reuse.json; anything that
+    fails a check is recomputed. Completion marks are never imported.
+    """
+
+    source_run: Path
+    source_cache: Path | None = None
+    image_index: bool = True
+    embeddings: bool = True
+    sae_weights: bool = True
+    original_activations: bool = True
+    image_counterfactuals: bool = True
+    text_counterfactual_rows: bool = True
+
+
 class Config(StrictModel):
     output: Path = Path("runs/coco-rq1")
     cache: Path = Path("cache")
@@ -126,6 +145,7 @@ class Config(StrictModel):
     features: FeatureConfig = Field(default_factory=FeatureConfig)
     experiment: ExperimentConfig = Field(default_factory=ExperimentConfig)
     execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
+    reuse: ReuseConfig | None = None
 
     @model_validator(mode="after")
     def coherent(self):
@@ -135,8 +155,12 @@ class Config(StrictModel):
             raise ValueError("Approval requires both an approval_file and a review_document")
         if self.training.top_k > self.training.latent_size:
             raise ValueError("top_k cannot exceed latent_size")
-        if bool(self.training.image_checkpoint) != bool(self.training.text_checkpoint):
-            raise ValueError("Provide both pretrained SAE checkpoints, or neither")
+        if self.training.sampling == "paired_repeat_image" and (
+            bool(self.training.image_checkpoint) != bool(self.training.text_checkpoint)
+        ):
+            raise ValueError("Paired training requires both checkpoints or neither")
+        if set(self.data.caption_overrides) - set(self.data.splits):
+            raise ValueError("caption_overrides keys must be configured splits")
         if (self.data.source == "synthetic") != (self.encoder.backend == "synthetic"):
             raise ValueError("Synthetic data and encoder must be selected together; no mock encoder on COCO")
         if self.training.split not in self.data.splits:
@@ -145,6 +169,8 @@ class Config(StrictModel):
             raise ValueError("mask_rgb must contain byte values")
         if self.data.image_limits and set(self.data.image_limits) != set(self.data.splits):
             raise ValueError("A smoke run must explicitly limit every split")
+        if self.reuse is not None and self.reuse.source_run.resolve() == self.output.resolve():
+            raise ValueError("reuse.source_run must be a different, finished run directory")
         return self
 
     def digest(self) -> str:
@@ -161,11 +187,23 @@ def load_config(path: str | Path) -> Config:
         (config.data, ["root", "concepts_file", "reviewed_captions"]),
         (config.training, ["image_checkpoint", "text_checkpoint"]),
         (config.execution, ["approval_file", "review_document"]),
+        (config.reuse, ["source_run", "source_cache"]),
     ]:
+        if model is None:
+            continue
         for field in fields:
             value = getattr(model, field)
             if value is not None:
                 setattr(
                     model, field, value.resolve() if value.is_absolute() else (path.parent / value).resolve()
                 )
+    if "source_run" in config.experiment.options:
+        source = Path(config.experiment.options["source_run"])
+        config.experiment.options["source_run"] = str(
+            source.resolve() if source.is_absolute() else (path.parent / source).resolve()
+        )
+    config.data.caption_overrides = {
+        split: p.resolve() if p.is_absolute() else (path.parent / p).resolve()
+        for split, p in config.data.caption_overrides.items()
+    }
     return config

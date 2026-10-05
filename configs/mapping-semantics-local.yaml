@@ -1,0 +1,15 @@
+source_run: ../runs/elice-rq1-lexicon2
+parent_run: ../runs/mapping-suite-2026-10-04
+projection_run: ../runs/mapping-ablation-2026-10-04
+pruning_run: ../runs/mapping-pruning-2026-10-04
+output: ../runs/mapping-semantics-2026-10-04
+device: cpu
+retrieval_chunk: 256
+auc_chunk: 64
+progress_interval_seconds: 10
+baseline_k: [4, 8, 16]
+sinkhorn_epsilon: 0.05
+sign_k: [8, 16]
+sparse_k: [4, 8, 16]
+case_concepts: [dog, skis, snow, grass, road, sand]
+case_examples: 3

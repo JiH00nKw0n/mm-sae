@@ -19,7 +19,7 @@ class Encoder(Protocol):
 
     def images(self, images: list[Image.Image]) -> np.ndarray: ...
     def texts(self, texts: list[str], mask_positions: list[list[int]] | None = None) -> np.ndarray: ...
-    def plan_text_masks(self, text: str, spans: dict) -> tuple[dict, dict]: ...
+    def plan_text_masks(self, text: str, spans: dict, visible_only: bool = False) -> tuple[dict, dict]: ...
     def text_mask_info(self) -> dict: ...
     def visible_mask(self, mask: np.ndarray) -> np.ndarray: ...
 
@@ -94,7 +94,7 @@ class CLIPEncoder:
             out = project_at_positions(self.model, masked.to(self.device), attention, pooled_at)
         return normalize(out.float().cpu().numpy())
 
-    def plan_text_masks(self, text, spans):
+    def plan_text_masks(self, text, spans, visible_only=False):
         if not spans:
             return {}, {}
         settings = {"truncation": True, "max_length": self.config.text_max_length}
@@ -105,7 +105,7 @@ class CLIPEncoder:
         if original["input_ids"] != aligned["input_ids"]:
             return {}, {c: "fast_slow_tokenizer_mismatch" for c in spans}
         positions, unavailable = plan_masks(
-            text, aligned["offset_mapping"], aligned["special_tokens_mask"], spans
+            text, aligned["offset_mapping"], aligned["special_tokens_mask"], spans, visible_only
         )
         original_pool = int(
             clip_pool_positions(
@@ -183,9 +183,9 @@ class SyntheticEncoder:
         ]
         return normalize(np.asarray(rows, dtype=np.float32) @ self.projection)
 
-    def plan_text_masks(self, text, spans):
+    def plan_text_masks(self, text, spans, visible_only=False):
         offsets = [(m.start(), m.end()) for m in re.finditer(r"\w+|[^\w\s]", text)]
-        return plan_masks(text, offsets, [0] * len(offsets), spans)
+        return plan_masks(text, offsets, [0] * len(offsets), spans, visible_only)
 
     def text_mask_info(self):
         return {"method": "synthetic_test_only", "replacement": "suppress_target_signal"}

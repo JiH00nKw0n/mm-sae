@@ -14,6 +14,7 @@ from ..io import atomic_json, write_csv, sha256
 from .download import annotation_archive, extract_member, fetch
 from .text import CaptionEditor, load_concepts
 from ..progress import iter_progress
+from ..reuse import Reuse
 
 LOG = logging.getLogger(__name__)
 
@@ -88,18 +89,47 @@ def source_records(config, split):
     expected = config.data.expected_images.get(split)
     if expected and len(images) != expected:
         raise ValueError(f"{split}: expected {expected} source images, found {len(images)}")
+    annotations = value["annotations"]
+    provenance = {}
+    override = config.data.caption_overrides.get(split)
+    if override is not None:
+        annotations = replacement_captions(
+            override, {r["id"] for r in images}, config.data.splits.index(split)
+        )
+        provenance = {"caption_override": str(override), "caption_override_sha256": sha256(override)}
     limit = config.data.image_limits.get(split)
     if limit is not None:
         if limit < 2:
             raise ValueError("Smoke subsets need at least two images")
         images = images[:limit]
     image_ids = {r["id"] for r in images}
-    captions = [c for c in value["annotations"] if c["image_id"] in image_ids]
+    captions = [c for c in annotations if c["image_id"] in image_ids]
     return (
         images,
         captions,
-        {"source_images": len(value["images"]), "source_captions": len(value["annotations"])},
+        {"source_images": len(value["images"]), "source_captions": len(annotations), **provenance},
     )
+
+
+def replacement_captions(path: Path, image_ids: set[int], split_index: int):
+    """Validate complete image coverage and allocate deterministic, disjoint internal IDs."""
+    raw = json.loads(path.read_text())["annotations"]
+    rows, seen = [], set()
+    for i, row in enumerate(raw):
+        image_id, caption = row["image_id"], row["caption"]
+        if image_id not in image_ids:
+            raise ValueError(f"Replacement caption refers to unknown image {image_id}")
+        if not isinstance(caption, str) or not caption.strip():
+            raise ValueError(f"Replacement caption is empty for image {image_id}")
+        if (image_id, caption) in seen:
+            raise ValueError(f"Duplicate replacement caption for image {image_id}")
+        seen.add((image_id, caption))
+        rows.append({"id": -((split_index + 1) * 10**12 + i),
+                     "image_id": image_id, "caption": caption})
+    missing = image_ids - {r["image_id"] for r in rows}
+    if missing:
+        raise ValueError(f"Replacement captions missing {len(missing)} images")
+    return rows
 
 
 def acquire_pixels(config, split, images):
@@ -143,6 +173,50 @@ def acquire_pixels(config, split, images):
                     extract_member(archive, f"{split}/{image_id:012d}.jpg", path)
 
 
+def read_image_arrays(config, encoder, split, images, concepts, columns):
+    """Read every mask once: full-image and model-input presence, area fractions, file hashes."""
+    presence = np.zeros((len(images), len(concepts)), dtype=bool)
+    full = presence.copy()
+    areas = np.zeros(presence.shape, np.float32)
+    indexed_images = []
+    for i, row in enumerate(
+        iter_progress(
+            tqdm(images, desc=f"Read annotations {split}"),
+            f"Read annotations {split}",
+            total=len(images),
+            unit="images",
+        )
+    ):
+        image_id = row["id"]
+        ip = config.data.root / config.data.images_pattern.format(split=split, image_id=image_id)
+        mp = config.data.root / config.data.masks_pattern.format(split=split, image_id=image_id)
+        with Image.open(mp) as label_image:
+            if label_image.format != "PNG" or label_image.mode not in {"L", "P"}:
+                raise ValueError(f"Expected lossless integer-label PNG: {mp}")
+            mask = np.array(label_image)
+        with Image.open(ip) as photo:
+            if mask.shape != (photo.height, photo.width):
+                raise ValueError(f"Image and mask dimensions differ: {image_id}")
+        if set(np.unique(mask)) - (set(columns) | {255}) and config.data.concepts_file is None:
+            raise ValueError(f"Unexpected raw mask IDs in {mp}; possible remapping or JPEG corruption")
+        visible = encoder.visible_mask(mask)
+        scoped = visible if config.data.label_scope == "model_input" else mask
+        for c in concepts:
+            full[i, columns[c.id]] = np.any(mask == c.id)
+            presence[i, columns[c.id]] = np.any(scoped == c.id)
+            areas[i, columns[c.id]] = np.mean(scoped == c.id)
+        indexed_images.append(
+            {
+                "image_id": image_id,
+                "image": str(ip),
+                "mask": str(mp),
+                "image_sha256": sha256(ip),
+                "mask_sha256": sha256(mp),
+            }
+        )
+    return presence, full, areas, indexed_images
+
+
 def prepare(config, encoder):
     if config.data.source == "synthetic":
         fixture(config)
@@ -159,48 +233,27 @@ def prepare(config, encoder):
         acquire_pixels(config, split, images)
         out = config.output / "index" / split
         out.mkdir(parents=True, exist_ok=True)
-        presence = np.zeros((len(images), len(concepts)), dtype=bool)
-        full = presence.copy()
-        areas = np.zeros(presence.shape, np.float32)
-        indexed_images = []
-        for i, row in enumerate(
-            iter_progress(
-                tqdm(images, desc=f"Read annotations {split}"),
-                f"Read annotations {split}",
-                total=len(images),
-                unit="images",
+        reuse = Reuse.maybe(config)
+        imported = (
+            reuse.image_index(
+                split,
+                images,
+                list(columns),
+                lambda image_id: config.data.root
+                / config.data.images_pattern.format(split=split, image_id=image_id),
+                lambda image_id: config.data.root
+                / config.data.masks_pattern.format(split=split, image_id=image_id),
             )
-        ):
-            image_id = row["id"]
-            ip = config.data.root / config.data.images_pattern.format(split=split, image_id=image_id)
-            mp = config.data.root / config.data.masks_pattern.format(split=split, image_id=image_id)
-            with Image.open(mp) as label_image:
-                if label_image.format != "PNG" or label_image.mode not in {"L", "P"}:
-                    raise ValueError(f"Expected lossless integer-label PNG: {mp}")
-                mask = np.array(label_image)
-            with Image.open(ip) as photo:
-                if mask.shape != (photo.height, photo.width):
-                    raise ValueError(f"Image and mask dimensions differ: {image_id}")
-            if set(np.unique(mask)) - (set(columns) | {255}) and config.data.concepts_file is None:
-                raise ValueError(f"Unexpected raw mask IDs in {mp}; possible remapping or JPEG corruption")
-            visible = encoder.visible_mask(mask)
-            scoped = visible if config.data.label_scope == "model_input" else mask
-            for c in concepts:
-                full[i, columns[c.id]] = np.any(mask == c.id)
-                presence[i, columns[c.id]] = np.any(scoped == c.id)
-                areas[i, columns[c.id]] = np.mean(scoped == c.id)
-            indexed_images.append(
-                {
-                    "image_id": image_id,
-                    "image": str(ip),
-                    "mask": str(mp),
-                    "image_sha256": sha256(ip),
-                    "mask_sha256": sha256(mp),
-                }
-            )
+            if reuse is not None
+            else None
+        )
+        presence, full, areas, indexed_images = imported or read_image_arrays(
+            config, encoder, split, images, concepts, columns
+        )
         image_rows = {r["image_id"]: i for i, r in enumerate(indexed_images)}
         indexed_caps, reviews = [], []
         mentions = np.zeros((len(caps), len(concepts)), bool)
+        full_mentions = np.zeros_like(mentions)
         for i, cap in enumerate(
             iter_progress(
                 sorted(caps, key=lambda c: (c["image_id"], c["id"])),
@@ -212,8 +265,16 @@ def prepare(config, encoder):
                 raise ValueError("Duplicate caption ID")
             seen_captions.add(cap["id"])
             present, spans, status, unavailable = editor.analyze(cap["id"], cap["caption"])
-            positions, mask_unavailable = encoder.plan_text_masks(cap["caption"], spans)
+            positions, mask_unavailable = encoder.plan_text_masks(
+                cap["caption"], spans,
+                visible_only=config.data.text_label_scope == "maskable_input",
+            )
             unavailable = sorted(set(unavailable) | set(mask_unavailable))
+            for c in present:
+                full_mentions[i, columns[c]] = True
+            full_present = list(present)
+            if config.data.text_label_scope == "maskable_input":
+                present = [c for c in present if c in positions]
             for c in present:
                 mentions[i, columns[c]] = True
             record = {
@@ -221,6 +282,7 @@ def prepare(config, encoder):
                 "image_row": image_rows[cap["image_id"]],
                 "text": cap["caption"],
                 "concept_ids": present,
+                "full_concept_ids": full_present,
                 "mask_spans": spans,
                 "mask_token_positions": positions,
                 "text_masking": config.features.text_masking,
@@ -259,6 +321,7 @@ def prepare(config, encoder):
             ("full_presence", full),
             ("areas", areas),
             ("mentions", mentions),
+            ("full_mentions", full_mentions),
         ]:
             np.save(out / f"{name}.npy", value)
         write_csv(out / "caption_mask_review.csv", reviews)
@@ -269,6 +332,9 @@ def prepare(config, encoder):
             "captions": len(caps),
             "caption_count_histogram": dict(zip(map(str, unique_counts), map(int, frequencies))),
             "label_scope": config.data.label_scope,
+            "text_label_scope": config.data.text_label_scope,
+            "full_caption_mentions": int(full_mentions.sum()),
+            "indexed_mentions": int(mentions.sum()),
             "automatic_caption_annotations": sum(
                 c["annotation_status"] != "human_reviewed" for c in indexed_caps
             ),

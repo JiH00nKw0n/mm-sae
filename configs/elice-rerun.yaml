@@ -1,0 +1,78 @@
+# Rerun of the full RQ1 experiment with the reviewed caption lexicon.
+# Same data, CLIP revision and frozen SAE weights as runs/elice-rq1; only the caption alias
+# dictionary changes, so verified artifacts of the finished run are imported (see docs/data.md,
+# section on `reuse`). The output directory is new; nothing in runs/elice-rq1 is modified.
+# This config needs its own approval record before the run starts.
+output: ../runs/elice-rq1-lexicon2
+data:
+  source: coco
+  root: ../data/coco
+  download: true
+  label_scope: model_input
+  concepts_file: ../configs/concepts.reviewed.yaml
+  reviewed_captions: null
+encoder:
+  backend: clip
+  model_id: openai/clip-vit-base-patch32
+  revision: 3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268
+  device: cuda
+  batch_size: 128
+training:
+  split: train2017
+  sampling: unique_image_all_text
+  latent_size: 4096
+  top_k: 8
+  # SAE weights are not retrained: reuse.sae_weights loads runs/elice-rq1/models and verifies
+  # tensor equality. The training arguments are kept identical for the record.
+  arguments:
+    num_train_epochs: 30
+    per_device_train_batch_size: 1024
+    learning_rate: 0.0005
+    weight_decay: 1.0e-05
+    adam_beta1: 0.9
+    adam_beta2: 0.999
+    adam_epsilon: 1.0e-08
+    optim: adamw_torch
+    lr_scheduler_type: cosine
+    warmup_ratio: 0.05
+    max_grad_norm: 1.0
+    seed: 0
+    data_seed: 0
+    eval_strategy: 'no'
+    save_strategy: epoch
+    logging_strategy: epoch
+    save_total_limit: 2
+    dataloader_num_workers: 0
+    dataloader_drop_last: false
+features:
+  text_masking: unk_token
+  mask_rgb:
+  - 255
+  - 255
+  - 255
+experiment:
+  name: rq1
+  options:
+    selection_split: train2017
+    correlation_split: train2017
+    validation_split: val2017
+    label_correlation: image_image
+    bin_width: 0.2
+    intervention_repeats: 5
+    intervention_seed: 0
+    area_strata: 5
+cache: ../cache
+reuse:
+  source_run: ../runs/elice-rq1
+  source_cache: ../cache
+  image_index: true
+  embeddings: true
+  sae_weights: true
+  original_activations: true
+  image_counterfactuals: true
+  text_counterfactual_rows: true
+execution:
+  progress_interval_seconds: 10
+  require_approval: true
+  approval_file: ../approvals/elice-rq1-lexicon2.json
+  review_document: ../docs/elice-rq1-lexicon2-review.md

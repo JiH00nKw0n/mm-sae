@@ -1,0 +1,18 @@
+# Same cached-data regression comparison as regression-cached.yaml.
+# Only the output directory and the server's Korean font differ.
+run: ../runs/elice-rq1-lexicon2
+output: ../runs/rq1-regression-server-2026-09-28
+fit_split: train2017
+test_split: val2017
+tune_image_fraction: 0.2
+seed: 0
+penalties: [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+annotation_bin_width: 0.2
+font: NanumGothic
+progress_interval_seconds: 10
+examples:
+  - [snow, skis]
+  - [grass, dog]
+  - [sea, surfboard]
+  - [sand, surfboard]
+  - [dirt, gravel]

@@ -1,0 +1,112 @@
+source_run: ../runs/elice-rq1-lexicon2
+output: ../runs/mapping-suite-2026-10-04
+seed: 0
+tune_image_fraction: 0.2
+device: cuda
+retrieval_chunk: 128
+progress_interval_seconds: 10
+support_regression: true
+ridge_penalties:
+- 0.001
+- 0.1
+- 1.0
+ridge_max_iter: 4000
+ridge_tolerance: 1.0e-06
+cca_penalties:
+- 0.01
+cca_dimensions:
+- 64
+- 256
+families:
+- name: hungarian
+  method: hungarian
+- name: greedy
+  method: greedy
+- name: topk
+  method: topk
+  grid:
+    k:
+    - 2
+    - 4
+- name: partial_one
+  method: partial_b_matching
+  options:
+    k_image: 1
+    k_text: 1
+  grid:
+    tau:
+    - 0.0
+    - 0.05
+    - 0.1
+- name: partial_many
+  method: partial_b_matching
+  grid:
+    k_image:
+    - 2
+    - 4
+    k_text:
+    - 2
+    - 4
+    tau:
+    - 0.0
+    - 0.05
+    - 0.1
+- name: same_budget_many
+  method: partial_b_matching
+  options:
+    k_image: 4
+    k_text: 4
+    edge_budget: one_to_one
+  grid:
+    tau:
+    - 0.0
+    - 0.05
+    - 0.1
+- name: global_top_edges
+  method: partial_b_matching
+  options:
+    k_image: all
+    k_text: all
+    edge_budget: one_to_one
+- name: sinkhorn
+  method: sinkhorn
+  options:
+    max_iter: 4000
+    tol: 1.0e-07
+  grid:
+    epsilon:
+    - 0.01
+    - 0.05
+    - 0.1
+- name: sparse_transport
+  method: sparse_transport
+  options:
+    k_image: 2
+    k_text: 4
+    max_iter: 5000
+    tol: 1.0e-07
+  grid:
+    tau:
+    - 0.0
+    - 0.05
+    - 0.1
+    lambda_:
+    - 0.02
+    - 0.1
+- name: sparse_factorization
+  method: sparse_factorization
+  options:
+    k_image: 8
+    k_text: 4
+    n_init: 3
+    seed: 0
+    max_iter: 3000
+    tol: 1.0e-07
+  grid:
+    rank:
+    - 64
+    - 128
+    - 256
+    lambda_:
+    - 0.0001
+    - 0.001

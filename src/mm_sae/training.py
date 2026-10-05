@@ -17,6 +17,7 @@ from .cache import embedding_directory
 from .models.encoder import device_for
 from .models.sae import SAEConfig, TopKSAE, PairedSAEs
 from .progress import progress_task, TaskProgress
+from .reuse import Reuse
 
 
 class DecoderNormCallback(TrainerCallback):
@@ -75,22 +76,31 @@ def train(config):
     image, text = [np.load(cache / f"{side}.npy", mmap_mode="r") for side in ["image", "text"]]
     parents = np.load(root / "index" / cfg.split / "parents.npy")
     set_seed(cfg.seed)
+    reuse = Reuse.maybe(config)
+    reused_checkpoints = reuse.sae_checkpoints() if reuse is not None else None
+    if reused_checkpoints is not None and not (cfg.image_checkpoint or cfg.text_checkpoint):
+        cfg.image_checkpoint, cfg.text_checkpoint = reused_checkpoints
     model_config = SAEConfig(hidden_size=image.shape[1], latent_size=cfg.latent_size, k=cfg.top_k)
     image_sae, text_sae = TopKSAE(model_config), TopKSAE(model_config)
     history = {}
-    if cfg.image_checkpoint:
-        image_sae, text_sae = [
-            TopKSAE.from_pretrained(p) for p in [cfg.image_checkpoint, cfg.text_checkpoint]
-        ]
-        for model in [image_sae, text_sae]:
-            if (model.config.hidden_size, model.config.latent_size, model.config.k) != (
-                image.shape[1],
-                cfg.latent_size,
-                cfg.top_k,
-            ):
-                raise ValueError("Loaded SAE checkpoint dimensions/TopK disagree with the run config")
-    else:
-        jobs = [("image", image_sae, cached_dataset(image)), ("text", text_sae, cached_dataset(text))]
+    checkpoints = {"image": cfg.image_checkpoint, "text": cfg.text_checkpoint}
+    models = {"image": image_sae, "text": text_sae}
+    for side, checkpoint in checkpoints.items():
+        if checkpoint is None:
+            continue
+        model = TopKSAE.from_pretrained(checkpoint)
+        if (model.config.hidden_size, model.config.latent_size, model.config.k) != (
+            image.shape[1], cfg.latent_size, cfg.top_k,
+        ):
+            raise ValueError("Loaded SAE checkpoint dimensions/TopK disagree with the run config")
+        models[side] = model
+        history[side] = {"loaded_checkpoint": str(checkpoint), "optimizer_steps": 0,
+                         "weights_sha256": sha256(checkpoint / "model.safetensors")}
+    image_sae, text_sae = models["image"], models["text"]
+    jobs = [(side, models[side], cached_dataset(embedding))
+            for side, embedding in [("image", image), ("text", text)]
+            if checkpoints[side] is None]
+    if jobs:
         if cfg.sampling == "paired_repeat_image":
             jobs = [("paired", PairedSAEs(image_sae, text_sae), cached_dataset(image, text, parents))]
         for name, model, dataset in jobs:
@@ -136,6 +146,8 @@ def train(config):
         },
     )
     atomic_json(root / "models" / "frozen.json", frozen_fingerprint(root))
+    if reuse is not None and reused_checkpoints is not None and all(checkpoints.values()):
+        reuse.verify_sae_weights()
 
 
 def frozen_fingerprint(root: Path):

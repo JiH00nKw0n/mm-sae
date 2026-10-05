@@ -1,0 +1,18 @@
+diagnosis_config: representation-diagnosis-server.yaml
+output: ../runs/feature-counts-smoke-2026-09-29
+baseline_run: ../runs/representation-diagnosis-2026-09-28
+feature_counts:
+- 8
+- 16
+- 64
+objectives:
+- presence
+- removal
+device: cuda
+categories:
+- 17
+- 105
+- 124
+- 154
+report_exclude_categories:
+- 102

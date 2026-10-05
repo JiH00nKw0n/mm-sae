@@ -9,7 +9,9 @@ from ..progress import iter_progress
 
 
 def correlation(x, y):
-    x, y = sparse.csr_matrix(x, dtype=np.float64), sparse.csr_matrix(y, dtype=np.float64)
+    # Dtype conversion can share CSR indices with the caller while copying data.
+    # power(2) canonicalizes those indices in place; own both arrays to avoid corrupting input.
+    x, y = sparse.csr_matrix(x, dtype=np.float64, copy=True), sparse.csr_matrix(y, dtype=np.float64, copy=True)
     shape_x, shape_y = x.shape, y.shape
     if shape_x is None or shape_y is None or shape_x[0] != shape_y[0] or shape_x[0] < 2:
         raise ValueError("Correlation requires at least two aligned observations")
