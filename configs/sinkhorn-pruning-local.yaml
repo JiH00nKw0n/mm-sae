@@ -1,4 +1,5 @@
 source_run: ../runs/elice-rq1-lexicon2
+reference_path: ../runs/mapping-mechanism-2026-10-04/sinkhorn-pruning.json
 parent_run: ../runs/mapping-suite-2026-10-04
 output: ../runs/mapping-pruning-2026-10-04/sinkhorn
 device: cpu

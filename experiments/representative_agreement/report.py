@@ -414,7 +414,7 @@ def build_report(output: Path) -> Path:
     if len(control) > 1:
         sections.append('<section><h2>CCA의 후보 좌표 수를 늘린 보조 조건도 비교했다</h2>'
                         '<p>후보 좌표 수가 다르면 대표를 고를 기회와 무작위 일치 확률이 달라진다. '
-                        '헝가리안의 원래 연결 수 437개에 맞춰 CCA도 437개 좌표를 사용하는 조건을 계산했다. '
+                        'CCA의 공통 좌표 수를 늘린 조건을 보조 비교에 포함했다. '
                         '상수 좌표를 제외한 뒤에는 유효 후보 수가 정확히 같지 않다. 실제 유효 좌표 수는 아래에 표시했다.</p>' +
                         _rate_table(control) + '</section>')
     positive = [{**record, **record["positive_only_sensitivity"]} for record in main
@@ -440,13 +440,15 @@ def build_report(output: Path) -> Path:
                         '대표는 각 자료에서 원래 고른 값을 유지했다. 이 조건에서도 같은 희소 설정이 항상 가장 높지는 않았다. '
                         '특징 16개가 최적이라고 확정하기보다 표본 분할에 대한 안정성을 더 확인해야 한다.</p>' +
                         _same_categories_table(main, secondary) + '</section>')
+    training_note = _escape(protocol.get('training', '기존 SAE와 대응 계수를 고정했다.'))
+    selection_note = _escape(protocol.get('population_notes', {}).get('tune',
+                            '대응 학습에서 제외한 이미지에서 주석 평가 집단을 구성했다.'))
     sections.append('<section><h2>실험의 조건과 해석 범위를 명시한다</h2><ol>'
-                    '<li>기존 COCO SAE와 대응 계수를 고정했다. CCA와 Sparse CCA의 학습에는 범주 주석을 쓰지 않았다. '
+                    f'<li>{training_note} CCA와 Sparse CCA의 학습에는 범주 주석을 쓰지 않았다. '
                     '주석은 평가할 대표 좌표를 고르고 두 선택이 일치하는지 측정하는 데 사용했다.</li>'
-                    '<li>주 분석에는 대응 학습에서 제외한 COCO train2017 이미지 23,657장을 사용했다. 이미지 ID를 '
+                    f'<li>{selection_note} 이미지 ID를 '
                     '기준으로 독립된 두 부분으로 나누고, 한 부분의 이미지와 다른 부분의 텍스트에서 대표를 골랐다. '
-                    '같은 이미지의 캡션은 모두 같은 부분에 속한다. SAE 자체는 COCO train2017로 학습했으므로 '
-                    '주 분석 자료가 SAE 학습에서도 제외된 것은 아니다.</li>'
+                    '같은 이미지의 캡션은 모두 같은 부분에 속한다.</li>'
                     '<li>물체의 중앙 자르기 영역 주석을 이미지 정답으로 사용하고, 그 이미지의 정답을 캡션에도 부여했다. '
                     '따라서 텍스트에서 캡션에 직접 언급된 물체만 평가한 것은 아니다.</li>'
                     '<li>AUROC는 물체가 있는 표본의 점수가 없는 표본보다 높을 확률이며 동점은 절반을 센다. '
@@ -454,8 +456,8 @@ def build_report(output: Path) -> Path:
                     '<li>양쪽에서 상수가 아닌 좌표를 사용했다. 원래 SAE activation의 활성 빈도 5% 기준은 적용하지 않았다. '
                     'COCO 물체 80개 중 이미지 A 부분의 양성이 50개 이상이고 텍스트 B 부분의 양성 캡션이 50개 이상이며 '
                     '각각 음성도 존재하는 공통 범주를 평가했다. 표본 수를 원본 결과에 저장했다.</li>'
-                    '<li>이 실험은 COCO로 학습한 방법의 비교다. CC3M으로 학습한 이전 논문의 주석 평가를 그대로 재현한 '
-                    '결과가 아니다. 대표 일치는 개념이 한 좌표에만 존재한다는 증거도, 개념 자체에만 반응한다는 증거도 아니다.</li>'
+                    '<li>중앙 자르기 주석과 부호 선택을 사용했으므로 이전 논문의 주석 평가를 그대로 재현한 결과는 아니다. '
+                    '대표 일치는 개념이 한 좌표에만 존재한다는 증거도, 개념 자체에만 반응한다는 증거도 아니다.</li>'
                     '</ol><p class="file">범주별 전체 수치는 '
                     f'{_escape(output / "representative_per_category.csv")}에 저장했다. 원본 결과는 '
                     f'{_escape(output / "results")}에 저장했다.</p></section>')

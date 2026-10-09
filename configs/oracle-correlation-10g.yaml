@@ -1,0 +1,11 @@
+root: /mnt/working/mm-sae
+output: runs/oracle-correlation-2026-10-06
+budget: 16
+ridge: 0.01
+alphas: [0.1]
+max_outer: 30
+inner_iter: 150
+conditions:
+- name: cc3m-coco
+  parent: runs/cc3m-followup-2026-10-05/coco-fit/mapping
+  source: runs/cc3m-followup-2026-10-05/cc3m-sae-coco-activations

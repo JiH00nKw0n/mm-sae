@@ -119,3 +119,31 @@ cd /mnt/working/cross_modal_feature_heterogeneity
 이전 저장소에는 `/mnt/working/cross_modal_feature_heterogeneity/cache/clip_b32_cc3m`, `/mnt/working/cross_modal_feature_heterogeneity/cache/clip_b32_coco`, `/mnt/working/cross_modal_feature_heterogeneity/outputs/post_rebuttal/cc3m_clip_b32/seed0/separated/final`, `/mnt/working/cross_modal_feature_heterogeneity/outputs/post_rebuttal/cc3m_clip_b32/seed0/ours/panel.npz`가 필요하다. 캐시 형식이 현재 저장소와 다르므로 입력 경로만 바꿔 공유할 수는 없다.
 
 이전 구현은 CCA·Procrustes의 공분산 학습에는 중심화를 적용하지만 검색 활성값에는 같은 평균·표준편차 보정을 적용하지 않는다. 이번 저장소의 동일 보정 비교와 별도 실험으로 취급한다. 이전 검색 결과는 `/mnt/working/cross_modal_feature_heterogeneity/outputs/post_rebuttal/rebuttal/cc3m_k32/alignment_methods.json`과 같은 경로의 `alignment_methods.md`에 저장된다.
+
+## CC3M 후속 비교를 실행한다
+
+`/mnt/working/mm-sae/configs/cc3m-followup-server.yaml`은 완료된 CC3M SAE와 대응 결과를 읽는다. SAE는 다시 학습하지 않는다. 다음 명령은 입력 파일을 확인한 뒤 새 결과 폴더에서 실험을 순서대로 실행한다.
+
+```bash
+bash /mnt/working/mm-sae/scripts/run_cc3m_followup.sh /mnt/working/mm-sae/configs/cc3m-followup-server.yaml --check
+bash /mnt/working/mm-sae/scripts/run_cc3m_followup.sh /mnt/working/mm-sae/configs/cc3m-followup-server.yaml
+```
+
+CCA·Procrustes의 작은 계수를 제거하고, Sinkhorn의 분포 집중도와 연결 수를 조절한다. 같은 연결 위치에서 음수 계수를 허용한 회귀와 허용하지 않은 회귀도 비교한다. Sparse CCA는 출력 좌표마다 최대 4·8·16·32개 특징을 사용한다. 모든 검색 결과에 양방향 Recall@1·5·10을 저장한다.
+
+주석 기반 비교에서는 CC3M SAE를 고정하고 COCO의 저장된 임베딩을 activation으로 변환한다. CC3M에는 COCO 범주 주석이 없으므로 CC3M 학습 행에 COCO 주석을 붙이지 않는다. CC3M에서 학습한 대응을 COCO 주석으로 평가하는 조건과, 대응 자체를 COCO에서 학습하는 조건을 구분한다. 주석 기반 개념 조합과 CCA·Sparse CCA를 비교할 때는 모두 같은 COCO 학습 표본을 사용한다. 주석 기반 조합은 특징 선택·교체·로지스틱 분류를 최대 8·16·32개 특징에서 비교한다.
+
+전체 진행 상황은 `/mnt/working/mm-sae/runs/cc3m-followup-2026-10-05/scheduler.json`에, 단계별 출력은 `/mnt/working/mm-sae/runs/cc3m-followup-2026-10-05/logs/`에 저장한다. 각 분석의 `progress.json` 또는 `status.json`에는 처리량과 추정 남은 시간을 저장한다. Sparse CCA의 시간 추정은 완료한 좌표의 평균 처리 시간을 사용하므로 초반에는 오차가 클 수 있다. 실행을 마친 단계는 같은 명령으로 재시작해도 건너뛴다. 실행 중 코드나 설정이 바뀌면 새 결과 폴더를 사용해야 한다.
+
+COCO SAE는 표본당 활성 특징 8개로 30회 학습했고 CC3M SAE는 32개로 10회 학습했다. 두 모델의 차이를 학습 데이터만의 효과로 해석해서는 안 된다. CC3M SAE를 고정하고 대응 학습 자료만 바꾸는 추가 조건은 대응 학습 자료의 영향을 확인하기 위한 비교다.
+
+2026년 10월 6일에 33개 작업을 모두 완료했다. 처음 실행은 주석 기반 집합의 계산을 마친 뒤 서버에 누락된 보고서 모듈 때문에 중단됐다. 모듈을 보완하고 남은 세 작업을 `/mnt/working/mm-sae/runs/cc3m-followup-2026-10-05/continuation-2026-10-06/`에서 실행했다. 기존 계산은 다시 실행하거나 덮어쓰지 않았다. 최초 `/mnt/working/mm-sae/runs/cc3m-followup-2026-10-05/scheduler.json`의 실패 기록은 보존했으며, 최종 완료 상태는 `/mnt/working/mm-sae/runs/cc3m-followup-2026-10-05/completed-artifacts.json`에 저장했다.
+
+로컬 보고서는 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/runs/cc3m-followup-2026-10-05/report.html`이다. 보고서·수치·실행 기록 870개 파일을 서버의 SHA-256과 대조했다. 큰 가중치 파일과 activation 캐시는 서버에 남아 있다. 보고서 재생성 명령은 다음과 같다.
+
+```bash
+cd /Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae
+.venv/bin/python -m experiments.corpus_comparison.followup_report --config configs/cc3m-followup-report-local.yaml
+```
+
+이 명령은 서버에서 가져온 파일의 무결성, 평가 이미지의 일치, 질의별 순위에서 다시 구한 양방향 Recall@1·5·10, Sparse CCA와 Sinkhorn의 수렴 여부를 확인한다. 검사 결과와 사용한 근거 파일의 해시는 `/Users/jihoonkwon/Desktop/projects/research/MM-SAE/mm-sae/runs/cc3m-followup-2026-10-05/report-verification.json`에 저장한다. 실험을 새로 시작할 때 필요한 실행 모듈이 하나라도 없으면 계산 전에 오류를 내도록 준비 코드도 보완했다.

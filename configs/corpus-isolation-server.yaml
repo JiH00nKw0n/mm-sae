@@ -1,0 +1,10 @@
+source_run: ../runs/cc3m-followup-2026-10-05/cc3m-sae-coco-activations
+mapping_runs:
+  cc3m: ../runs/mapping-suite-cc3m-2026-10-04
+  coco: ../runs/cc3m-followup-2026-10-05/coco-fit/mapping
+output: ../runs/corpus-isolation-2026-10-06
+methods: [cca, cross_svd, procrustes]
+dimensions: 256
+ridge: 0.01
+device: cuda
+chunk_size: 256

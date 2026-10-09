@@ -1,0 +1,17 @@
+root: /home/elicer/jihoonkwon/mm_sae_grahtp_20261006
+source: data/cc3m-sae-coco-activations
+parent: data/coco-fit/mapping
+output: results/cc3m-coco
+seed: 20261006
+budget: 16
+max_outer: 50
+inner_iter: 300
+gradient_tolerance: 0.000001
+cpu_threads: 8
+methods:
+- {loss: mse, penalty: 0.01}
+- {loss: mse, penalty: 0.0}
+- {loss: binary_ce, penalty: 0.01}
+- {loss: binary_ce, penalty: 0.0}
+- {loss: ce, penalty: 0.01}
+- {loss: ce, penalty: 0.0}

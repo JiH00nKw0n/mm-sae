@@ -1,0 +1,21 @@
+device: cuda
+retrieval_chunk: 256
+max_iter: 1000
+conditions:
+- name: coco-coco
+  source_run: ../runs/elice-rq1-lexicon2
+  parent_run: ../runs/mapping-suite-2026-10-04
+  projection_run: ../runs/mapping-ablation-2026-10-04
+  sinkhorn_transform: ../runs/sparsity-sweep-2026-10-06/coco-coco/sinkhorn_full.npz
+- name: cc3m-cc3m
+  source_run: ../runs/cc3m-sae-2026-10-04
+  parent_run: ../runs/mapping-suite-cc3m-2026-10-04
+  projection_run: ../runs/mapping-ablation-cc3m-2026-10-04
+  sinkhorn_transform: ../runs/cc3m-followup-2026-10-05/cc3m-fit/pruning/sinkhorn/transforms/sinkhorn_e0.05_full.npz
+- name: cc3m-coco
+  source_run: ../runs/cc3m-followup-2026-10-05/cc3m-sae-coco-activations
+  parent_run: ../runs/cc3m-followup-2026-10-05/coco-fit/mapping
+  projection_run: ../runs/cc3m-followup-2026-10-05/coco-fit/ablation
+  sinkhorn_transform: ../runs/cc3m-followup-2026-10-05/coco-fit/pruning/sinkhorn/transforms/sinkhorn_e0.05_full.npz
+supports: [null, 16]
+output: ../runs/sinkhorn-fusion-2026-10-06

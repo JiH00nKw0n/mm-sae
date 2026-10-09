@@ -1,0 +1,20 @@
+device: cuda
+retrieval_chunk: 256
+support: 16
+max_iter: 1000
+conditions:
+  - name: coco-coco
+    source_run: ../runs/elice-rq1-lexicon2
+    parent_run: ../runs/mapping-suite-2026-10-04
+    projection_run: ../runs/mapping-ablation-2026-10-04
+    output: ../runs/sparse-pls-2026-10-06/coco-coco
+  - name: cc3m-cc3m
+    source_run: ../runs/cc3m-sae-2026-10-04
+    parent_run: ../runs/mapping-suite-cc3m-2026-10-04
+    projection_run: ../runs/mapping-ablation-cc3m-2026-10-04
+    output: ../runs/sparse-pls-2026-10-06/cc3m-cc3m
+  - name: cc3m-coco
+    source_run: ../runs/cc3m-followup-2026-10-05/cc3m-sae-coco-activations
+    parent_run: ../runs/cc3m-followup-2026-10-05/coco-fit/mapping
+    projection_run: ../runs/cc3m-followup-2026-10-05/coco-fit/ablation
+    output: ../runs/sparse-pls-2026-10-06/cc3m-coco

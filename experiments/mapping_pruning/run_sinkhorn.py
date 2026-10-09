@@ -26,6 +26,8 @@ def main():
     cfg = yaml.safe_load(args.config.read_text())
     for key in ("source_run", "parent_run", "output"):
         cfg[key] = str((args.config.parent / cfg[key]).resolve())
+    if cfg.get("reference_path"):
+        cfg["reference_path"] = str((args.config.parent / cfg["reference_path"]).resolve())
     out = Path(cfg["output"])
     for folder in (out, out / "results", out / "transforms", out / "solvers"):
         folder.mkdir(parents=True, exist_ok=True)
@@ -102,8 +104,8 @@ def main():
                                        "rebalance_after_pruning": False})
         with stage_progress("verify"):
             verify_recall(out)
-            reference_path = repository / "runs/mapping-mechanism-2026-10-04/sinkhorn-pruning.json"
-            if reference_path.exists() and .05 in cfg["epsilon_grid"]:
+            reference_path = Path(cfg["reference_path"]) if cfg.get("reference_path") else None
+            if reference_path is not None and reference_path.exists() and .05 in cfg["epsilon_grid"]:
                 references = json.loads(reference_path.read_text())
                 changes = []
                 for reference in references["rows"]:

@@ -1,0 +1,22 @@
+conditions:
+- name: coco-coco
+  source_run: ../runs/elice-rq1-lexicon2
+  parent_run: ../runs/mapping-suite-2026-10-04
+  reference_run: ../runs/oracle-sets-2026-10-04
+- name: cc3m-coco
+  source_run: ../runs/cc3m-followup-2026-10-05/cc3m-sae-coco-activations
+  parent_run: ../runs/cc3m-followup-2026-10-05/coco-fit/mapping
+  reference_run: ../runs/cc3m-followup-2026-10-05/coco-fit/annotation-sets
+output: ../runs/oracle-losses-2026-10-06
+ridge_penalties:
+- 0.01
+- 0.1
+- 1.0
+- 2.0
+ce_losses:
+- binary_ce
+- ce
+ce_penalty: 0.01
+max_iter: 250
+device: cuda
+retrieval_chunk: 256

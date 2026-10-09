@@ -1,0 +1,13 @@
+root: /mnt/working/mm-sae
+source: runs/elice-rq1-lexicon2
+parent: runs/mapping-suite-2026-10-04
+output: runs/oracle-svm-2026-10-07/coco-coco
+seed: 20261007
+budget: 16
+max_outer: 30
+inner_iter: 200
+gradient_tolerance: 0.000001
+cpu_threads: 4
+initial_run: runs/oracle-losses-2026-10-06/coco-coco
+methods:
+- {loss: squared_hinge, penalty: 0.01}

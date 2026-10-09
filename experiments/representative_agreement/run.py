@@ -22,6 +22,7 @@ from mm_sae.analysis.representative_agreement import (
     variable_coordinates,
 )
 from mm_sae.analysis.semantic_evaluation import auc_matrix
+from mm_sae.analysis.annotation_population import load_population as annotation_population
 from mm_sae.io import sha256
 from mm_sae.metrics.regression import Moments
 
@@ -35,6 +36,14 @@ def load_config(path: Path) -> dict[str, Any]:
     cfg = yaml.safe_load(path.read_text())
     for key in ('source_run', 'parent_run', 'output'):
         cfg[key] = str((path.parent / cfg[key]).resolve())
+    if cfg.get('annotation_population'):
+        cfg['annotation_population'] = str((path.parent / cfg['annotation_population']).resolve())
+    if any('{full_dimensions}' in model['path'] for model in cfg['models']):
+        pop = json.loads((Path(cfg['parent_run']) / 'population.json').read_text())
+        dimensions = min(pop['image_features'], pop['text_features'])
+        for model in cfg['models']:
+            model['path'] = model['path'].replace('{full_dimensions}', str(dimensions))
+            model['label'] = model['label'].replace('{full_dimensions}', str(dimensions))
     for model in cfg['models']:
         model['path'] = str((path.parent / model['path']).resolve())
     return cfg
@@ -42,7 +51,7 @@ def load_config(path: Path) -> dict[str, Any]:
 
 def load_population(cfg: dict[str, Any], kind: str) -> dict[str, Any]:
     src, parent = Path(cfg['source_run']), Path(cfg['parent_run'])
-    population = json.loads((parent / 'population.json').read_text())
+    population = annotation_population(parent, cfg.get('annotation_population'))
     split = 'train2017' if kind == 'tune' else 'val2017'
     index = src / 'index' / split
     records = json.loads((index / 'images.json').read_text())
@@ -86,6 +95,8 @@ def load_population(cfg: dict[str, Any], kind: str) -> dict[str, Any]:
     provenance_files = [parent / 'moments.npz', parent / 'population.json', index / 'presence.npy',
                         index / 'parents.npy', index / 'images.json', index / 'concept_ids.json',
                         *activation_files.values()]
+    if cfg.get('annotation_population'):
+        provenance_files.append(Path(cfg['annotation_population']))
     metadata = {
         'population': kind, 'split': split, 'n_images': len(image_rows), 'n_captions': len(text_rows),
         'n_eligible_categories': int(eligible.sum()), 'seed': cfg['seed'],
@@ -199,6 +210,7 @@ def run(cfg: dict[str, Any]) -> None:
             'test': '5,000 COCO val images outside SAE and correspondence fitting; previously used for exploratory analyses.',
         },
     }
+    protocol.update(cfg.get('protocol', {}))
     total = len(cfg['models']) * len(cfg['populations'])
     started, completed = time.monotonic(), 0
     population_metadata = {}

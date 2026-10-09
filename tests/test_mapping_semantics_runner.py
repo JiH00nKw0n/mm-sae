@@ -178,7 +178,10 @@ def test_model_coordinates_and_reused_retrieval_match_the_actual_projection_matr
         expected[f"procrustes_support_2_{constraint}__text"] = paired_retrieval(image @ b, text, parents)
     sparse_path = Path(cfg["output"]) / "sparse-fit/sparse_cca_k2.npz"
     np.savez(sparse_path, image=wi, text=wt)
-    save_json(sparse_path.with_suffix(".json"), {})
+    save_json(sparse_path.with_suffix(".json"), {
+        "converged_components": 2,
+        "components": [{"converged": True}, {"converged": True}],
+    })
     expected["sparse_cca_2"] = paired_retrieval(image @ wi, text @ wt, parents)
     # This corpus has identity standardized fit covariance. Unit variance with
     # ridge 0.01 therefore has a closed form independent of the runner helper.

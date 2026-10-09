@@ -22,6 +22,7 @@ import yaml
 
 from experiments.mapping_ablation.run import product
 from mm_sae.analysis.data import save_json
+from mm_sae.analysis.annotation_population import load_population
 from mm_sae.analysis.mapping_evaluation import paired_retrieval
 from mm_sae.analysis.mapping_pruning import coefficient_summary
 from mm_sae.analysis.semantic_evaluation import auc_matrix, evaluate_selected_coordinates, select_from_auc
@@ -48,12 +49,14 @@ def load_config(path):
     cfg = yaml.safe_load(Path(path).read_text())
     for key in ('source_run', 'parent_run', 'projection_run', 'pruning_run', 'output'):
         cfg[key] = str((Path(path).parent / cfg[key]).resolve())
+    if cfg.get('annotation_population'):
+        cfg['annotation_population'] = str((Path(path).parent / cfg['annotation_population']).resolve())
     return cfg
 
 
 def load_data(cfg):
     src, parent = Path(cfg['source_run']), Path(cfg['parent_run'])
-    pop = json.loads((parent / 'population.json').read_text())
+    pop = load_population(parent, cfg.get('annotation_population'))
     partitions = [set(pop[k + '_image_ids']) for k in ('fit', 'tune', 'test')]
     if any(partitions[a] & partitions[b] for a, b in ((0, 1), (0, 2), (1, 2))):
         raise ValueError('Fit, coordinate calibration, and evaluation images must be disjoint')
@@ -169,6 +172,9 @@ def models(cfg, data, section):
                                 f'CCA 학습 후 최대 {k}개 유지, 좌표 크기 재정규화', 'common', ai, at,
                                 [control_path], options={'k': k, 'ridge_variance_normalization': .01}))
             path = Path(cfg['output']) / 'sparse-fit' / f'sparse_cca_k{k}.npz'
+            diagnostics = json.loads(path.with_suffix('.json').read_text())
+            if diagnostics['converged_components'] != len(diagnostics['components']):
+                raise ValueError(f'Sparse CCA did not converge in every component: {path}')
             with np.load(path) as saved:
                 wi, wt = saved['image'], saved['text']
             result.append(Model(f'sparse_cca_{k}', 'sparse', 'sparse_cca',
@@ -286,6 +292,8 @@ def main():
         (out / folder).mkdir(parents=True, exist_ok=True)
     src = Path(cfg['source_run'])
     paths = [Path(cfg['parent_run']) / n for n in ['moments.npz', 'population.json']]
+    if cfg.get('annotation_population'):
+        paths.append(Path(cfg['annotation_population']))
     for split in ('train2017', 'val2017'):
         paths += [src / 'index' / split / n for n in ['presence.npy', 'mentions.npy', 'parents.npy', 'concept_ids.json', 'images.json', 'captions.json']]
         paths += [src / 'activations' / split / (s + '.npz') for s in ('image', 'text')]

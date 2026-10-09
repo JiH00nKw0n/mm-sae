@@ -1,0 +1,5 @@
+run: ../runs/cc3m-followup-2026-10-05
+coco_ablation: ../runs/mapping-ablation-2026-10-04
+cc3m_ablation: ../runs/mapping-ablation-cc3m-2026-10-04
+coco_semantics: ../runs/mapping-semantics-2026-10-04
+evaluation_parents: ../runs/elice-rq1-lexicon2/index/val2017/parents.npy

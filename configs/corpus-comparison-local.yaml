@@ -1,0 +1,44 @@
+output: ../runs/corpus-comparison-2026-10-05
+followup_report: ../cc3m-followup-2026-10-05/report.html
+evaluation_parents: ../runs/elice-rq1-lexicon2/index/val2017/parents.npy
+studies:
+  - name: COCO
+    ablation_run: ../runs/mapping-ablation-2026-10-04
+  - name: CC3M
+    ablation_run: ../runs/mapping-ablation-cc3m-2026-10-04
+sections:
+  - message: CCA가 크게 무너졌다기보다 헝가리안이 좋아지면서 격차가 줄었다.
+    explanation: CCA 256차원의 이미지로 텍스트 검색 Recall@10은 49.76%에서 47.22%로, 텍스트로 이미지 검색은 40.74%에서 35.96%로 낮아졌다. 반면 원래 활성값으로 계산한 헝가리안의 성능은 두 방향 모두 높아졌다. 이 표는 종전 설정의 변화를 보여주며 입력 보정이 같은 조건의 방법 비교는 아니다.
+    keys:
+      hungarian__raw__text_projected_to_image: 헝가리안에 원래 활성값 사용
+      cca_256: 표준화한 활성값으로 학습한 CCA 256차원
+  - message: 평균을 빼는 보정은 CC3M에서 일관된 이득을 주지 않았다.
+    explanation: 연결 행렬을 고정하고 입력만 바꿨다. CC3M의 헝가리안은 평균을 빼면 이미지로 텍스트 검색이 낮아지고, 반대 방향은 소폭 높아졌다. 표준편차까지 나누면 두 방향 모두 낮아졌다. COCO에서 관찰한 보정 효과를 그대로 일반화할 수 없다.
+    keys:
+      hungarian__raw__text_projected_to_image: 헝가리안에 원래 활성값 사용
+      hungarian__centered__text_projected_to_image: 헝가리안에 학습 평균을 뺀 활성값 사용
+      hungarian__standardized__text_projected_to_image: 헝가리안에 학습 평균을 빼고 표준편차로 나눈 활성값 사용
+  - message: CC3M에서는 특징 간 중복을 추가로 보정하지 않은 공동 투영이 CCA보다 좋았다.
+    explanation: 두 조건 모두 표준화한 활성값과 공통 256차원을 사용했다. Cross-SVD는 양쪽 activation이 함께 변하는 방향을 찾는다. CCA는 각 모달리티 내부의 분산과 특징 간 상관까지 보정한다. CC3M에서는 이 보정을 포함한 조건의 Recall@1·5·10이 두 검색 방향 모두 낮았다. 보정이 왜 불리한지는 추가 분석이 필요하다.
+    keys:
+      cross_svd_256: 추가 중복 보정이 없는 Cross-SVD 256차원
+      cca_256: 모달리티 내부의 중복까지 보정한 CCA 256차원
+  - message: 표준화한 입력끼리 비교하면 CC3M에서도 CCA가 헝가리안보다 좋았다.
+    explanation: 같은 평균·표준편차 보정을 적용해도 양쪽 특징을 조합하는 CCA와 Cross-SVD의 성능이 일대일 대응보다 높았다. 다만 이것만으로 소프트 대응이 언제나 우세하거나 의미를 더 정확하게 연결한다고 결론 내릴 수 없다.
+    keys:
+      hungarian__standardized__text_projected_to_image: 표준화한 활성값의 헝가리안
+      sinkhorn__standardized__text_projected_to_image: 표준화한 활성값의 Sinkhorn 가중 대응
+      cross_svd_256: 표준화한 활성값의 Cross-SVD 256차원
+      cca_256: 표준화한 활성값의 CCA 256차원
+  - message: 여러 특징을 작은 집합으로 묶는 것만으로 CCA의 검색 성능을 얻지는 못했다.
+    explanation: 동일한 256개 집합 좌표에서 가중합과 출력 분산 보정을 비교했다. 이 조합은 주석으로 의미를 학습한 집합이 아니라 기존 coactivation correlation 행렬을 희소하게 분해한 집합이다. 주석 기반 집합과 Sparse CCA의 추가 비교는 후속 실험 보고서에 정리했다.
+    keys:
+      groups__raw_factors: 희소 행렬 분해의 가중치를 그대로 사용한 256개 집합
+      groups__weighted_average: 희소 행렬 분해의 가중 평균을 사용한 256개 집합
+      groups__unit_variance: 출력 분산을 맞춘 희소 행렬 분해의 256개 집합
+      cca_256: CCA의 256개 공통 좌표
+limitations:
+  - COCO SAE는 한 표본당 8개 특징을 활성화하도록 30회 학습했고, CC3M SAE는 32개 특징을 활성화하도록 10회 학습했다. 따라서 지금의 차이를 학습 데이터만의 효과로 볼 수 없다.
+  - 이 문서의 비교에서는 SAE뿐 아니라 대응 행렬의 학습 자료도 COCO에서 CC3M으로 바뀌었다. 후속 실험 보고서에는 CC3M SAE를 고정하고 대응 행렬만 COCO 자료로 학습한 결과를 별도로 정리했다.
+  - COCO val2017은 앞선 탐색에서도 사용했다. 결과를 확인한 뒤 가장 유리한 조건을 선택한 최종 성능으로 해석하지 않는다.
+  - 검색 성능과 같은 의미의 특징끼리 대응한 비율은 다른 지표다. 주석 기반 대응 평가는 별도로 실시한다.

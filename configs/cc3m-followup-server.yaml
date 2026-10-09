@@ -1,0 +1,10 @@
+model_run: ../runs/cc3m-sae-2026-10-04
+annotation_run: ../runs/elice-rq1-lexicon2
+annotation_population: ../runs/mapping-suite-2026-10-04/population.json
+native_parent: ../runs/mapping-suite-cc3m-2026-10-04
+native_projection: ../runs/mapping-ablation-cc3m-2026-10-04
+output: ../runs/cc3m-followup-2026-10-05
+device: cuda
+retrieval_chunk: 256
+sparse_supports: [4, 8, 16, 32]
+sparse_max_iter: 1000

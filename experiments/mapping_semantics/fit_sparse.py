@@ -17,7 +17,7 @@ import numpy as np  # noqa: E402
 from scipy import linalg  # noqa: E402
 
 from mm_sae.analysis.sparse_cca import fit_sparse_cca  # noqa: E402
-from mm_sae.io import sha256  # noqa: E402
+from mm_sae.io import atomic_json, sha256  # noqa: E402
 from mm_sae.metrics.regression import Moments  # noqa: E402
 
 
@@ -61,6 +61,14 @@ def main():
         started = time.monotonic()
 
         def progress(record):
+            completed = record["component"] + 1
+            elapsed = time.monotonic() - started
+            atomic_json(args.output / "progress.json", {
+                "state": "running", "support": k, "completed_components": completed,
+                "total_components": args.dimensions, "elapsed_seconds": elapsed,
+                "eta_seconds": elapsed / completed * (args.dimensions - completed),
+                "updated_at": time.time(), "component_converged": record["converged"],
+            })
             if record["component"] % 16 == 0:
                 print(json.dumps({"k": k, "component": record["component"],
                                   "elapsed_seconds": time.monotonic() - started,
@@ -84,6 +92,11 @@ def main():
                                 model.metadata["output_text_orientation_factors"])[None, :],
                             residual_objectives=model.singular_values, image_ids=image_ids, text_ids=text_ids)
         metadata_path.write_text(json.dumps(model.metadata, indent=2) + "\n")
+        atomic_json(args.output / "progress.json", {
+            "state": "completed", "support": k, "completed_components": args.dimensions,
+            "total_components": args.dimensions, "elapsed_seconds": time.monotonic() - started,
+            "eta_seconds": 0, "updated_at": time.time(),
+        })
         print(json.dumps({"completed": str(destination), "seconds": model.metadata["fit_seconds"],
                           "converged_components": model.metadata["converged_components"]}), flush=True)
 
