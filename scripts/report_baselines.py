@@ -204,8 +204,13 @@ def figure(definition, data, dest):
         else "Mean image and text concept loss"
     )
     fig.supxlabel(xlabel + " (lower toward the right)")
-    fig.legend(handles=artists, loc="outside upper center", ncols=min(4, len(artists)), frameon=False)
-    fig.savefig(dest / "baseline-frontier.png", dpi=190)
+    fig.legend(
+        handles=artists,
+        loc="outside upper center",
+        ncols=min(3 if len(panels) == 1 else 4, len(artists)),
+        frameon=False,
+    )
+    fig.savefig(dest / "baseline-frontier.png", dpi=190, bbox_inches="tight", pad_inches=0.12)
     plt.close(fig)
     return rows
 

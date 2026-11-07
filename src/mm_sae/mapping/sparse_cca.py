@@ -21,6 +21,12 @@ _gemm = linalg.get_blas_funcs(("gemm",), dtype=np.float64)[0]
 
 
 def _mv(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    # A sparse loading touches only its selected columns. Avoid a full BLAS
+    # layout conversion on every large covariance or residual matrix product.
+    if min(a.shape) > 64:
+        support = np.flatnonzero(b)
+        if 0 < len(support) * 4 < len(b):
+            return _gemv(1.0, a[:, support], b[support])
     return _gemv(1.0, a, b)
 
 

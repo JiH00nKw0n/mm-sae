@@ -93,3 +93,15 @@ def test_output_orientation_uses_original_fit_covariance_and_preserves_deflation
             abs(record["original_regularized_correlation"])
         )
         residual -= rho * np.outer(a @ u, b @ raw_v)
+
+
+def test_sparse_loading_product_matches_dense_blas_for_both_strides():
+    from mm_sae.mapping.sparse_cca import _mv
+
+    rng = np.random.default_rng(7)
+    cross = rng.normal(size=(101, 97))
+    for mat in (cross, cross.T):
+        weights = np.zeros(mat.shape[1])
+        weights[[1, 32, 64]] = (1.4, -0.5, 0.7)
+        reference = np.einsum("ij,j->i", mat, weights)
+        np.testing.assert_allclose(_mv(mat, weights), reference, atol=1e-13)
