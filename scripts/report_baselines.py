@@ -1,7 +1,9 @@
 """Render the baseline tables and measured Pareto diagram from completed results."""
 
 from pathlib import Path
-import argparse, csv, json
+import argparse
+import csv
+import json
 import numpy as np
 import matplotlib
 
@@ -205,6 +207,11 @@ def main(root, dest):
     if final:
         caption += " 이미지와 텍스트에 각각 50%를 배정했습니다. 세 방법 중 어떤 다른 방법도 예측 손실과 검색 성능을 동시에 개선하지 못하는 점을 점선으로 연결했습니다."
     plotsection = "\n\n![세 대응 방법의 측정 결과](baseline-frontier.png)\n\n" + caption if rows else ""
+    if rows:
+        plotsection += "\n\n" + table(
+            ["대응 방법", "그림의 개념 예측 손실", "그림의 양방향 평균 R@5 (%)"],
+            [[name, f"{x:.6f}", f"{y:.3f}"] for name, x, y in rows],
+        )
     if final:
         status += " 그림에서 비교한 세 점의 좌표는 [CSV](figure-points.csv)에 있습니다."
     body = (

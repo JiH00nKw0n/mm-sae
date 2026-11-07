@@ -1,0 +1,96 @@
+{
+  "code_revision": "87b5f13a9236a39ccfd100ef2f9b1ca78e799d5d",
+  "paired_corpus": "pixparse/cc3m-wds",
+  "paired_rows": 2905954,
+  "paired_cache_fingerprint": "b7850d49907b85280057c956fb2cab391edbf64a56d21df956cc9fbf2d5d0920",
+  "encoder": {
+    "backend": "clip",
+    "model_id": "openai/clip-vit-base-patch32",
+    "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+    "text_max_length": 77,
+    "synthetic_dim": 16
+  },
+  "sae_files": {
+    "image": {
+      "config.json": "09c03933d26b4d6754e5aa858ede1b82601ab60a2dc8bad440d074c744e8b44e",
+      "model.safetensors": "4137ec6ae00036fe017943af66bdfc1fec4a4781224ba3ff996681e80f6c3311"
+    },
+    "text": {
+      "config.json": "09c03933d26b4d6754e5aa858ede1b82601ab60a2dc8bad440d074c744e8b44e",
+      "model.safetensors": "5e384df294a5d282c7dbf2bccf918c9b0446569c91a1b5fc13a92da348868c64"
+    }
+  },
+  "fits": {
+    "cca": {
+      "id": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
+      "sha256": "02e441b5b5526f962fa04156f92eef2622c7cbb49ffc9c60c041f282ec7a9933",
+      "config": {
+        "method": "cca",
+        "rank": 256,
+        "ridge": 1.0,
+        "support": 16,
+        "rotation": "none",
+        "prune": null,
+        "max_iter": 500,
+        "tolerance": 1e-06,
+        "score_pairs": 200000,
+        "seed": 0
+      }
+    },
+    "pls": {
+      "id": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
+      "sha256": "af60776f1aead2d7b7dc5bb00f6e6df6fde171d96303d70e35474d3599539a20",
+      "config": {
+        "method": "pls",
+        "rank": 256,
+        "ridge": 1.0,
+        "support": 16,
+        "rotation": "none",
+        "prune": null,
+        "max_iter": 500,
+        "tolerance": 1e-06,
+        "score_pairs": 200000,
+        "seed": 0
+      }
+    },
+    "hungarian": {
+      "id": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
+      "sha256": "90c591dbb0ac5d7b5174be4960d5ab1710f9dc98bed08e6e5446c02d0f141e19",
+      "config": {
+        "method": "hungarian",
+        "rank": 256,
+        "ridge": 1.0,
+        "support": 16,
+        "rotation": "none",
+        "prune": null,
+        "max_iter": 500,
+        "tolerance": 1e-06,
+        "score_pairs": 200000,
+        "seed": 0
+      }
+    }
+  },
+  "gpu_loss_audit": {
+    "hungarian": {
+      "compared": 12,
+      "max_absolute_validation_loss_error": 1.8127970513592828e-09
+    },
+    "pls": {
+      "compared": 12,
+      "max_absolute_validation_loss_error": 1.999467258428922e-10
+    },
+    "cca": {
+      "compared": 12,
+      "max_absolute_validation_loss_error": 2.1839112462895827e-10
+    }
+  },
+  "data_revisions_at_verification": {
+    "jokl/syncoco": "61ec39e676af44a7a33146f78f54019b8a0f97fc",
+    "jokl/syncub": "9d4a42db1807f685c3222e26f64e998c79de5a8a",
+    "clip-benchmark/wds_flickr30k": "f8af3ceee1b944bf761340682621dfafd23974d2",
+    "nlphuji/flickr30k": "2b239befc81b6e3f035ce6bd52f5f4d60f5625f7",
+    "not-lain/docci": "c16644a7fc921512164aa22e9179d7172f70575f",
+    "Jaszczurix7652/CUB-200-2011": "ecc431bb99dd6ec05d0c1098dd94d669da916a7a",
+    "bentrevett/caltech-ucsd-birds-200-2011": "1ef09e021b0b65b40337f6f285909656f407f6e0"
+  }
+}
