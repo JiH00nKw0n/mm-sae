@@ -135,6 +135,7 @@ def _extract_part(
     fingerprint: str,
     limit: int | None,
     notify: Callable[[int, int, int], None],
+    row_source=None,
 ) -> dict:
     pending = part.with_name(part.name + ".pending")
     if pending.exists():
@@ -176,7 +177,7 @@ def _extract_part(
                 keys.clear()
             notify(encoded, read, excluded)
 
-        stream = _stream_rows(config, shard, download_dir)
+        stream = (row_source or _stream_rows)(config, shard, download_dir)
         try:
             for row_number, row in enumerate(stream):
                 read += 1
@@ -192,8 +193,12 @@ def _extract_part(
                     try:
                         image = _decode_image(raw_image)
                     except (
-                        OSError, ValueError, TypeError, KeyError,
-                        UnidentifiedImageError, Image.DecompressionBombError,
+                        OSError,
+                        ValueError,
+                        TypeError,
+                        KeyError,
+                        UnidentifiedImageError,
+                        Image.DecompressionBombError,
                     ) as exc:
                         reason = f"image_decode_error:{type(exc).__name__}"
                     else:
@@ -272,6 +277,7 @@ def extract(
     encoder_config: EncoderConfig | Mapping[str, Any],
     encoder: PairedEncoder | None = None,
     on_progress: Callable[[dict], None] | None = None,
+    row_source=None,
 ) -> dict:
     """Extract paired arrays, returning manifest with mmap-ready relative paths.
 
@@ -290,12 +296,18 @@ def extract(
     identity = {
         "format_version": 1,
         "source": settings.model_dump(
-            exclude={"batch_size", "staging", "verify_cached_hashes", "estimated_rows", "estimated_source_bytes"}
+            exclude={
+                "batch_size",
+                "staging",
+                "verify_cached_hashes",
+                "estimated_rows",
+                "estimated_source_bytes",
+            }
         ),
         "encoder": encoder_settings.model_dump(mode="json", exclude={"device", "batch_size"}),
         "implementation": {
             "paired_embeddings.py": sha256(Path(__file__)),
-            "encoder.py": sha256(Path(__file__).parents[1] / "models" / "encoder.py"),
+            "encoder.py": sha256(Path(__file__).parents[1] / "encoders" / "clip.py"),
         },
         "packages": {
             name: importlib.metadata.version(name)
@@ -308,7 +320,9 @@ def extract(
         if manifest_path.exists():
             existing = json.loads(manifest_path.read_text())
             if existing["fingerprint"] != fingerprint:
-                raise ValueError("Embedding cache belongs to a different source, encoder, code, or sample limit")
+                raise ValueError(
+                    "Embedding cache belongs to a different source, encoder, code, or sample limit"
+                )
         manifest = {
             "fingerprint": fingerprint,
             "identity": identity,
@@ -347,8 +361,12 @@ def extract(
                     def notify(rows: int, source_rows: int, excluded: int):
                         done = completed + rows
                         progress.update(
-                            done, shard=shard, shard_index=number, shards_total=len(shard_paths),
-                            source_rows_in_shard=source_rows, excluded_in_shard=excluded,
+                            done,
+                            shard=shard,
+                            shard_index=number,
+                            shards_total=len(shard_paths),
+                            source_rows_in_shard=source_rows,
+                            excluded_in_shard=excluded,
                             total_is_estimate=settings.max_samples is None,
                         )
                         snapshot = progress.snapshot() | {"shard": shard, "state": "running"}
@@ -365,14 +383,22 @@ def extract(
                             shutil.rmtree(download_dir)
                     else:
                         if encoder is None:
-                            from mm_sae.models.encoder import CLIPEncoder
+                            from mm_sae.encoders.clip import CLIPEncoder
 
                             if encoder_settings.backend != "clip":
                                 raise ValueError("Provide an explicit encoder for non-CLIP extraction tests")
                             encoder = CLIPEncoder(encoder_settings)
                         limit = None if settings.max_samples is None else settings.max_samples - completed
                         receipt = _extract_part(
-                            settings, shard, part, download_dir, encoder, fingerprint, limit, notify
+                            settings,
+                            shard,
+                            part,
+                            download_dir,
+                            encoder,
+                            fingerprint,
+                            limit,
+                            notify,
+                            row_source,
                         )
                     entry = receipt | {
                         "image_path": f"parts/{part.name}/image.npy",
@@ -388,10 +414,9 @@ def extract(
                 manifest["invocation_elapsed_seconds"] = time.monotonic() - started
                 manifest["source_rows_read"] = sum(p["source_rows_read"] for p in manifest["parts"])
                 manifest["excluded_rows"] = sum(p["excluded_rows"] for p in manifest["parts"])
-                manifest["all_selected_sources_exhausted"] = (
-                    len(manifest["parts"]) == len(shard_paths)
-                    and all(p["source_exhausted"] for p in manifest["parts"])
-                )
+                manifest["all_selected_sources_exhausted"] = len(manifest["parts"]) == len(
+                    shard_paths
+                ) and all(p["source_exhausted"] for p in manifest["parts"])
                 progress.total = manifest["rows"]
                 atomic_json(manifest_path, manifest)
                 atomic_json(output / "embedding_progress.json", progress.snapshot() | {"state": "completed"})

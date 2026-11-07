@@ -72,7 +72,9 @@ def test_sharded_extraction_preserves_pairs_and_resumes(monkeypatch, tmp_path):
     opened = install_rows(monkeypatch, {"train/000.tar": [1, 2, 3], "train/001.tar": [4, 5]})
     encoder = FakeEncoder()
     progress = []
-    manifest = pe.extract(config(), tmp_path, encoder_config=ENCODER, encoder=encoder, on_progress=progress.append)
+    manifest = pe.extract(
+        config(), tmp_path, encoder_config=ENCODER, encoder=encoder, on_progress=progress.append
+    )
     assert manifest["rows"] == 5
     assert manifest["all_selected_sources_exhausted"]
     assert manifest["source_rows_read"] == 5
@@ -84,7 +86,9 @@ def test_sharded_extraction_preserves_pairs_and_resumes(monkeypatch, tmp_path):
         texts = np.load(tmp_path / part["text_path"], mmap_mode="r")
         np.testing.assert_allclose(images, FakeEncoder.vectors(expected))
         np.testing.assert_array_equal(images, texts)
-        assert [r["key"] for r in json.loads((tmp_path / part["keys_path"]).read_text())] == list(map(str, expected))
+        assert [r["key"] for r in json.loads((tmp_path / part["keys_path"]).read_text())] == list(
+            map(str, expected)
+        )
     resumed = pe.extract(config(batch_size=64), tmp_path, encoder_config=ENCODER)
     assert resumed["rows"] == 5
     assert opened == ["train/000.tar", "train/001.tar"]
@@ -142,14 +146,24 @@ def test_completed_array_corruption_is_not_silently_reused(monkeypatch, tmp_path
 
 
 def test_only_known_row_errors_are_excluded(monkeypatch, tmp_path):
-    install_rows(monkeypatch, {"train/000.tar": [
-        1, {"__key__": "bad-image", "jpg": {"bytes": b"not an image", "path": None}, "txt": "2"},
-        {"__key__": "empty-caption", "jpg": None, "txt": ""}, {"__key__": "no-image", "txt": "3"}, 4,
-    ]})
+    install_rows(
+        monkeypatch,
+        {
+            "train/000.tar": [
+                1,
+                {"__key__": "bad-image", "jpg": {"bytes": b"not an image", "path": None}, "txt": "2"},
+                {"__key__": "empty-caption", "jpg": None, "txt": ""},
+                {"__key__": "no-image", "txt": "3"},
+                4,
+            ]
+        },
+    )
     manifest = pe.extract(config(max_shards=1), tmp_path, encoder_config=ENCODER, encoder=FakeEncoder())
     assert manifest["rows"] == 2
     assert manifest["excluded_rows"] == 3
-    excluded = [json.loads(line) for line in (tmp_path / "parts/00000/excluded.jsonl").read_text().splitlines()]
+    excluded = [
+        json.loads(line) for line in (tmp_path / "parts/00000/excluded.jsonl").read_text().splitlines()
+    ]
     assert [entry["key"] for entry in excluded] == ["bad-image", "empty-caption", "no-image"]
     assert excluded[0]["reason"].startswith("image_decode_error")
 
@@ -196,10 +210,16 @@ def test_local_shard_uses_hf_reader_and_removes_owned_download(monkeypatch, tmp_
     assert manifest["identity"]["source"]["revision"] == REVISION
 
 
-@pytest.mark.parametrize("changes", [
-    {"revision": "main"}, {"shard_paths": ["../outside.tar"]},
-    {"shard_paths": ["a.tar", "a.tar"]}, {"max_samples": 0}, {"unexpected": 1},
-])
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"revision": "main"},
+        {"shard_paths": ["../outside.tar"]},
+        {"shard_paths": ["a.tar", "a.tar"]},
+        {"max_samples": 0},
+        {"unexpected": 1},
+    ],
+)
 def test_invalid_config_fails_before_creating_data(changes):
     with pytest.raises(ValueError):
         pe.ShardEmbeddingConfig.model_validate(config(**changes))

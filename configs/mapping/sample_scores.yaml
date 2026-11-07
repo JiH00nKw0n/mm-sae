@@ -1,0 +1,4 @@
+rank: 256
+method: cca
+rotation: squared_score_covariance
+prune: 64

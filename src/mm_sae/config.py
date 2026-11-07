@@ -1,209 +1,111 @@
-"""One validated configuration contract shared by every stage."""
+"""Validated experiment recipes. Relative paths use the recipe's directory."""
 
-from __future__ import annotations
-
-import hashlib
-import json
 from pathlib import Path
-from typing import Literal
-
+from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-class StrictModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class Settings(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
 
-def default_training_arguments():
-    return {
-        "num_train_epochs": 30,
-        "per_device_train_batch_size": 1024,
-        "learning_rate": 5e-4,
-        "weight_decay": 1e-5,
-        "adam_beta1": 0.9,
-        "adam_beta2": 0.999,
-        "adam_epsilon": 1e-8,
-        "optim": "adamw_torch",
-        "lr_scheduler_type": "cosine",
-        "warmup_ratio": 0.05,
-        "max_grad_norm": 1.0,
-        "seed": 0,
-        "data_seed": 0,
-        "eval_strategy": "no",
-        "save_strategy": "epoch",
-        "logging_strategy": "epoch",
-        "save_total_limit": 2,
-        "dataloader_num_workers": 0,
-        "dataloader_drop_last": False,
-    }
-
-
-class DataConfig(StrictModel):
-    source: Literal["coco", "synthetic"] = "coco"
-    root: Path = Path("data/coco")
-    download: bool = False
-    splits: list[str] = ["train2017", "val2017"]
-    expected_images: dict[str, int] = {"train2017": 118287, "val2017": 5000}
-    images_pattern: str = "images/{split}/{image_id:012d}.jpg"
-    masks_pattern: str = "annotations/{split}/{image_id:012d}.png"
-    captions_pattern: str = "annotations/captions_{split}.json"
-    caption_overrides: dict[str, Path] = Field(default_factory=dict)
-    text_label_scope: Literal["full_caption", "maskable_input"] = "full_caption"
-    image_limits: dict[str, int] = {}
-    concepts_file: Path | None = None
-    reviewed_captions: Path | None = None
-    images_url_pattern: str = "http://images.cocodataset.org/{split}/{image_id:012d}.jpg"
-    label_scope: Literal["model_input", "full_image"] = "model_input"
-    fixture_images: int = Field(default=48, ge=8)
-    fixture_captions: int = Field(default=5, ge=1)
-    fixture_size: int = Field(default=64, ge=16)
-    downloads: dict[str, str] = {
-        "train2017.zip": "http://images.cocodataset.org/zips/train2017.zip",
-        "val2017.zip": "http://images.cocodataset.org/zips/val2017.zip",
-        "annotations_trainval2017.zip": "http://images.cocodataset.org/annotations/annotations_trainval2017.zip",
-        "stuffthingmaps_trainval2017.zip": "https://huggingface.co/datasets/JPShi/COCO-Stuff/resolve/b7af13b9d74c9ab4a6e0ffa787a40f0ab8ec1a40/stuffthingmaps_trainval2017.zip",
-    }
-
-
-class EncoderConfig(StrictModel):
+class EncoderConfig(Settings):
     backend: Literal["clip", "synthetic"] = "clip"
     model_id: str = "openai/clip-vit-base-patch32"
     revision: str = "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268"
-    device: Literal["cuda", "cpu", "mps"] = "cuda"
-    batch_size: int = Field(default=128, ge=1)
-    text_max_length: int = Field(default=77, ge=1)
-    synthetic_dim: int = Field(default=16, ge=6)
+    device: Literal["cpu", "cuda"] = "cpu"
+    batch_size: int = Field(128, ge=1)
+    text_max_length: int = Field(77, ge=3)
+    synthetic_dim: int = Field(16, ge=6)
 
 
-class TrainingConfig(StrictModel):
-    split: str = "train2017"
-    sampling: Literal["unique_image_all_text", "paired_repeat_image"] = "unique_image_all_text"
-    latent_size: int = Field(default=4096, ge=1)
-    top_k: int = Field(default=8, ge=1)
-    arguments: dict = Field(default_factory=default_training_arguments)
+class Training(Settings):
+    latent_size: int = Field(4096, ge=2)
+    top_k: int = Field(32, ge=1)
+    seed: int = 0
+    arguments: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def merge_arguments(self):
-        self.arguments = default_training_arguments() | self.arguments
+    def check_width(self):
+        if self.top_k > self.latent_size:
+            raise ValueError("top_k exceeds latent_size")
         return self
 
-    @property
-    def max_steps(self):
-        value = self.arguments.get("max_steps", -1)
-        return value if value > 0 else None
 
-    @property
-    def seed(self):
-        return self.arguments.get("seed", 0)
-
-    image_checkpoint: Path | None = None
-    text_checkpoint: Path | None = None
-
-
-class FeatureConfig(StrictModel):
-    batch_size: int = Field(default=2048, ge=1)
-    mask_rgb: tuple[int, int, int] = (255, 255, 255)
-    text_masking: Literal["unk_token"] = "unk_token"
+class Mapping(Settings):
+    method: Literal["hungarian", "pls", "cca", "sparse_pls", "sparse_cca"] = "cca"
+    rank: int = Field(256, ge=1)
+    ridge: float = Field(1.0, ge=0)
+    support: int = Field(16, ge=1)
+    rotation: Literal["none", "covariance", "squared_score_covariance"] = "none"
+    prune: int | None = Field(None, ge=1)
+    max_iter: int = Field(500, ge=1)
+    tolerance: float = Field(1e-6, gt=0)
+    score_pairs: int = Field(200000, ge=2)
+    seed: int = 0
 
 
-class ExperimentConfig(StrictModel):
-    name: str = "rq1"
-    options: dict = {}
+class Benchmark(Settings):
+    dataset: Literal[
+        "coco",
+        "stuff",
+        "visual_genome",
+        "cub",
+        "syncoco",
+        "syncub",
+        "coco_retrieval",
+        "flickr30k",
+        "docci",
+        "iiw",
+    ]
+    # Probe name referenced by edited pairs; defaults to coco or cub.
+    probe: str | None = None
+    files: dict[str, str]
+    min_train_positives: int = Field(2, ge=1)
+    diagnostics: bool = False
 
 
-class ExecutionConfig(StrictModel):
-    progress_interval_seconds: float = Field(default=10, gt=0)
-    require_approval: bool = False
-    approval_file: Path | None = None
-    review_document: Path | None = None
-
-
-class ReuseConfig(StrictModel):
-    """Import verified artifacts from a finished run of the same data and frozen models.
-
-    Every item is checked before it is copied and recorded in <output>/reuse.json; anything that
-    fails a check is recomputed. Completion marks are never imported.
-    """
-
-    source_run: Path
-    source_cache: Path | None = None
-    image_index: bool = True
-    embeddings: bool = True
-    sae_weights: bool = True
-    original_activations: bool = True
-    image_counterfactuals: bool = True
-    text_counterfactual_rows: bool = True
-
-
-class Config(StrictModel):
-    output: Path = Path("runs/coco-rq1")
-    cache: Path = Path("cache")
-    data: DataConfig = Field(default_factory=DataConfig)
+class Recipe(Settings):
+    output: Path
+    data_root: Path
+    paired_cache: Path
+    expected_dataset: str | None = None
+    source: dict | None = None
     encoder: EncoderConfig = Field(default_factory=EncoderConfig)
-    training: TrainingConfig = Field(default_factory=TrainingConfig)
-    features: FeatureConfig = Field(default_factory=FeatureConfig)
-    experiment: ExperimentConfig = Field(default_factory=ExperimentConfig)
-    execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
-    reuse: ReuseConfig | None = None
+    training: Training = Field(default_factory=Training)
+    mapping: Mapping = Field(default_factory=Mapping)
+    benchmarks: dict[str, Benchmark]
+    split_seed: int = 0
+    smoke: bool = False
 
     @model_validator(mode="after")
-    def coherent(self):
-        if self.execution.require_approval and (
-            self.execution.approval_file is None or self.execution.review_document is None
-        ):
-            raise ValueError("Approval requires both an approval_file and a review_document")
-        if self.training.top_k > self.training.latent_size:
-            raise ValueError("top_k cannot exceed latent_size")
-        if self.training.sampling == "paired_repeat_image" and (
-            bool(self.training.image_checkpoint) != bool(self.training.text_checkpoint)
-        ):
-            raise ValueError("Paired training requires both checkpoints or neither")
-        if set(self.data.caption_overrides) - set(self.data.splits):
-            raise ValueError("caption_overrides keys must be configured splits")
-        if (self.data.source == "synthetic") != (self.encoder.backend == "synthetic"):
-            raise ValueError("Synthetic data and encoder must be selected together; no mock encoder on COCO")
-        if self.training.split not in self.data.splits:
-            raise ValueError("training.split must be present in data.splits")
-        if any(not 0 <= x <= 255 for x in self.features.mask_rgb):
-            raise ValueError("mask_rgb must contain byte values")
-        if self.data.image_limits and set(self.data.image_limits) != set(self.data.splits):
-            raise ValueError("A smoke run must explicitly limit every split")
-        if self.reuse is not None and self.reuse.source_run.resolve() == self.output.resolve():
-            raise ValueError("reuse.source_run must be a different, finished run directory")
+    def check(self):
+        if self.smoke != (self.encoder.backend == "synthetic"):
+            raise ValueError("Synthetic encoder and smoke fixture must be used together")
+        if any(not k.isidentifier() for k in self.benchmarks):
+            raise ValueError("Benchmark names must be identifiers")
+        if not self.benchmarks:
+            raise ValueError("Configure at least one benchmark")
+        for name, spec in self.benchmarks.items():
+            if spec.dataset in ("syncoco", "syncub"):
+                kind = "coco" if spec.dataset == "syncoco" else "cub"
+                dependency = spec.probe or kind
+                if dependency not in self.benchmarks or self.benchmarks[dependency].dataset != kind:
+                    raise ValueError(f"{name} needs an original {kind} probe named {dependency}")
         return self
 
-    def digest(self) -> str:
-        return hashlib.sha256(json.dumps(self.model_dump(mode="json"), sort_keys=True).encode()).hexdigest()
 
-
-def load_config(path: str | Path) -> Config:
+def load_recipe(path, mapping_override=None):
     path = Path(path).resolve()
-    raw = yaml.safe_load(path.read_text())
-    config = Config.model_validate(raw)
-    # Every relative path is relative to the configuration file, never the caller's working directory.
-    for model, fields in [
-        (config, ["output", "cache"]),
-        (config.data, ["root", "concepts_file", "reviewed_captions"]),
-        (config.training, ["image_checkpoint", "text_checkpoint"]),
-        (config.execution, ["approval_file", "review_document"]),
-        (config.reuse, ["source_run", "source_cache"]),
-    ]:
-        if model is None:
-            continue
-        for field in fields:
-            value = getattr(model, field)
-            if value is not None:
-                setattr(
-                    model, field, value.resolve() if value.is_absolute() else (path.parent / value).resolve()
-                )
-    if "source_run" in config.experiment.options:
-        source = Path(config.experiment.options["source_run"])
-        config.experiment.options["source_run"] = str(
-            source.resolve() if source.is_absolute() else (path.parent / source).resolve()
-        )
-    config.data.caption_overrides = {
-        split: p.resolve() if p.is_absolute() else (path.parent / p).resolve()
-        for split, p in config.data.caption_overrides.items()
-    }
-    return config
+    data = yaml.safe_load(path.read_text())
+    if parent := data.pop("extends", None):
+        base = yaml.safe_load((path.parent / parent).read_text())
+        if "extends" in base:
+            raise ValueError("Recipe inheritance supports one level")
+        data = base | data
+    if mapping_override:
+        data["mapping"] = yaml.safe_load(Path(mapping_override).read_text())
+    for key in ("output", "data_root", "paired_cache"):
+        data[key] = (path.parent / data[key]).resolve()
+    return Recipe.model_validate(data)

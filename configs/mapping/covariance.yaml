@@ -1,0 +1,4 @@
+rank: 256
+method: cca
+rotation: covariance
+prune: 64

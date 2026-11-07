@@ -1,0 +1,3 @@
+rank: 256
+method: sparse_pls
+support: 16

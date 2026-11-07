@@ -1,6 +1,6 @@
 import numpy as np
 
-from mm_sae.analysis.sparse_pls import fit_sparse_pls
+from mm_sae.mapping.sparse_pls import fit_sparse_pls
 
 
 def test_unrestricted_recovers_svd_and_sparse_respects_support():
@@ -8,8 +8,11 @@ def test_unrestricted_recovers_svd_and_sparse_respects_support():
     u, s, vt = np.linalg.svd(cross, full_matrices=False)
     dense = fit_sparse_pls(cross, u[:, :4], vt.T[:, :4], k=12)
     np.testing.assert_allclose(dense.singular_values, s[:4], atol=1e-9)
-    np.testing.assert_allclose(dense.image @ np.diag(dense.singular_values) @ dense.text.T,
-                               u[:, :4] @ np.diag(s[:4]) @ vt[:4], atol=1e-9)
+    np.testing.assert_allclose(
+        dense.image @ np.diag(dense.singular_values) @ dense.text.T,
+        u[:, :4] @ np.diag(s[:4]) @ vt[:4],
+        atol=1e-9,
+    )
     sparse = fit_sparse_pls(cross, u[:, :4], vt.T[:, :4], k=2)
     assert ((sparse.image != 0).sum(0) <= 2).all()
     assert ((sparse.text != 0).sum(0) <= 2).all()

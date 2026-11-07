@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mm-sae"
 version = "0.1.0"
-description = "Frozen multimodal SAE correspondence experiments with COCO-Stuff interventions"
+description = "Train multimodal SAE correspondences and evaluate concepts and retrieval"
 requires-python = ">=3.11,<3.13"
 dependencies = [
   "torch==2.6.0", "numpy==2.1.3", "scipy==1.14.1",
@@ -19,19 +19,12 @@ dev = [
     "pytest==8.3.5",
     "ruff==0.11.2",
 ]
-annotation = [
-    "jsonschema==4.26.0",
-    "openai==3.13.0",
-    "python-dotenv==1.2.3",
-]
 [project.scripts]
 mm-sae = "mm_sae.cli:main"
 [tool.setuptools.packages.find]
-where = ["src", "."]
-include = ["mm_sae*", "experiments*"]
+where = ["src"]
+include = ["mm_sae*"]
 namespaces = false
-[tool.setuptools.package-data]
-mm_sae = ["resources/*.yaml"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 [tool.ruff]
@@ -40,7 +33,7 @@ line-length = 110
 select = ["E4", "E7", "E9", "F"]
 
 [tool.pyright]
-include = ["src", "experiments", "tests", "scripts"]
+include = ["src", "tests"]
 extraPaths = ["src"]
 pythonVersion = "3.11"
 typeCheckingMode = "basic"

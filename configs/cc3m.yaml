@@ -1,0 +1,7 @@
+extends: paper.yaml
+source:
+  dataset_id: pixparse/cc3m-wds
+  revision: 46f3d69f840e59d77d52e8decfe5baec97e94c7f
+  shard_pattern: cc3m-train-*.tar
+  staging: local_shard
+  batch_size: 128
