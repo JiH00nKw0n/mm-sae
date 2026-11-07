@@ -47,7 +47,7 @@ def fit_columns(x, y, iterations=80):
     return w, b
 
 
-def evaluate(scores, records, min_count, diagnostics, allowed=None):
+def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=False):
     row_ids = {key: array("q") for key in ("train", "val", "test")}
     positives = defaultdict(lambda: array("q"))
     train_counts = defaultdict(int)
@@ -69,6 +69,21 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None):
     if any(not len(values) for values in ids.values()):
         raise ValueError("Concept probes require nonempty train, val and test splits")
     names = sorted(train_counts) if allowed is None else sorted(set(allowed))
+    if use_cuda:
+        from scipy.sparse import csc_matrix
+        from . import concepts_cuda
+
+        offsets = np.cumsum([0] + [len(positives[name]) for name in names])
+        row_index = (
+            np.concatenate([np.asarray(positives[name], dtype=np.int32) for name in names])
+            if names
+            else np.empty(0, np.int32)
+        )
+        labels = csc_matrix(
+            (np.ones(len(row_index), dtype=bool), row_index, offsets), shape=(n_rows, len(names))
+        )
+        return concepts_cuda.evaluate(scores, labels, names, ids, min_count, diagnostics)
+
     it, iv, ie = ids["train"], ids["val"], ids["test"]
     total = np.zeros(scores.shape[1])
     squares = np.zeros_like(total)

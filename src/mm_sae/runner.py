@@ -207,7 +207,11 @@ def evaluate(cfg, tables, saes, mapping, out):
             else:
                 side = next(iter(rows))
                 result, details = concepts.evaluate(
-                    side_scores[side], rows[side], spec.min_train_positives, spec.diagnostics
+                    side_scores[side],
+                    rows[side],
+                    spec.min_train_positives,
+                    spec.diagnostics,
+                    use_cuda=cfg.encoder.device == "cuda",
                 )
                 save_arrays(work / (name + "-probes.npz"), details)
             summary[name] = result

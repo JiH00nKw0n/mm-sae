@@ -27,10 +27,13 @@ benchmarks = {
 
 def main(root, dest):
     dest.mkdir(parents=True, exist_ok=True)
-    data = {
-        m: {p.parent.name: json.loads(p.read_text()) for p in (root / m).glob("*/result.json")}
-        for m in methods
-    }
+    if root.is_file():
+        data = json.loads(root.read_text())
+    else:
+        data = {
+            m: {p.parent.name: json.loads(p.read_text()) for p in (root / m).glob("*/result.json")}
+            for m in methods
+        }
     # Accept both collected server results and the repository's native run tree.
     for fit_path in root.glob("**/mappings/*/fit.json"):
         receipt = json.loads(fit_path.read_text())
@@ -50,6 +53,14 @@ def main(root, dest):
                 data[cfg["method"]][name] = result
     if not any(data.values()):
         raise ValueError("No measured baselines found")
+    summary = {
+        m: {
+            ds: {k: v for k, v in result.items() if k not in ("concepts", "excluded")}
+            for ds, result in measurements.items()
+        }
+        for m, measurements in data.items()
+    }
+    (dest / "measurements.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
 
     def table(cols, rows):
         return "\n".join(
@@ -142,6 +153,20 @@ def main(root, dest):
         ("edits.csv", ecols, er),
     ]:
         save_csv(file, cols, result)
+    populations = []
+    for key, label in benchmarks.items():
+        completed = [data[m][key] for m in methods if key in data[m]]
+        if not completed:
+            continue
+        if "split_sizes" in completed[0]:
+            for split, count in completed[0]["split_sizes"].items():
+                assert all(r["split_sizes"][split] == count for r in completed)
+                populations.append([label, "concept", split, count])
+        if "images" in completed[0]:
+            for side in ("images", "captions"):
+                assert all(r[side] == completed[0][side] for r in completed)
+                populations.append([label, "retrieval", side, completed[0][side]])
+    save_csv("populations.csv", ["dataset", "evaluation", "split_or_modality", "samples"], populations)
     common = set.intersection(*(set(b) for b in data.values()))
     final = {"coco", "stuff", "visual_genome", "coco_retrieval", "flickr30k", "docci", "iiw"} <= common
     im = [k for k in ("coco", "stuff") if k in common]
@@ -218,15 +243,33 @@ def main(root, dest):
         heading
         + status
         + plotsection
-        + "\n\n## 개념 예측\n\n"
+        + "\n\n## 개념 예측\n\n손실, 혼합도, 분산도는 모두 낮을수록 좋습니다. CUB의 원본 속성 평가는 synCUB 편집 쌍에 사용할 분류기를 정하기 위해 별도로 측정했습니다.\n\n"
         + table(ccols, cr)
         + "\n\n## 이미지·캡션 검색\n\n"
         + table(rcols, rr)
     )
     body += "\n\n이미지 R@5는 이미지로 정답 캡션을 상위 5개 안에서 찾은 비율입니다. 텍스트 R@5는 캡션으로 정답 이미지를 찾은 비율입니다."
     if er:
-        body += "\n\n## 편집 전후의 개념 예측 확률\n\n" + table(
-            ecols, [[*r[:5], *[f"{v:.5f}" if v is not None else "해당 없음" for v in r[5:]]] for r in er]
+        roles = {"removed": "제거", "added": "추가", "retained": "유지"}
+        edit_rows = [
+            [
+                dataset,
+                method,
+                roles[role],
+                count,
+                missing,
+                f"{change:.5f}" if change is not None else "해당 없음",
+                f"{abs_change:.5f}" if abs_change is not None else "해당 없음",
+            ]
+            for dataset, method, role, count, missing, change, abs_change in er
+            if count or missing
+        ]
+        body += (
+            "\n\n## 편집 전후의 개념 예측 확률\n\n"
+            "한 건은 편집 전후의 이미지 한 쌍에서 개념 하나를 비교한 값입니다. "
+            "평균 확률 변화는 편집 후 확률에서 편집 전 확률을 뺀 값입니다. "
+            "예를 들어 −0.17이면 해당 개념의 예측 확률이 평균 17%p 낮아졌다는 뜻입니다.\n\n"
+            + table(ecols, edit_rows)
         )
     body += "\n\n## 재현 방법\n\n" + (dest / "REPRODUCE.md").read_text() + "\n"
     (dest / "README.md").write_text(body.rstrip() + "\n")

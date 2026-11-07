@@ -1,0 +1,17 @@
+{
+  "samples": {
+    "val": 1073329,
+    "train": 3664602,
+    "test": 668661
+  },
+  "image_groups": 107786,
+  "rows_without_region_labels": 1779173,
+  "positive_annotations_by_type": {
+    "object": 5824982,
+    "relation": 1991887
+  },
+  "eligible_by_type": {
+    "object": 5430,
+    "relation": 1179
+  }
+}
