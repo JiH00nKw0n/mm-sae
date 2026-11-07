@@ -2,6 +2,8 @@
 
 Train separate sparse autoencoders for image and text embeddings, learn correspondences from paired training data, and evaluate the frozen coordinates on concept prediction and cross-modal retrieval. The suite implements the November 4 meeting protocols on slides 11–16.
 
+The [measured CC3M baseline report](docs/baselines-2026-11-07/README.md) includes the scores, the two-dimensional comparison and commands to reproduce them.
+
 ## Run the complete offline example
 
 From a clean checkout with Docker and Make installed:
