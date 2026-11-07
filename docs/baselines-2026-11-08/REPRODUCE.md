@@ -18,7 +18,7 @@ Docker와 NVIDIA GPU를 준비합니다. [평가 설정](../../configs/coco_val2
 
 ```bash
 make build TARGET=gpu IMAGE=mm-sae:gpu
-for method in hungarian pls cca sparse_pls sparse_cca cca_cov cca_cov64; do
+for method in hungarian pls cca sparse_pls sparse_cca cca_cov cca_cov64 sinkhorn procrustes; do
   make run TARGET=gpu IMAGE=mm-sae:gpu DATA=/datasets/mm-sae CACHE=/cache/mm-sae \
     RUNS=/results/mm-sae SAE=/checkpoints/cc3m/models \
     ARGS="run configs/coco_val2017_top16.yaml --mapping configs/mapping/${method}.yaml"

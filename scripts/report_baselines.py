@@ -155,6 +155,8 @@ def figure(definition, data, dest):
     rows = []
     for ax, (group, title) in zip(axes[0], panels.items()):
         coordinates = []
+        detail_points = []
+        detail_methods = layout.get("detail_methods", [])
         for idx, (method, style) in enumerate(definition["methods"].items()):
             measurements = data[method]
             image_loss = float(np.mean([measurements[ds]["groups"][g]["loss"] for ds, g in layout["image"]]))
@@ -173,12 +175,16 @@ def figure(definition, data, dest):
             shared = "sae_objective" in style
             if not shared:
                 coordinates.append((x, y))
+            marker = "*" if shared else ["o", "s", "D", "^"][idx % 4]
+            color = plt.get_cmap("tab10")(idx % 10)
+            if method in detail_methods:
+                detail_points.append((x, y, marker, color))
             point = ax.scatter(
                 x,
                 y,
                 s=155 if shared else 92,
-                color=plt.get_cmap("tab10")(idx % 10),
-                marker="*" if shared else ["o", "s", "D", "^"][idx % 4],
+                color=color,
+                marker=marker,
                 edgecolors="white",
                 zorder=3,
                 label=style["label"],
@@ -192,6 +198,20 @@ def figure(definition, data, dest):
         )
         if len(frontier) > 1:
             ax.plot(*zip(*frontier), linewidth=1.3, linestyle="--", color="#6b7278")
+        if len(panels) == 1 and len(detail_points) >= 2:
+            from matplotlib.ticker import LinearLocator, FormatStrFormatter
+
+            inset = ax.inset_axes([0.12, 0.40, 0.29, 0.26])
+            for x, y, marker, color in detail_points:
+                inset.scatter(x, y, marker=marker, color=color, s=36)
+            inset.margins(x=0.16, y=0.25)
+            inset.invert_xaxis()
+            inset.set_title("Matched features (detail)", fontsize=8)
+            for axis, fmt in ((inset.xaxis, "%.5f"), (inset.yaxis, "%.2f")):
+                axis.set_major_locator(LinearLocator(3))
+                axis.set_major_formatter(FormatStrFormatter(fmt))
+            inset.tick_params(labelsize=7)
+            inset.grid(alpha=0.15)
         ax.set_title(title if len(panels) > 1 else "COCO val2017")
         ax.margins(x=0.18, y=0.17)
         ax.grid(alpha=0.16)

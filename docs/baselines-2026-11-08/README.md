@@ -11,6 +11,8 @@
 | Sparse CCA (k=16) | 256 | 0.11674 | 0.02479 | 0.07077 | 25.61775 |
 | CCA + covariance rotation | 256 | 0.11499 | 0.02412 | 0.06955 | 35.94141 |
 | CCA + rotation (top 64) | 256 | 0.11499 | 0.02412 | 0.06955 | 30.80659 |
+| Sinkhorn (256 pairs) | 256 | 0.12320 | 0.02910 | 0.07615 | 12.09690 |
+| Procrustes (256 pairs) | 256 | 0.12320 | 0.02901 | 0.07611 | 12.24888 |
 
 ![개념 예측과 이미지·텍스트 검색](baseline-frontier.png)
 
@@ -23,6 +25,7 @@
 - **고정한 모달리티별 SAE.** CC3M 2,905,954쌍의 통계량으로 이미지·텍스트 대응을 구했습니다. 헝가리안은 일대일 대응에서 상관계수가 큰 256쌍을 골랐고, PLS-SVD와 CCA는 각각 256개 조합을 구했습니다. CCA의 규제 값은 1입니다.
 - **희소 PLS-SVD와 희소 CCA.** 각 축을 학습할 때 양쪽 계수에서 절댓값이 0보다 큰 특징을 각각 최대 16개로 제한했습니다. 희소 PLS-SVD는 공분산을, 희소 CCA는 규제한 분산 제약 아래에서 대응 점수를 높이는 계수를 번갈아 구합니다. 두 방법 모두 구한 축의 기여를 뺀 뒤 다음 축을 찾습니다. 양쪽 모두 256개 축이 각각의 수렴 기준을 충족했습니다. 희소 CCA에서는 0이 아닌 계수만 곱해 계산했고, 첫 8개 축을 전체 행렬 곱으로 다시 구했을 때 최대 계수 차이는 3×10⁻¹⁶ 미만이었습니다.
 - **CCA 공분산 회전.** 이미지와 텍스트에서 한 축과 강하게 관련된 특징이 소수에 집중되도록 양쪽에 같은 직교회전을 적용했습니다. 10월 회전은 활성 특징 수가 당시 이미지 3,695개·텍스트 3,221개이고 이번에는 3,706개·3,241개여서 이번 CCA 해에서 다시 구했습니다. 회전 목적값은 0.03465에서 0.38978로 높아졌고 최대 반복 500회에서 종료했습니다. 회전 후 계수 전체를 사용한 조건과, 같은 회전에서 축마다 절댓값이 큰 계수 64개를 양쪽에 따로 남긴 조건을 비교했습니다. 두 조건에서 상위 16개 계수는 같으므로 개념 예측 결과도 같습니다. 각 조건의 검색에는 각각 전체 계수와 상위 64개 계수를 사용했습니다.
+- **Sinkhorn과 Procrustes.** 헝가리안이 CC3M에서 고른 이미지·텍스트 특징 256쌍을 두 조건에서 공통으로 사용했습니다. 이미지는 이 256개 특징을 그대로 쓰고 텍스트를 이미지 좌표로 변환합니다. Sinkhorn은 균등한 주변 질량과 엔트로피 규제 값 0.05로 한 텍스트 특징을 여러 이미지 특징에 배분합니다. Sinkhorn의 최대 주변 질량 오차는 18,020회 반복에서 9.99×10⁻⁸로 허용치 10⁻⁷을 충족했습니다. Procrustes는 양쪽 조합의 점수 차이를 제곱해 더한 값이 작아지도록 텍스트 특징을 직교변환합니다. 평가에 쓴 COCO 주석은 특징 선택과 변환 학습에 사용하지 않았습니다. [Sinkhorn의 수송 목적함수](https://proceedings.neurips.cc/paper_files/paper/2013/hash/af21d0c97db2e27e13572cbf59eb343d-Abstract.html) · [직교 Procrustes 문제](https://doi.org/10.1007/BF02289451)
 - **공유 SAE 비교.** Group-Sparse와 Iso-Energy Alignment는 하나의 인코더와 디코더를 이미지·텍스트가 함께 사용합니다. 참조 코드에 따라 같은 CC3M 캐시의 마지막 20,000쌍을 학습에서 제외하고 2,885,954쌍으로 10회 학습합니다. 8,192개 좌표 중 표본마다 상위 32개를 사용합니다. Group-Sparse는 같은 좌표의 이미지·텍스트 활성값 두 개를 벡터로 보고 그 길이의 합을 줄입니다. Iso-Energy는 각 쌍의 이미지·텍스트에서 가장 크게 활성화된 좌표를 양쪽에서 모두 가린 뒤, 남은 활성값의 코사인 유사도를 높입니다. 검색에는 학습된 공유 좌표 전체를 직접 사용합니다. 개념별 대표 좌표의 후보가 8,192개여서, 256개 축을 사용하는 고정 SAE 조건과는 후보 수와 학습한 가중치가 모두 다릅니다. [참조 구현](https://github.com/JiH00nKw0n/lvlm_hallucination/blob/b09bd423cec3ff635f475e7750025fead0806fce/src/runners/trainer.py#L499) · [CC3M 학습 설정](https://github.com/JiH00nKw0n/lvlm_hallucination/blob/b09bd423cec3ff635f475e7750025fead0806fce/configs/real/cc3m.yaml)
 - **개념 예측.** 각 축에서 표준화된 활성값에 곱하는 계수의 절댓값이 큰 16개를 남깁니다. 이 계수를 고정하고 train2017을 이미지 단위로 학습과 검증에 나눴습니다. 조합 하나의 점수로 개념 유무를 예측하는 로지스틱 분류기를 학습하고, 검증 손실이 가장 작은 조합을 개념마다 하나씩 골랐습니다. 그 조합의 val2017 이진 교차엔트로피 손실을 개념별로 구해 같은 비중으로 평균했습니다. 이 손실은 예측 확률이 정답과 잘 맞을수록 낮습니다.
 - **이미지 평가.** COCO val2017의 5,000장에서 개념이 주석되었는지 예측했습니다. COCO는 물체 80개를, COCO-Stuff는 물체 80개와 배경 91개를 평가합니다. COCO-Stuff의 전체 값은 171개 개념별 결과의 평균입니다. [COCO-Stuff 주석](https://github.com/nightrome/cocostuff#downloads)
@@ -44,6 +47,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO | 물체 | Sparse CCA (k=16) | 256 | 80 | 0.09505 | 0.63101 | 0.65499 |
 | COCO | 물체 | CCA + covariance rotation | 256 | 80 | 0.09278 | 0.66320 | 0.68412 |
 | COCO | 물체 | CCA + rotation (top 64) | 256 | 80 | 0.09278 | 0.66320 | 0.68412 |
+| COCO | 물체 | Sinkhorn (256 pairs) | 256 | 80 | 0.10185 | 0.57557 | 0.56185 |
+| COCO | 물체 | Procrustes (256 pairs) | 256 | 80 | 0.10185 | 0.57557 | 0.56185 |
 | COCO-Stuff | 물체 | Hungarian | 256 | 80 | 0.09984 | 0.57671 | 0.56348 |
 | COCO-Stuff | 물체 | PLS-SVD | 256 | 80 | 0.09509 | 0.53376 | 0.68427 |
 | COCO-Stuff | 물체 | CCA (λ=1) | 256 | 80 | 0.09391 | 0.53275 | 0.69166 |
@@ -51,6 +56,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO-Stuff | 물체 | Sparse CCA (k=16) | 256 | 80 | 0.09314 | 0.63008 | 0.65651 |
 | COCO-Stuff | 물체 | CCA + covariance rotation | 256 | 80 | 0.09135 | 0.66327 | 0.68579 |
 | COCO-Stuff | 물체 | CCA + rotation (top 64) | 256 | 80 | 0.09135 | 0.66327 | 0.68579 |
+| COCO-Stuff | 물체 | Sinkhorn (256 pairs) | 256 | 80 | 0.09984 | 0.57671 | 0.56348 |
+| COCO-Stuff | 물체 | Procrustes (256 pairs) | 256 | 80 | 0.09984 | 0.57671 | 0.56348 |
 | COCO-Stuff | 배경 | Hungarian | 256 | 91 | 0.18383 | 0.71781 | 0.66388 |
 | COCO-Stuff | 배경 | PLS-SVD | 256 | 91 | 0.17859 | 0.67395 | 0.77136 |
 | COCO-Stuff | 배경 | CCA (λ=1) | 256 | 91 | 0.17834 | 0.66416 | 0.77912 |
@@ -58,6 +65,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO-Stuff | 배경 | Sparse CCA (k=16) | 256 | 91 | 0.17824 | 0.72512 | 0.74002 |
 | COCO-Stuff | 배경 | CCA + covariance rotation | 256 | 91 | 0.17751 | 0.74588 | 0.76521 |
 | COCO-Stuff | 배경 | CCA + rotation (top 64) | 256 | 91 | 0.17751 | 0.74588 | 0.76521 |
+| COCO-Stuff | 배경 | Sinkhorn (256 pairs) | 256 | 91 | 0.18383 | 0.71781 | 0.66388 |
+| COCO-Stuff | 배경 | Procrustes (256 pairs) | 256 | 91 | 0.18383 | 0.71781 | 0.66388 |
 | COCO-Stuff | 물체+배경 | Hungarian | 256 | 171 | 0.14454 | 0.68711 | 0.61691 |
 | COCO-Stuff | 물체+배경 | PLS-SVD | 256 | 171 | 0.13953 | 0.63870 | 0.73062 |
 | COCO-Stuff | 물체+배경 | CCA (λ=1) | 256 | 171 | 0.13884 | 0.62994 | 0.73820 |
@@ -65,6 +74,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO-Stuff | 물체+배경 | Sparse CCA (k=16) | 256 | 171 | 0.13843 | 0.70957 | 0.70095 |
 | COCO-Stuff | 물체+배경 | CCA + covariance rotation | 256 | 171 | 0.13720 | 0.73651 | 0.72806 |
 | COCO-Stuff | 물체+배경 | CCA + rotation (top 64) | 256 | 171 | 0.13720 | 0.73651 | 0.72806 |
+| COCO-Stuff | 물체+배경 | Sinkhorn (256 pairs) | 256 | 171 | 0.14454 | 0.68711 | 0.61691 |
+| COCO-Stuff | 물체+배경 | Procrustes (256 pairs) | 256 | 171 | 0.14454 | 0.68711 | 0.61691 |
 | Visual Genome | 물체 | Hungarian | 256 | 170 | 0.02499 | 0.47832 | 0.58562 |
 | Visual Genome | 물체 | PLS-SVD | 256 | 170 | 0.02130 | 0.43915 | 0.62595 |
 | Visual Genome | 물체 | CCA (λ=1) | 256 | 170 | 0.02335 | 0.41739 | 0.63537 |
@@ -72,6 +83,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | Visual Genome | 물체 | Sparse CCA (k=16) | 256 | 170 | 0.01984 | 0.54792 | 0.63973 |
 | Visual Genome | 물체 | CCA + covariance rotation | 256 | 170 | 0.01900 | 0.56747 | 0.65463 |
 | Visual Genome | 물체 | CCA + rotation (top 64) | 256 | 170 | 0.01900 | 0.56747 | 0.65463 |
+| Visual Genome | 물체 | Sinkhorn (256 pairs) | 256 | 170 | 0.02502 | 0.53545 | 0.66634 |
+| Visual Genome | 물체 | Procrustes (256 pairs) | 256 | 170 | 0.02492 | 0.41020 | 0.65710 |
 | Visual Genome | 관계 | Hungarian | 256 | 42 | 0.04560 | 0.59329 | 0.66681 |
 | Visual Genome | 관계 | PLS-SVD | 256 | 42 | 0.04526 | 0.55602 | 0.76922 |
 | Visual Genome | 관계 | CCA (λ=1) | 256 | 42 | 0.04548 | 0.57383 | 0.77005 |
@@ -79,6 +92,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | Visual Genome | 관계 | Sparse CCA (k=16) | 256 | 42 | 0.04483 | 0.58229 | 0.76276 |
 | Visual Genome | 관계 | CCA + covariance rotation | 256 | 42 | 0.04482 | 0.57475 | 0.77509 |
 | Visual Genome | 관계 | CCA + rotation (top 64) | 256 | 42 | 0.04482 | 0.57475 | 0.77509 |
+| Visual Genome | 관계 | Sinkhorn (256 pairs) | 256 | 42 | 0.04559 | 0.59537 | 0.69038 |
+| Visual Genome | 관계 | Procrustes (256 pairs) | 256 | 42 | 0.04559 | 0.51409 | 0.70034 |
 | Visual Genome | 물체+관계 | Hungarian | 256 | 212 | 0.02907 | 0.50107 | 0.60171 |
 | Visual Genome | 물체+관계 | PLS-SVD | 256 | 212 | 0.02605 | 0.45580 | 0.65433 |
 | Visual Genome | 물체+관계 | CCA (λ=1) | 256 | 212 | 0.02773 | 0.43223 | 0.66205 |
@@ -86,6 +101,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | Visual Genome | 물체+관계 | Sparse CCA (k=16) | 256 | 212 | 0.02479 | 0.56498 | 0.66410 |
 | Visual Genome | 물체+관계 | CCA + covariance rotation | 256 | 212 | 0.02412 | 0.58401 | 0.67850 |
 | Visual Genome | 물체+관계 | CCA + rotation (top 64) | 256 | 212 | 0.02412 | 0.58401 | 0.67850 |
+| Visual Genome | 물체+관계 | Sinkhorn (256 pairs) | 256 | 212 | 0.02910 | 0.54894 | 0.67110 |
+| Visual Genome | 물체+관계 | Procrustes (256 pairs) | 256 | 212 | 0.02901 | 0.42765 | 0.66567 |
 
 ## 이미지·텍스트 검색
 
@@ -98,6 +115,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO val2017 | Sparse CCA (k=16) | 256 | 5000 | 25014 | 12.60000 | 28.90000 | 39.04000 | 9.42700 | 22.33500 | 31.09100 |
 | COCO val2017 | CCA + covariance rotation | 256 | 5000 | 25014 | 20.66000 | 41.22000 | 52.18000 | 14.01200 | 30.66300 | 40.67700 |
 | COCO val2017 | CCA + rotation (top 64) | 256 | 5000 | 25014 | 17.10000 | 35.16000 | 45.70000 | 11.78500 | 26.45300 | 35.50400 |
+| COCO val2017 | Sinkhorn (256 pairs) | 256 | 5000 | 25014 | 5.44000 | 13.12000 | 19.56000 | 4.09400 | 11.07400 | 16.31100 |
+| COCO val2017 | Procrustes (256 pairs) | 256 | 5000 | 25014 | 5.10000 | 13.34000 | 19.70000 | 4.15400 | 11.15800 | 16.48300 |
 
 ## 재현 방법
 
@@ -121,7 +140,7 @@ Docker와 NVIDIA GPU를 준비합니다. [평가 설정](../../configs/coco_val2
 
 ```bash
 make build TARGET=gpu IMAGE=mm-sae:gpu
-for method in hungarian pls cca sparse_pls sparse_cca cca_cov cca_cov64; do
+for method in hungarian pls cca sparse_pls sparse_cca cca_cov cca_cov64 sinkhorn procrustes; do
   make run TARGET=gpu IMAGE=mm-sae:gpu DATA=/datasets/mm-sae CACHE=/cache/mm-sae \
     RUNS=/results/mm-sae SAE=/checkpoints/cc3m/models \
     ARGS="run configs/coco_val2017_top16.yaml --mapping configs/mapping/${method}.yaml"

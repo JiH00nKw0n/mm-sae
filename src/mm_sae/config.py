@@ -42,10 +42,14 @@ class Training(Settings):
 
 
 class Mapping(Settings):
-    method: Literal["hungarian", "pls", "cca", "sparse_pls", "sparse_cca", "shared_identity"] = "cca"
+    method: Literal[
+        "hungarian", "pls", "cca", "sparse_pls", "sparse_cca", "shared_identity", "sinkhorn", "procrustes"
+    ] = "cca"
     rank: int = Field(256, ge=1)
     ridge: float = Field(1.0, ge=0)
     support: int = Field(16, ge=1)
+    feature_scope: Literal["matched_pairs", "all_active"] = "matched_pairs"
+    transport_epsilon: float = Field(0.05, gt=0)
     rotation: Literal["none", "covariance", "squared_score_covariance"] = "none"
     prune: int | None = Field(None, ge=1)
     max_iter: int = Field(500, ge=1)

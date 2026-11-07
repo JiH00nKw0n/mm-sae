@@ -1,7 +1,7 @@
 """Fit and serialize a coordinate-preserving cross-modal mapping."""
 
 import numpy as np
-from scipy.optimize import linear_sum_assignment
+from .direct import fit_in_image_coordinates, matched_features
 from mm_sae.data.paired import ChunkedMatrix
 from .projection import fit_common_projection
 from .sparse_pls import fit_sparse_pls
@@ -30,20 +30,23 @@ def fit(stats, cfg, cache, saes, batch):
     yy = stats["yy"][np.ix_(iy, iy)]
     cross = stats["xy"][np.ix_(ix, iy)]
     r = cfg.rank
-    if r > min(cross.shape):
+    if r > min(cross.shape) and not (
+        cfg.method in ("sinkhorn", "procrustes") and cfg.feature_scope == "all_active"
+    ):
         raise ValueError(f"rank {r} exceeds active widths {cross.shape}")
     meta = {"method": cfg.method}
     if cfg.method == "hungarian":
-        i, j = linear_sum_assignment(cross, maximize=True)
-        order = np.argsort(-cross[i, j], kind="stable")[:r]
+        i, j = matched_features(cross, r)
         a, b = np.zeros((len(ix), r)), np.zeros((len(iy), r))
-        a[i[order], np.arange(r)] = 1
-        b[j[order], np.arange(r)] = 1
+        a[i, np.arange(r)] = 1
+        b[j, np.arange(r)] = 1
         meta.update(
-            image_ids=ix[i[order]].tolist(),
-            text_ids=iy[j[order]].tolist(),
+            image_ids=ix[i].tolist(),
+            text_ids=iy[j].tolist(),
             selection="top correlations in full assignment",
         )
+    elif cfg.method in ("sinkhorn", "procrustes"):
+        a, b, meta["solver"] = fit_in_image_coordinates(cross, cfg)
     else:
         if cfg.method == "sparse_cca":
             result = fit_sparse_cca(

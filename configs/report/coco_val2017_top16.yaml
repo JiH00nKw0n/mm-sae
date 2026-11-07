@@ -8,6 +8,8 @@ methods:
   sparse_cca: {label: Sparse CCA (k=16), rank: 256, ridge: 1.0, support: 16, rotation: none, prune: null}
   cca_cov: {label: CCA + covariance rotation, method: cca, rank: 256, ridge: 1.0, rotation: covariance, prune: null}
   cca_cov64: {label: CCA + rotation (top 64), method: cca, rank: 256, ridge: 1.0, rotation: covariance, prune: 64}
+  sinkhorn: {label: Sinkhorn (256 pairs), rank: 256, feature_scope: matched_pairs, transport_epsilon: 0.05, max_iter: 50000, rotation: none, prune: null}
+  procrustes: {label: Procrustes (256 pairs), rank: 256, feature_scope: matched_pairs, rotation: none, prune: null}
   group_sparse: {label: "Group-Sparse (shared, 8192)", method: shared_identity, rank: 8192, sae_objective: group_sparse}
   iso_align: {label: "Iso-Energy (shared, 8192)", method: shared_identity, rank: 8192, sae_objective: iso_align}
 concepts:
@@ -30,6 +32,7 @@ concepts:
 retrieval:
   coco_retrieval: COCO val2017
 figure:
+  detail_methods: [hungarian, sinkhorn, procrustes]
   image: [[coco, 물체], [stuff, 물체+배경]]
   text_dataset: visual_genome
   panels: {물체: Objects, 관계: Relations, 물체+관계: Objects and relations}

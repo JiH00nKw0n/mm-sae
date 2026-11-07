@@ -43,3 +43,24 @@ def test_concept_budget_selects_largest_coefficients_without_changing_retrieval_
     np.testing.assert_array_equal(capped, [[-3.0, 0.0], [0.0, -10.0], [0.0, 0.0]])
     np.testing.assert_allclose(original, weights * np.array([[1.0], [2.0], [3.0]]))
     np.testing.assert_array_equal(mapping["image"], weights)
+
+
+def test_direct_maps_in_matched_image_coordinates():
+    from mm_sae.config import Mapping
+    from mm_sae.mapping.direct import fit_in_image_coordinates
+
+    cross = np.array([[0.2, 0.9, 0], [0.8, 0.3, 0.1], [0.1, 0.0, 0.7], [0, 0.1, 0]])
+    for method in ("sinkhorn", "procrustes"):
+        a, b, info = fit_in_image_coordinates(cross, Mapping(method=method, rank=2, tolerance=1e-9, transport_epsilon=0.2))
+        assert a.shape == (4, 2) and b.shape == (3, 2)
+        np.testing.assert_array_equal(a.argmax(0), [0, 1])
+        t = b[info["text_indices_active"]].T
+        if method == "sinkhorn":
+            assert info["converged"]
+            np.testing.assert_allclose(t.sum(0), 1.0, atol=1e-8)
+            np.testing.assert_allclose(t.sum(1), 1.0, atol=1e-8)
+            assert np.all(t >= 0)
+        else:
+            np.testing.assert_allclose(t @ t.T, np.eye(2), atol=1e-12)
+            u, _, vt = np.linalg.svd(cross[np.ix_([0, 1], [1, 0])])
+            np.testing.assert_allclose(t, u @ vt, atol=1e-12)
