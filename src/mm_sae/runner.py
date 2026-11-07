@@ -15,7 +15,7 @@ from mm_sae.encoders.clip import CLIPEncoder
 from mm_sae.encoders.fixture import FixtureEncoder
 from mm_sae.evaluation import concepts, edits, retrieval
 from mm_sae.io import atomic_json, file_lock, write_csv, sha256
-from mm_sae.mapping.model import fit, scores
+from mm_sae.mapping.model import fit, prune, scores
 from mm_sae.mapping.statistics import fit_moments
 from mm_sae.sae.inference import FrozenSAEs
 from mm_sae.sae.train import train_pairs
@@ -106,11 +106,34 @@ def run(cfg, stage, pretrained=None, weights_dir=None):
         weights = out / "mapping.npz"
         if stage in ("fit-mapping", "run") and not (out / "fit.json").exists():
             statfile = cfg.output / "statistics" / (stats_id + ".npz")
-            if not statfile.exists():
-                stats = fit_moments(cfg.paired_cache, saes, cfg.encoder.batch_size)
-                save_arrays(statfile, stats)
-            with np.load(statfile) as stats:
-                arrays, meta = fit(stats, cfg.mapping, cfg.paired_cache, saes, cfg.encoder.batch_size)
+            uncut_id = digest([stats_id, cfg.mapping.model_dump() | {"prune": None}])
+            uncut = out.parent / uncut_id
+            if (
+                cfg.mapping.prune is not None
+                and (uncut / "fit.json").exists()
+                and cfg.mapping.method != "shared_identity"
+            ):
+                parent = json.loads((uncut / "fit.json").read_text())
+                if sha256(uncut / "mapping.npz") != parent["sha256"]:
+                    raise ValueError("Saved unpruned mapping weights changed")
+                with np.load(uncut / "mapping.npz") as packed:
+                    arrays = dict(packed)
+                for side in ("image", "text"):
+                    arrays[side] = prune(arrays[side], cfg.mapping.prune)
+                meta = dict(parent["solver"], unpruned_fit=uncut_id)
+            elif cfg.mapping.method == "shared_identity":
+                if saes.hashes["image"] != saes.hashes["text"]:
+                    raise ValueError("Shared-coordinate retrieval requires identical encoder weights")
+                width = saes.models["image"].config.latent_size
+                if width != cfg.mapping.rank or cfg.mapping.prune or cfg.mapping.rotation != "none":
+                    raise ValueError("Shared identity uses the native SAE width, without pruning or rotation")
+                arrays, meta = {"shared_width": np.array(width)}, {"method": "native_shared_coordinates"}
+            else:
+                if not statfile.exists():
+                    stats = fit_moments(cfg.paired_cache, saes, cfg.encoder.batch_size)
+                    save_arrays(statfile, stats)
+                with np.load(statfile) as stats:
+                    arrays, meta = fit(stats, cfg.mapping, cfg.paired_cache, saes, cfg.encoder.batch_size)
             save_arrays(weights, arrays)
             atomic_json(
                 out / "fit.json",
@@ -149,7 +172,14 @@ def evaluate(cfg, tables, saes, mapping, out):
         expected = benchmark_contract(spec, cfg.data_root, cfg.encoder, cfg.split_seed)
         if expected != manifest["contract"]:
             raise ValueError(f"Prepared benchmark differs from evaluation recipe: {name}")
-    eval_id = digest([implementation(), manifests, {k: v.model_dump() for k, v in cfg.benchmarks.items()}])
+    eval_id = digest(
+        [
+            implementation(),
+            manifests,
+            cfg.concept_feature_budget,
+            {k: v.model_dump() for k, v in cfg.benchmarks.items()},
+        ]
+    )
     dest = out / "evaluation" / eval_id
     if dest.is_dir():
         return dest
@@ -165,12 +195,20 @@ def evaluate(cfg, tables, saes, mapping, out):
             tables_dir = tables[name]
             side_scores = {}
             rows = {}
+            single_modality = sum(count > 0 for count in manifests[name]["rows"].values()) == 1
+            feature_budget = cfg.concept_feature_budget if single_modality else None
             for side, count in manifests[name]["rows"].items():
                 if not count:
                     continue
                 data = np.load(tables_dir / (side + ".npy"), mmap_mode="r")
                 side_scores[side] = scores(
-                    saes, mapping, side, data, cfg.encoder.batch_size, Path(tmp) / (side + ".npy")
+                    saes,
+                    mapping,
+                    side,
+                    data,
+                    cfg.encoder.batch_size,
+                    Path(tmp) / (side + ".npy"),
+                    feature_budget=feature_budget,
                 )
                 rows[side] = jsonlines(tables_dir / (side + ".jsonl"))
                 if spec.dataset not in ("coco", "stuff", "visual_genome", "cub"):

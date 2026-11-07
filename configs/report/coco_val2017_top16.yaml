@@ -1,0 +1,36 @@
+title: COCO val2017에서 비교한 SAE 대응 방법
+concept_feature_budget: 16
+methods:
+  hungarian: {label: Hungarian, rank: 256, rotation: none, prune: null}
+  pls: {label: PLS-SVD, rank: 256, rotation: none, prune: null}
+  cca: {label: "CCA (λ=1)", rank: 256, ridge: 1.0, rotation: none, prune: null}
+  sparse_pls: {label: Sparse PLS-SVD (k=16), rank: 256, support: 16, rotation: none, prune: null}
+  sparse_cca: {label: Sparse CCA (k=16), rank: 256, ridge: 1.0, support: 16, rotation: none, prune: null}
+  cca_cov: {label: CCA + covariance rotation, method: cca, rank: 256, ridge: 1.0, rotation: covariance, prune: null}
+  cca_cov64: {label: CCA + rotation (top 64), method: cca, rank: 256, ridge: 1.0, rotation: covariance, prune: 64}
+  group_sparse: {label: "Group-Sparse (shared, 8192)", method: shared_identity, rank: 8192, sae_objective: group_sparse}
+  iso_align: {label: "Iso-Energy (shared, 8192)", method: shared_identity, rank: 8192, sae_objective: iso_align}
+concepts:
+  coco:
+    label: COCO
+    groups:
+      물체: {}
+  stuff:
+    label: COCO-Stuff
+    groups:
+      물체: {vocabulary: coco_objects.txt}
+      배경: {vocabulary: coco_objects.txt, complement: true}
+      물체+배경: {}
+  visual_genome:
+    label: Visual Genome
+    groups:
+      물체: {prefix: object/}
+      관계: {prefix: relation/}
+      물체+관계: {}
+retrieval:
+  coco_retrieval: COCO val2017
+figure:
+  image: [[coco, 물체], [stuff, 물체+배경]]
+  text_dataset: visual_genome
+  panels: {물체: Objects, 관계: Relations, 물체+관계: Objects and relations}
+  primary: 물체+관계

@@ -13,7 +13,7 @@ from mm_sae.data.paired import ChunkedMatrix, _manifest, _verified_identity
 from mm_sae.encoders.clip import device_for
 from mm_sae.io import atomic_json, file_lock, sha256
 from mm_sae.progress import progress_task, TaskProgress
-from .model import TopKSAE, SAEConfig, PairedSAEs
+from .model import TopKSAE, SAEConfig, PairedSAEs, SharedSAE
 
 
 class DecoderNormCallback(TrainerCallback):
@@ -54,6 +54,24 @@ def cached_dataset(image, text=None, parents=None):
         }
 
     return ds.with_transform(transform)
+
+
+class PairedTrainingRows(torch.utils.data.Dataset):
+    """Index cached paired embeddings without serializing their contents into a dataset fingerprint."""
+
+    def __init__(self, image, text, count):
+        self.image, self.text, self.count = image, text, count
+
+    def __len__(self):
+        return self.count
+
+    def __getitem__(self, index):
+        return self.__getitems__([index])[0]
+
+    def __getitems__(self, indices):
+        a = torch.from_numpy(self.image[np.asarray(indices)])
+        b = torch.from_numpy(self.text[np.asarray(indices)])
+        return [{"image": image, "text": text} for image, text in zip(a, b)]
 
 
 def frozen_fingerprint(root: Path):
@@ -117,7 +135,10 @@ def _train_pairs(embedding_root: Path, output: Path, cfg: dict, device: str) -> 
     if device not in ("cpu", "cuda"):
         raise ValueError("Paired training currently supports cpu or cuda")
     device_for(device)
-    batches = math.ceil(manifest["rows"] / arguments["per_device_train_batch_size"])
+    train_rows = manifest["rows"] - cfg.get("holdout_pairs", 0)
+    if train_rows < 2:
+        raise ValueError("Too few CC3M pairs remain after holding out rows")
+    batches = math.ceil(train_rows / arguments["per_device_train_batch_size"])
     steps = int(arguments.get("max_steps", -1))
     if steps <= 0:
         steps = math.ceil(batches * arguments["num_train_epochs"])
@@ -131,6 +152,8 @@ def _train_pairs(embedding_root: Path, output: Path, cfg: dict, device: str) -> 
     signature_payload = {
         "cache": identity,
         "model": model_settings,
+        "shared": cfg.get("shared"),
+        "train_rows": train_rows,
         "arguments": arguments,
         "initialization_seed": int(cfg.get("seed", 0)),
         "implementation": {
@@ -157,7 +180,7 @@ def _train_pairs(embedding_root: Path, output: Path, cfg: dict, device: str) -> 
         "signature": signature,
         "signature_payload": signature_payload,
         "state": "running",
-        "rows_per_epoch": manifest["rows"],
+        "rows_per_epoch": train_rows,
         "planned_optimizer_steps": steps,
         "sampling": "paired_repeat_image",
         "trainer": "transformers.Trainer",
@@ -169,7 +192,27 @@ def _train_pairs(embedding_root: Path, output: Path, cfg: dict, device: str) -> 
     try:
         set_seed(int(cfg.get("seed", 0)))
         model_config = SAEConfig(**model_settings)
-        pair = PairedSAEs(TopKSAE(model_config), TopKSAE(model_config))
+        shared = cfg.get("shared")
+        if shared:
+            model = TopKSAE(model_config)
+            pair = SharedSAE(model, shared["method"], shared["weight"])
+            exports = {"image": model, "text": model}
+        else:
+            image_model, text_model = TopKSAE(model_config), TopKSAE(model_config)
+            pair = PairedSAEs(image_model, text_model)
+            exports = {"image": image_model, "text": text_model}
+
+        def preload(matrix):
+            output = np.empty((train_rows, matrix.shape[1]), dtype=np.float32)
+            for begin in range(0, train_rows, 8192):
+                end = min(begin + 8192, train_rows)
+                output[begin:end] = matrix[begin:end]
+            return output
+
+        if cfg.get("preload_embeddings"):
+            train_image, train_text = preload(image), preload(text)
+        else:
+            train_image, train_text = image, text
         checkpoint_dir = output / "checkpoints" / "paired"
         args = TrainingArguments(
             **arguments,
@@ -182,7 +225,7 @@ def _train_pairs(embedding_root: Path, output: Path, cfg: dict, device: str) -> 
         trainer = Trainer(
             model=pair,
             args=args,
-            train_dataset=cached_dataset(image, text, np.arange(len(image))),
+            train_dataset=PairedTrainingRows(train_image, train_text, train_rows),
             data_collator=default_data_collator,
             callbacks=[DecoderNormCallback()],
         )
@@ -191,7 +234,7 @@ def _train_pairs(embedding_root: Path, output: Path, cfg: dict, device: str) -> 
             trainer.add_callback(TrainingProgressCallback(meter))
             trainer.train(resume_from_checkpoint=last)
         trainer.save_state()
-        for side, model in (("image", pair.image_sae), ("text", pair.text_sae)):
+        for side, model in exports.items():
             model.save_pretrained(output / "models" / side, safe_serialization=True)
         fingerprints = frozen_fingerprint(output)
         atomic_json(output / "models" / "frozen.json", fingerprints)

@@ -1,0 +1,19 @@
+extends: coco_val2017_top16.yaml
+output: ../runs/group_sparse
+training:
+  shared:
+    method: group_sparse
+    weight: 0.05
+  latent_size: 8192
+  top_k: 32
+  holdout_pairs: 20000
+  preload_embeddings: true
+  arguments:
+    tf32: true
+    logging_steps: 100
+    save_steps: 500
+    save_strategy: steps
+    save_total_limit: 1
+mapping:
+  method: shared_identity
+  rank: 8192

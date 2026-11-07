@@ -17,9 +17,13 @@ def as_gpu(x):
 class EmpiricalDistribution:
     """Integrate loss and Newton derivatives over one fixed coordinate distribution."""
 
-    def __init__(self, x):
+    def __init__(self, x, repeated=None, multiplicity=0):
         self.raw = x
-        self.n = len(x)
+        self.n = len(x) + multiplicity
+        if not len(x):
+            x = np.array([repeated])
+            multiplicity -= 1
+            self.raw = x
         n = len(x)
         self.exact_bins = {}
         self.sorted = None
@@ -50,14 +54,17 @@ class EmpiricalDistribution:
         nodes = middle[:, None] + radius[:, None] * np.cos(theta)
         # Combine repeated constant nodes exactly.
         nodes0 = nodes[unique].ravel()
-        w0 = weights[unique].ravel() / n
+        w0 = weights[unique].ravel() / self.n
+        if multiplicity:
+            nodes0 = np.append(nodes0, repeated)
+            w0 = np.append(w0, multiplicity / self.n)
         nodes1, idx = np.unique(nodes0, return_inverse=True)
         self.x = as_gpu(nodes1)[:, None]
         self.mass = as_gpu(np.bincount(idx, weights=w0))[:, None]
         self.low = as_gpu(lows[unique])[:, None]
         self.high = as_gpu(highs[unique])[:, None]
         self.bin_nodes = nodes[unique]
-        self.bin_mass = weights[unique] / n
+        self.bin_mass = weights[unique] / self.n
         self.bounds = np.stack([lows[unique], highs[unique]], axis=1)
 
     def calc(self, w, b, hessian):
@@ -135,6 +142,23 @@ def fit_logistic(model, rate, xy):
     return w, b
 
 
+def _sparse_distributions(train, val, j):
+    # The implicit zeros have identical logits; a single node represents all of them exactly.
+    xt, xv = (m.data[m.indptr[j] : m.indptr[j + 1]].astype(float) for m in (train, val))
+    n = train.shape[0]
+    mean = xt.sum() / n
+    sd = np.sqrt(max(0.0, (xt @ xt) / n - mean**2))
+    if sd < 1e-10:
+        sd = 1.0
+    common = -mean / sd
+    return (
+        mean,
+        sd,
+        EmpiricalDistribution((xt - mean) / sd, common, n - len(xt)),
+        EmpiricalDistribution((xv - mean) / sd, common, val.shape[0] - len(xv)),
+    )
+
+
 def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
     train_idx, val_idx, test_idx = (split_ids[name] for name in ("train", "val", "test"))
     labels = sparse.csr_matrix(labels, dtype=np.float64)
@@ -159,20 +183,33 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
         m = np.zeros((k, rank))
         for i in range(0, len(ix), 8192):
             r = ix[i : i + 8192]
-            m += labels[r].T @ scores[r].astype(float)
+            product = labels[r].T @ scores[r].astype(float)
+            m += product.toarray() if sparse.issparse(product) else product
         sums.append(m / len(ix))
     w = np.empty((rank, k))
     b = w.copy()
     loss = w.copy()
+    split_scores = None
+    if sparse.issparse(scores):
+        split_scores = [sparse.csc_matrix(scores[idx]) for idx in (train_idx, val_idx, test_idx)]
+    train_rate, val_rate = rates[:2]
+    prior_bias = np.log(train_rate) - np.log1p(-train_rate)
+    prior_loss = -val_rate * np.log(train_rate) - (1 - val_rate) * np.log1p(-train_rate)
     for j in range(rank):
-        raw = scores[:, j].astype(float)
-        mean = raw[train_idx].mean()
-        sd = raw[train_idx].std()
-        if sd < 1e-10:
-            sd = 1.0
-        x = (raw - mean) / sd
-        tr = EmpiricalDistribution(x[train_idx])
-        va = EmpiricalDistribution(x[val_idx])
+        if split_scores is not None and split_scores[0].indptr[j] == split_scores[0].indptr[j + 1]:
+            w[j], b[j], loss[j] = 0, prior_bias, prior_loss
+            continue
+        if split_scores is not None:
+            mean, sd, tr, va = _sparse_distributions(split_scores[0], split_scores[1], j)
+        else:
+            raw = scores[:, j].astype(float)
+            mean = raw[train_idx].mean()
+            sd = raw[train_idx].std()
+            if sd < 1e-10:
+                sd = 1.0
+            x = (raw - mean) / sd
+            tr = EmpiricalDistribution(x[train_idx])
+            va = EmpiricalDistribution(x[val_idx])
         for start in range(0, k, 128):
             sl = slice(start, start + 128)
             p, q = [as_gpu(v[sl]) for v in rates[:2]]
@@ -190,7 +227,8 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
     test_y = sparse.csc_matrix(labels[test_idx])
     for c, (name, j) in enumerate(zip(concepts, best)):
         positives = test_y.indices[test_y.indptr[c] : test_y.indptr[c + 1]]
-        z = scores[test_idx, j].astype(float) * w[j, c] + b[j, c]
+        raw = split_scores[2][:, j].toarray().ravel() if split_scores is not None else scores[test_idx, j]
+        z = raw.astype(float) * w[j, c] + b[j, c]
         v = float((np.logaddexp(0, z).sum() - z[positives].sum()) / len(z))
         probes[str(name)] = dict(
             axis=int(j),
@@ -200,9 +238,7 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
             test_loss=v,
             positives={name: int(count[c]) for name, count in zip(("train", "val", "test"), counts)},
         )
-    p, q = rates[:2]
-    null = -q * np.log(p) - (1 - q) * np.log1p(-p)
-    gain = np.maximum(0, null - loss)
+    gain = np.maximum(0, prior_loss - loss)
     result = dict(
         macro_test_loss=float(np.mean([v["test_loss"] for v in probes.values()])),
         eligible=k,

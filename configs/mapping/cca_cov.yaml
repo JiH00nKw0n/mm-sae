@@ -1,0 +1,4 @@
+method: cca
+rank: 256
+ridge: 1.0
+rotation: covariance

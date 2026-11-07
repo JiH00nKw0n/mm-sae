@@ -41,13 +41,17 @@ class TopKSAE(PreTrainedModel):
         pre = torch.relu(self.encoder(x - self.b_dec))
         return pre.topk(self.config.k, dim=-1, sorted=False)
 
-    def forward(self, inputs):
+    def reconstruct(self, inputs):
         values, indices = self.encode(inputs)
         dense = inputs.new_zeros((len(inputs), self.config.latent_size)).scatter(1, indices, values)
         reconstruction = dense @ self.W_dec + self.b_dec
         variance = (inputs - inputs.mean(0)).square().sum()
         # A singleton/constant batch must not produce NaNs. Normal COCO batches use the original loss.
         loss = (reconstruction - inputs).square().sum() / variance.clamp_min(torch.finfo(inputs.dtype).eps)
+        return loss, dense
+
+    def forward(self, inputs):
+        loss, _ = self.reconstruct(inputs)
         return {"loss": loss}
 
     @torch.no_grad()
@@ -68,3 +72,29 @@ class PairedSAEs(nn.Module):
     def normalize_decoder(self):
         self.image_sae.normalize_decoder()
         self.text_sae.normalize_decoder()
+
+
+class SharedSAE(nn.Module):
+    """Reconstruct both paired embeddings with one dictionary and couple their Top-K codes."""
+
+    def __init__(self, sae, objective, weight):
+        super().__init__()
+        self.sae = sae
+        self.objective = objective
+        self.weight = weight
+
+    def forward(self, image, text):
+        image_loss, zi = self.sae.reconstruct(image)
+        text_loss, zt = self.sae.reconstruct(text)
+        if self.objective == "group_sparse":
+            penalty = (zi.square() + zt.square() + 1e-12).sqrt().sum(dim=1).mean()
+        elif self.objective == "iso_align":
+            # The reference uses topk(1), including its tie behavior for all-zero codes.
+            top = torch.cat([z.topk(1, dim=1).indices for z in (zi, zt)], dim=1)
+            penalty = -nn.functional.cosine_similarity(zi.scatter(1, top, 0), zt.scatter(1, top, 0)).mean()
+        else:
+            raise ValueError(f"Unknown shared SAE objective: {self.objective}")
+        return {"loss": (image_loss + text_loss) / 2 + self.weight * penalty}
+
+    def normalize_decoder(self):
+        self.sae.normalize_decoder()

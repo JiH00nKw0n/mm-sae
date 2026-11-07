@@ -65,13 +65,31 @@ def load_measurements(source, definition):
         if snapshot.get("definition_sha256") != signature:
             raise ValueError("The summary was generated with a different report definition")
         return snapshot
+    collected_protocol = source / "evaluation.json"
+    for method in definition["methods"]:
+        if (source / method).is_dir() and any((source / method).glob("*/result.json")):
+            budget = definition.get("concept_feature_budget")
+            actual = json.loads(collected_protocol.read_text()) if collected_protocol.exists() else {}
+            if actual.get("concept_feature_budget") != budget:
+                raise ValueError(f"{source}: concept feature budget differs from the report")
+            break
     results = {}
     for method, criteria in definition["methods"].items():
+        expected = {k: v for k, v in criteria.items() if k not in ("label", "sae_objective")}
+        expected.setdefault("method", method)
         native = []
         for path in source.glob("**/mappings/*/fit.json"):
             cfg = json.loads(path.read_text())["config"]
-            if cfg["method"] == method and all(cfg.get(k) == v for k, v in criteria.items() if k != "label"):
+            if all(cfg.get(k) == v for k, v in expected.items()):
                 for filename in path.parent.glob("evaluation/*/results.json"):
+                    recipe = json.loads((filename.parent / "recipe.json").read_text())
+                    if recipe.get("concept_feature_budget") != definition.get("concept_feature_budget"):
+                        continue
+                    if "sae_objective" in criteria:
+                        if (recipe["training"].get("shared") or {}).get("method") != criteria[
+                            "sae_objective"
+                        ]:
+                            continue
                     run = json.loads(filename.read_text())
                     if not run["synthetic"]:
                         native.append((filename.parent, run["datasets"]))
@@ -98,7 +116,11 @@ def load_measurements(source, definition):
                     k: result[k]
                     for k in ("images", "captions", "image_to_text", "text_to_image", "truncated_fraction")
                 }
-    return {"definition_sha256": signature, "methods": results}
+    return {
+        "definition_sha256": signature,
+        "methods": results,
+        "panels": list(definition["figure"]["panels"]),
+    }
 
 
 def write_table(dest, name, headers, rows):
@@ -122,7 +144,12 @@ def figure(definition, data, dest):
     layout = definition["figure"]
     panels = layout["panels"]
     fig, axes = plt.subplots(
-        1, len(panels), figsize=(4.2 * len(panels), 4.2), sharey=True, squeeze=False, layout="constrained"
+        1,
+        len(panels),
+        figsize=(max(8.0, 4.2 * len(panels)), 4.8),
+        sharey=True,
+        squeeze=False,
+        layout="constrained",
     )
     artists = []
     rows = []
@@ -142,14 +169,16 @@ def figure(definition, data, dest):
                     ]
                 )
             )
-            rows.append([group, style["label"], image_loss, text_loss, x, y])
-            coordinates.append((x, y))
+            rows.append([group, style["label"], style["rank"], image_loss, text_loss, x, y])
+            shared = "sae_objective" in style
+            if not shared:
+                coordinates.append((x, y))
             point = ax.scatter(
                 x,
                 y,
-                s=92,
+                s=155 if shared else 92,
                 color=plt.get_cmap("tab10")(idx % 10),
-                marker=["o", "s", "D", "^"][idx % 4],
+                marker="*" if shared else ["o", "s", "D", "^"][idx % 4],
                 edgecolors="white",
                 zorder=3,
                 label=style["label"],
@@ -163,13 +192,19 @@ def figure(definition, data, dest):
         )
         if len(frontier) > 1:
             ax.plot(*zip(*frontier), linewidth=1.3, linestyle="--", color="#6b7278")
-        ax.set_title(title)
+        ax.set_title(title if len(panels) > 1 else "COCO val2017")
         ax.margins(x=0.18, y=0.17)
         ax.grid(alpha=0.16)
         ax.invert_xaxis()
     axes[0, 0].set_ylabel("Mean bidirectional Recall@5 (%)")
-    fig.supxlabel("Mean image and text concept loss (lower toward the right)")
-    fig.legend(handles=artists, loc="outside upper center", ncols=len(artists), frameon=False)
+    budget = definition.get("concept_feature_budget")
+    xlabel = (
+        f"Mean concept loss with at most {budget} SAE features per axis"
+        if budget
+        else "Mean image and text concept loss"
+    )
+    fig.supxlabel(xlabel + " (lower toward the right)")
+    fig.legend(handles=artists, loc="outside upper center", ncols=min(4, len(artists)), frameon=False)
     fig.savefig(dest / "baseline-frontier.png", dpi=190)
     plt.close(fig)
     return rows
@@ -189,6 +224,7 @@ def render(snapshot, definition, dest):
                         spec["label"],
                         group,
                         style["label"],
+                        style["rank"],
                         s["count"],
                         s["loss"],
                         s["mixing"],
@@ -202,6 +238,7 @@ def render(snapshot, definition, dest):
                 [
                     label,
                     style["label"],
+                    style["rank"],
                     s["images"],
                     s["captions"],
                     *[
@@ -215,6 +252,7 @@ def render(snapshot, definition, dest):
     coord_cols = [
         "텍스트 개념",
         "방법",
+        "평가 좌표 수",
         "이미지 평균 손실",
         "텍스트 평균 손실",
         "모달리티 평균 손실",
@@ -226,7 +264,7 @@ def render(snapshot, definition, dest):
     concepts = write_table(
         dest,
         "concepts.csv",
-        ["자료", "개념 범위", "방법", "개념 수", "시험 손실", "혼합도", "분산도"],
+        ["자료", "개념 범위", "방법", "평가 좌표 수", "개념 수", "시험 손실", "혼합도", "분산도"],
         concept_rows,
     )
     retrieval = write_table(
@@ -235,6 +273,7 @@ def render(snapshot, definition, dest):
         [
             "자료",
             "방법",
+            "평가 좌표 수",
             "이미지 수",
             "캡션 수",
             *[f"{side} R@{k} (%)" for side in ("이미지", "텍스트") for k in (1, 5, 10)],
@@ -248,9 +287,15 @@ def render(snapshot, definition, dest):
             raise ValueError(f"Methods evaluated on different populations for {key}")
         populations.extend([spec["label"], split, n] for split, n in sizes[0].items())
     write_table(dest, "populations.csv", ["자료", "분할", "표본 수"], populations)
-    best_loss = min(main_rows, key=lambda r: r[-2])
-    best_recall = max(main_rows, key=lambda r: r[-1])
-    lead = f"텍스트의 {definition['figure']['primary']} 범위에서 이미지·텍스트 평균 개념 예측 손실이 가장 낮은 방법은 **{best_loss[0]}** ({best_loss[-2]:.5f})이고, 양방향 평균 R@5가 가장 높은 방법은 **{best_recall[0]}** ({best_recall[-1]:.2f}%)입니다."
+    best_loss = min(row[-2] for row in main_rows)
+    best_recall = max(row[-1] for row in main_rows)
+    loss_names = ", ".join(row[0] for row in main_rows if row[-2] == best_loss)
+    recall_names = ", ".join(row[0] for row in main_rows if row[-1] == best_recall)
+    lead = (
+        f"텍스트의 {definition['figure']['primary']} 범위에서 이미지·텍스트 평균 개념 예측 손실이 "
+        f"가장 낮은 방법은 **{loss_names}** ({best_loss:.5f})이고, "
+        f"양방향 평균 R@5가 가장 높은 방법은 **{recall_names}** ({best_recall:.2f}%)입니다."
+    )
     body = [
         f"# {definition['title']}",
         lead,
@@ -272,6 +317,24 @@ if __name__ == "__main__":
     p.add_argument("results", type=Path)
     p.add_argument("docs", type=Path)
     p.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    p.add_argument("--methods", nargs="+", help="Report only these configured methods, in this order")
+    p.add_argument("--primary-panel", action="store_true", help="Draw only the primary text concept group")
     args = p.parse_args()
     definition = load_definition(args.config)
+    if args.results.is_file():
+        snapshot = json.loads(args.results.read_text())
+        if args.methods is None:
+            args.methods = list(snapshot["methods"])
+        if "panels" in snapshot:
+            layout = definition["figure"]
+            layout["panels"] = {key: layout["panels"][key] for key in snapshot["panels"]}
+    if args.methods:
+        unknown = set(args.methods) - definition["methods"].keys()
+        if unknown:
+            p.error(f"Methods not defined by the report configuration: {sorted(unknown)}")
+        definition["methods"] = {key: definition["methods"][key] for key in args.methods}
+    if args.primary_panel:
+        layout = definition["figure"]
+        primary = layout["primary"]
+        layout["panels"] = {primary: layout["panels"][primary]}
     render(load_measurements(args.results, definition), definition, args.docs)

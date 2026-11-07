@@ -5,6 +5,7 @@ from collections import defaultdict
 
 import numpy as np
 from scipy.special import expit
+from scipy import sparse
 
 
 def losses(scores, y, w, b):
@@ -66,7 +67,7 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
             if split == "train":
                 train_counts[label] += 1
         n_rows += 1
-    if n_rows != len(scores):
+    if n_rows != scores.shape[0]:
         raise ValueError("Embedding/metadata row mismatch")
     ids = {key: np.asarray(values) for key, values in row_ids.items()}
     if any(not len(values) for values in ids.values()):
@@ -96,11 +97,15 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
         )
         return concepts_cuda.evaluate(scores, labels, names, ids, min_count, diagnostics)
 
+    def values(rows, cols):
+        block = scores[rows, cols]
+        return block.toarray() if sparse.issparse(block) else block
+
     it, iv, ie = ids["train"], ids["val"], ids["test"]
     total = np.zeros(scores.shape[1])
     squares = np.zeros_like(total)
     for start in range(0, len(it), 8192):
-        block = np.asarray(scores[it[start : start + 8192]], dtype=np.float64)
+        block = np.asarray(values(it[start : start + 8192], slice(None)), dtype=np.float64)
         total += block.sum(0)
         squares += np.einsum("ij,ij->j", block, block)
     mean = total / len(it)
@@ -126,16 +131,16 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
         valid = []
         for start in range(0, scores.shape[1], width):
             block = slice(start, start + width)
-            x = (scores[it, block] - mean[block]) / scale[block]
+            x = (values(it, block) - mean[block]) / scale[block]
             w, b = fit_columns(x, y[it])
             w = w / scale[block]
             b = b - w * mean[block]
             weights.extend(w)
             intercepts.extend(b)
-            valid.extend(losses(scores[iv, block], y[iv], w, b))
+            valid.extend(losses(values(iv, block), y[iv], w, b))
         j = int(np.argmin(valid))
         w, b = weights[j], intercepts[j]
-        test_loss = losses(scores[ie, j : j + 1], y[ie], w, b).item()
+        test_loss = losses(values(ie, slice(j, j + 1)), y[ie], w, b).item()
         prior = y[it].mean()
         null = -np.mean(y[iv] * np.log(prior) + (1 - y[iv]) * np.log1p(-prior))
         importance.append(np.maximum(0.0, null - np.asarray(valid)))

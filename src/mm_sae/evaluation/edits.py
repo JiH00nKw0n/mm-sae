@@ -3,6 +3,7 @@
 from collections import defaultdict
 import numpy as np
 from scipy.special import expit
+from scipy import sparse
 
 
 def evaluate(scores, rows, probes):
@@ -21,7 +22,10 @@ def evaluate(scores, rows, probes):
                     skipped[role] += 1
                     continue
                 p = probes[concept]
-                before, after = expit(scores[[a, b], p["axis"]].astype(float) * p["weight"] + p["bias"])
+                values = scores[[a, b], p["axis"]].astype(float)
+                if sparse.issparse(values):
+                    values = values.toarray().ravel()
+                before, after = expit(values * p["weight"] + p["bias"])
                 results.append(
                     dict(
                         pair=pair,

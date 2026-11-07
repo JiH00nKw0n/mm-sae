@@ -1,0 +1,10 @@
+자료,분할,표본 수
+COCO,train,94674
+COCO,val,23613
+COCO,test,5000
+COCO-Stuff,train,94674
+COCO-Stuff,val,23613
+COCO-Stuff,test,5000
+Visual Genome,train,1337144
+Visual Genome,val,337693
+Visual Genome,test,74895

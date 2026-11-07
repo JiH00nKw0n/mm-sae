@@ -26,3 +26,20 @@ def test_sparse_projection_matches_standardized_dense_reference():
     w = np.arange(8).reshape(4, 2)
     np.testing.assert_allclose(project(csr_matrix(x), w, mean, inv), ((x - mean) * inv) @ w, atol=1e-6)
     assert ((prune(w, 2) != 0).sum(axis=0) == 2).all()
+
+
+def test_concept_budget_selects_largest_coefficients_without_changing_retrieval_weights():
+    from mm_sae.mapping.model import scores
+
+    class IdentityEncoder:
+        def activations(self, side, block):
+            return csr_matrix(block)
+
+    x = np.eye(3, dtype=np.float32)
+    weights = np.array([[-3.0, 0.2], [2.0, -5.0], [1.0, 1.0]])
+    mapping = {"image": weights.copy(), "image_inv": np.array([1.0, 2.0, 3.0]), "image_mean": np.zeros(3)}
+    capped = scores(IdentityEncoder(), mapping, "image", x, 2, feature_budget=1)
+    original = scores(IdentityEncoder(), mapping, "image", x, 2)
+    np.testing.assert_array_equal(capped, [[-3.0, 0.0], [0.0, -10.0], [0.0, 0.0]])
+    np.testing.assert_allclose(original, weights * np.array([[1.0], [2.0], [3.0]]))
+    np.testing.assert_array_equal(mapping["image"], weights)

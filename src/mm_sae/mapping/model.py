@@ -110,16 +110,30 @@ def fit(stats, cfg, cache, saes, batch):
     return arrays, meta
 
 
-def scores(saes, mapping, side, embeddings, batch_size, path=None):
-    shape = (len(embeddings), mapping[side].shape[1])
+def scores(saes, mapping, side, embeddings, batch_size, path=None, *, feature_budget=None):
+    shared = "shared_width" in mapping
+    if shared:
+        from scipy import sparse
+
+        return sparse.vstack(
+            [
+                saes.activations(side, embeddings[i : i + batch_size])
+                for i in range(0, len(embeddings), batch_size)
+            ],
+            format="csr",
+        )
+    width = mapping[side].shape[1]
+    shape = (len(embeddings), width)
     result = (
         np.empty(shape, dtype=np.float32)
         if path is None
         else np.lib.format.open_memmap(path, mode="w+", dtype=np.float32, shape=shape)
     )
-    coeff = mapping[side + "_inv"][:, None] * mapping[side]
+    weights = prune(mapping[side], feature_budget) if feature_budget is not None else mapping[side]
+    coeff = mapping[side + "_inv"][:, None] * weights
     offset = mapping[side + "_mean"] @ coeff
     for start in range(0, len(embeddings), batch_size):
         sl = slice(start, start + batch_size)
-        result[sl] = saes.activations(side, embeddings[sl]) @ coeff - offset
+        codes = saes.activations(side, embeddings[sl])
+        result[sl] = codes @ coeff - offset
     return result

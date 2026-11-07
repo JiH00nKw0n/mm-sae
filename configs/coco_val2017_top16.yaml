@@ -1,0 +1,3 @@
+extends: coco_val2017.yaml
+output: ../runs/coco-val2017-top16
+concept_feature_budget: 16

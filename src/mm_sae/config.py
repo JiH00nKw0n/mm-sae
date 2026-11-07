@@ -20,7 +20,15 @@ class EncoderConfig(Settings):
     synthetic_dim: int = Field(16, ge=6)
 
 
+class SharedObjective(Settings):
+    method: Literal["group_sparse", "iso_align"]
+    weight: float = Field(gt=0)
+
+
 class Training(Settings):
+    shared: SharedObjective | None = None
+    holdout_pairs: int = Field(0, ge=0)
+    preload_embeddings: bool = False
     latent_size: int = Field(4096, ge=2)
     top_k: int = Field(32, ge=1)
     seed: int = 0
@@ -34,7 +42,7 @@ class Training(Settings):
 
 
 class Mapping(Settings):
-    method: Literal["hungarian", "pls", "cca", "sparse_pls", "sparse_cca"] = "cca"
+    method: Literal["hungarian", "pls", "cca", "sparse_pls", "sparse_cca", "shared_identity"] = "cca"
     rank: int = Field(256, ge=1)
     ridge: float = Field(1.0, ge=0)
     support: int = Field(16, ge=1)
@@ -84,6 +92,7 @@ class Benchmark(Settings):
 
 
 class Recipe(Settings):
+    concept_feature_budget: int | None = Field(None, ge=1)
     output: Path
     data_root: Path
     paired_cache: Path
@@ -98,6 +107,9 @@ class Recipe(Settings):
 
     @model_validator(mode="after")
     def check(self):
+        if self.mapping.method == "shared_identity":
+            if self.mapping.rotation != "none" or self.mapping.prune is not None:
+                raise ValueError("Shared identity directly compares the two native codes")
         if self.smoke != (self.encoder.backend == "synthetic"):
             raise ValueError("Synthetic encoder and smoke fixture must be used together")
         if any(not k.isidentifier() for k in self.benchmarks):
@@ -115,12 +127,17 @@ class Recipe(Settings):
 
 def load_recipe(path, mapping_override=None):
     path = Path(path).resolve()
-    data = yaml.safe_load(path.read_text())
-    if parent := data.pop("extends", None):
-        base = yaml.safe_load((path.parent / parent).read_text())
-        if "extends" in base:
-            raise ValueError("Recipe inheritance supports one level")
-        data = base | data
+    current = path
+    seen = set()
+    data = {}
+    while current is not None:
+        if current in seen:
+            raise ValueError(f"Circular recipe inheritance at {current}")
+        seen.add(current)
+        layer = yaml.safe_load(current.read_text())
+        parent = layer.pop("extends", None)
+        data = layer | data
+        current = (current.parent / parent).resolve() if parent else None
     if mapping_override:
         data["mapping"] = yaml.safe_load(Path(mapping_override).read_text())
     for key in ("output", "data_root", "paired_cache"):
