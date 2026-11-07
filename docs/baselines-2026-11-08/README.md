@@ -1,6 +1,6 @@
 # COCO val2017에서 비교한 SAE 대응 방법
 
-텍스트의 물체+관계 범위에서 이미지·텍스트 평균 개념 예측 손실이 가장 낮은 방법은 **CCA + covariance rotation, CCA + rotation (top 64)** (0.06955)이고, 양방향 평균 R@5가 가장 높은 방법은 **PLS-SVD** (36.39%)입니다.
+텍스트의 물체+관계 범위에서 이미지·텍스트 평균 개념 예측 손실이 가장 낮은 방법은 **Iso-Energy (shared, 8192)** (0.06429)이고, 양방향 평균 R@5가 가장 높은 방법은 **PLS-SVD** (36.39%)입니다.
 
 | 방법 | 평가 좌표 수 | 이미지 평균 손실 | 텍스트 평균 손실 | 모달리티 평균 손실 | 양방향 평균 R@5 (%) |
 | --- | --- | --- | --- | --- | --- |
@@ -13,6 +13,8 @@
 | CCA + rotation (top 64) | 256 | 0.11499 | 0.02412 | 0.06955 | 30.80659 |
 | Sinkhorn (256 pairs) | 256 | 0.12320 | 0.02910 | 0.07615 | 12.09690 |
 | Procrustes (256 pairs) | 256 | 0.12320 | 0.02901 | 0.07611 | 12.24888 |
+| Group-Sparse (shared, 8192) | 8192 | 0.11761 | 0.01865 | 0.06813 | 12.97099 |
+| Iso-Energy (shared, 8192) | 8192 | 0.11079 | 0.01779 | 0.06429 | 12.91103 |
 
 ![개념 예측과 이미지·텍스트 검색](baseline-frontier.png)
 
@@ -49,6 +51,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO | 물체 | CCA + rotation (top 64) | 256 | 80 | 0.09278 | 0.66320 | 0.68412 |
 | COCO | 물체 | Sinkhorn (256 pairs) | 256 | 80 | 0.10185 | 0.57557 | 0.56185 |
 | COCO | 물체 | Procrustes (256 pairs) | 256 | 80 | 0.10185 | 0.57557 | 0.56185 |
+| COCO | 물체 | Group-Sparse (shared, 8192) | 8192 | 80 | 0.09528 | 0.69861 | 0.68112 |
+| COCO | 물체 | Iso-Energy (shared, 8192) | 8192 | 80 | 0.08832 | 0.68768 | 0.63861 |
 | COCO-Stuff | 물체 | Hungarian | 256 | 80 | 0.09984 | 0.57671 | 0.56348 |
 | COCO-Stuff | 물체 | PLS-SVD | 256 | 80 | 0.09509 | 0.53376 | 0.68427 |
 | COCO-Stuff | 물체 | CCA (λ=1) | 256 | 80 | 0.09391 | 0.53275 | 0.69166 |
@@ -58,6 +62,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO-Stuff | 물체 | CCA + rotation (top 64) | 256 | 80 | 0.09135 | 0.66327 | 0.68579 |
 | COCO-Stuff | 물체 | Sinkhorn (256 pairs) | 256 | 80 | 0.09984 | 0.57671 | 0.56348 |
 | COCO-Stuff | 물체 | Procrustes (256 pairs) | 256 | 80 | 0.09984 | 0.57671 | 0.56348 |
+| COCO-Stuff | 물체 | Group-Sparse (shared, 8192) | 8192 | 80 | 0.09364 | 0.69964 | 0.68245 |
+| COCO-Stuff | 물체 | Iso-Energy (shared, 8192) | 8192 | 80 | 0.08707 | 0.68808 | 0.63968 |
 | COCO-Stuff | 배경 | Hungarian | 256 | 91 | 0.18383 | 0.71781 | 0.66388 |
 | COCO-Stuff | 배경 | PLS-SVD | 256 | 91 | 0.17859 | 0.67395 | 0.77136 |
 | COCO-Stuff | 배경 | CCA (λ=1) | 256 | 91 | 0.17834 | 0.66416 | 0.77912 |
@@ -67,6 +73,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO-Stuff | 배경 | CCA + rotation (top 64) | 256 | 91 | 0.17751 | 0.74588 | 0.76521 |
 | COCO-Stuff | 배경 | Sinkhorn (256 pairs) | 256 | 91 | 0.18383 | 0.71781 | 0.66388 |
 | COCO-Stuff | 배경 | Procrustes (256 pairs) | 256 | 91 | 0.18383 | 0.71781 | 0.66388 |
+| COCO-Stuff | 배경 | Group-Sparse (shared, 8192) | 8192 | 91 | 0.18066 | 0.75999 | 0.72547 |
+| COCO-Stuff | 배경 | Iso-Energy (shared, 8192) | 8192 | 91 | 0.17388 | 0.75888 | 0.68276 |
 | COCO-Stuff | 물체+배경 | Hungarian | 256 | 171 | 0.14454 | 0.68711 | 0.61691 |
 | COCO-Stuff | 물체+배경 | PLS-SVD | 256 | 171 | 0.13953 | 0.63870 | 0.73062 |
 | COCO-Stuff | 물체+배경 | CCA (λ=1) | 256 | 171 | 0.13884 | 0.62994 | 0.73820 |
@@ -76,6 +84,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO-Stuff | 물체+배경 | CCA + rotation (top 64) | 256 | 171 | 0.13720 | 0.73651 | 0.72806 |
 | COCO-Stuff | 물체+배경 | Sinkhorn (256 pairs) | 256 | 171 | 0.14454 | 0.68711 | 0.61691 |
 | COCO-Stuff | 물체+배경 | Procrustes (256 pairs) | 256 | 171 | 0.14454 | 0.68711 | 0.61691 |
+| COCO-Stuff | 물체+배경 | Group-Sparse (shared, 8192) | 8192 | 171 | 0.13995 | 0.76196 | 0.70534 |
+| COCO-Stuff | 물체+배경 | Iso-Energy (shared, 8192) | 8192 | 171 | 0.13327 | 0.75658 | 0.66260 |
 | Visual Genome | 물체 | Hungarian | 256 | 170 | 0.02499 | 0.47832 | 0.58562 |
 | Visual Genome | 물체 | PLS-SVD | 256 | 170 | 0.02130 | 0.43915 | 0.62595 |
 | Visual Genome | 물체 | CCA (λ=1) | 256 | 170 | 0.02335 | 0.41739 | 0.63537 |
@@ -85,6 +95,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | Visual Genome | 물체 | CCA + rotation (top 64) | 256 | 170 | 0.01900 | 0.56747 | 0.65463 |
 | Visual Genome | 물체 | Sinkhorn (256 pairs) | 256 | 170 | 0.02502 | 0.53545 | 0.66634 |
 | Visual Genome | 물체 | Procrustes (256 pairs) | 256 | 170 | 0.02492 | 0.41020 | 0.65710 |
+| Visual Genome | 물체 | Group-Sparse (shared, 8192) | 8192 | 170 | 0.01269 | 0.60097 | 0.63121 |
+| Visual Genome | 물체 | Iso-Energy (shared, 8192) | 8192 | 170 | 0.01165 | 0.58884 | 0.58464 |
 | Visual Genome | 관계 | Hungarian | 256 | 42 | 0.04560 | 0.59329 | 0.66681 |
 | Visual Genome | 관계 | PLS-SVD | 256 | 42 | 0.04526 | 0.55602 | 0.76922 |
 | Visual Genome | 관계 | CCA (λ=1) | 256 | 42 | 0.04548 | 0.57383 | 0.77005 |
@@ -94,6 +106,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | Visual Genome | 관계 | CCA + rotation (top 64) | 256 | 42 | 0.04482 | 0.57475 | 0.77509 |
 | Visual Genome | 관계 | Sinkhorn (256 pairs) | 256 | 42 | 0.04559 | 0.59537 | 0.69038 |
 | Visual Genome | 관계 | Procrustes (256 pairs) | 256 | 42 | 0.04559 | 0.51409 | 0.70034 |
+| Visual Genome | 관계 | Group-Sparse (shared, 8192) | 8192 | 42 | 0.04281 | 0.58972 | 0.70641 |
+| Visual Genome | 관계 | Iso-Energy (shared, 8192) | 8192 | 42 | 0.04263 | 0.58237 | 0.65930 |
 | Visual Genome | 물체+관계 | Hungarian | 256 | 212 | 0.02907 | 0.50107 | 0.60171 |
 | Visual Genome | 물체+관계 | PLS-SVD | 256 | 212 | 0.02605 | 0.45580 | 0.65433 |
 | Visual Genome | 물체+관계 | CCA (λ=1) | 256 | 212 | 0.02773 | 0.43223 | 0.66205 |
@@ -103,6 +117,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | Visual Genome | 물체+관계 | CCA + rotation (top 64) | 256 | 212 | 0.02412 | 0.58401 | 0.67850 |
 | Visual Genome | 물체+관계 | Sinkhorn (256 pairs) | 256 | 212 | 0.02910 | 0.54894 | 0.67110 |
 | Visual Genome | 물체+관계 | Procrustes (256 pairs) | 256 | 212 | 0.02901 | 0.42765 | 0.66567 |
+| Visual Genome | 물체+관계 | Group-Sparse (shared, 8192) | 8192 | 212 | 0.01865 | 0.62157 | 0.64611 |
+| Visual Genome | 물체+관계 | Iso-Energy (shared, 8192) | 8192 | 212 | 0.01779 | 0.60941 | 0.59943 |
 
 ## 이미지·텍스트 검색
 
@@ -117,6 +133,8 @@ COCO test2017의 40,670장 중 Visual Genome에 같은 COCO 이미지 ID가 있�
 | COCO val2017 | CCA + rotation (top 64) | 256 | 5000 | 25014 | 17.10000 | 35.16000 | 45.70000 | 11.78500 | 26.45300 | 35.50400 |
 | COCO val2017 | Sinkhorn (256 pairs) | 256 | 5000 | 25014 | 5.44000 | 13.12000 | 19.56000 | 4.09400 | 11.07400 | 16.31100 |
 | COCO val2017 | Procrustes (256 pairs) | 256 | 5000 | 25014 | 5.10000 | 13.34000 | 19.70000 | 4.15400 | 11.15800 | 16.48300 |
+| COCO val2017 | Group-Sparse (shared, 8192) | 8192 | 5000 | 25014 | 6.68000 | 15.20000 | 21.18000 | 3.53800 | 10.74200 | 16.26300 |
+| COCO val2017 | Iso-Energy (shared, 8192) | 8192 | 5000 | 25014 | 6.78000 | 15.22000 | 20.28000 | 4.19000 | 10.60200 | 15.43500 |
 
 ## 재현 방법
 
@@ -136,7 +154,7 @@ python3 -m venv .venv-report
 
 ### 같은 자료에서 대응 방법 다시 평가하기
 
-Docker와 NVIDIA GPU를 준비합니다. [평가 설정](../../configs/coco_val2017_top16.yaml)의 상대 경로에 맞춰 [원본 이미지와 주석](../benchmarks.md)을 배치합니다. 호스트의 `/datasets/mm-sae`에는 원본 자료를, `/cache/mm-sae/cc3m`에는 기존 CC3M 임베딩 캐시를, `/checkpoints/cc3m/models`에는 이미지·텍스트 SAE 가중치를 둡니다. 가중치와 캐시의 식별값은 [실행 기록](../baselines-2026-11-07/provenance.json)에 있습니다.
+Docker와 NVIDIA GPU를 준비합니다. [평가 설정](../../configs/coco_val2017_top16.yaml)의 상대 경로에 맞춰 [원본 이미지와 주석](../benchmarks.md)을 배치합니다. 호스트의 `/datasets/mm-sae`에는 원본 자료를, `/cache/mm-sae/cc3m`에는 기존 CC3M 임베딩 캐시를, `/checkpoints/cc3m/models`에는 이미지·텍스트 SAE 가중치를 둡니다. 기존 SAE와 캐시 식별값은 [기준 실험 기록](../baselines-2026-11-07/provenance.json)에, 추가 대응 행렬과 두 공유 SAE의 가중치 식별값은 [추가 실험 기록](extended-provenance.json)에 저장했습니다.
 
 ```bash
 make build TARGET=gpu IMAGE=mm-sae:gpu

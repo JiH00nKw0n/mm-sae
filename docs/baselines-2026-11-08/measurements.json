@@ -1,5 +1,5 @@
 {
-  "definition_sha256": "32a2dcb91a4fd32695e788c48343c44439fe949404a2e66626ed67535035a0fc",
+  "definition_sha256": "14ea2cd6e862dd5f66e6703c9044a184388a085fffdeaa64eb7bb44a73600dea",
   "methods": {
     "hungarian": {
       "coco": {
@@ -897,6 +897,206 @@
           "R@1": 0.04153673942592148,
           "R@5": 0.1115775165907092,
           "R@10": 0.16482769648996562
+        },
+        "truncated_fraction": 0.0
+      }
+    },
+    "group_sparse": {
+      "coco": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09528375985979805,
+            "mixing": 0.6986133073834576,
+            "dispersion": 0.6811198682299314,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
+      },
+      "stuff": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09363628106520652,
+            "mixing": 0.6996412217137203,
+            "dispersion": 0.6824542422755959,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "배경": {
+            "count": 91,
+            "loss": 0.1806582208454608,
+            "mixing": 0.7599902801213404,
+            "dispersion": 0.7254663367656187,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+배경": {
+            "count": 171,
+            "loss": 0.13994620223481552,
+            "mixing": 0.7619597684295063,
+            "dispersion": 0.7053437194603448,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
+      },
+      "visual_genome": {
+        "groups": {
+          "물체": {
+            "count": 170,
+            "loss": 0.01268590364660449,
+            "mixing": 0.6009677796191732,
+            "dispersion": 0.631212044015679,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "관계": {
+            "count": 42,
+            "loss": 0.04281065685889389,
+            "mixing": 0.5897200857177665,
+            "dispersion": 0.7064066864657056,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+관계": {
+            "count": 212,
+            "loss": 0.018654015132058055,
+            "mixing": 0.6215678280075709,
+            "dispersion": 0.6461090958218162,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 1337144,
+          "val": 337693,
+          "test": 74895
+        }
+      },
+      "coco_retrieval": {
+        "images": 5000,
+        "captions": 25014,
+        "image_to_text": {
+          "R@1": 0.0668,
+          "R@5": 0.152,
+          "R@10": 0.2118
+        },
+        "text_to_image": {
+          "R@1": 0.035380187095226674,
+          "R@5": 0.10741984488686336,
+          "R@10": 0.16262892780043176
+        },
+        "truncated_fraction": 0.0
+      }
+    },
+    "iso_align": {
+      "coco": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.0883168623377246,
+            "mixing": 0.6876802233064067,
+            "dispersion": 0.6386096028119791,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
+      },
+      "stuff": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.08706874907874226,
+            "mixing": 0.6880779756244192,
+            "dispersion": 0.6396756996787938,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "배경": {
+            "count": 91,
+            "loss": 0.1738841500758578,
+            "mixing": 0.7588797430285565,
+            "dispersion": 0.6827590511966893,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+배경": {
+            "count": 171,
+            "loss": 0.1332687577965055,
+            "mixing": 0.7565848505946592,
+            "dispersion": 0.6626030972701885,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
+      },
+      "visual_genome": {
+        "groups": {
+          "물체": {
+            "count": 170,
+            "loss": 0.01164635011473476,
+            "mixing": 0.5888356706531491,
+            "dispersion": 0.5846391047725968,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "관계": {
+            "count": 42,
+            "loss": 0.04263264924485547,
+            "mixing": 0.5823691253127515,
+            "dispersion": 0.6592984677922709,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+관계": {
+            "count": 212,
+            "loss": 0.01778514522541905,
+            "mixing": 0.609410803247022,
+            "dispersion": 0.5994301106538531,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 1337144,
+          "val": 337693,
+          "test": 74895
+        }
+      },
+      "coco_retrieval": {
+        "images": 5000,
+        "captions": 25014,
+        "image_to_text": {
+          "R@1": 0.0678,
+          "R@5": 0.1522,
+          "R@10": 0.2028
+        },
+        "text_to_image": {
+          "R@1": 0.0418965379387543,
+          "R@5": 0.10602062844806909,
+          "R@10": 0.15435356200527706
         },
         "truncated_fraction": 0.0
       }

@@ -14,7 +14,7 @@ python3 -m venv .venv-report
 
 ### 같은 자료에서 대응 방법 다시 평가하기
 
-Docker와 NVIDIA GPU를 준비합니다. [평가 설정](../../configs/coco_val2017_top16.yaml)의 상대 경로에 맞춰 [원본 이미지와 주석](../benchmarks.md)을 배치합니다. 호스트의 `/datasets/mm-sae`에는 원본 자료를, `/cache/mm-sae/cc3m`에는 기존 CC3M 임베딩 캐시를, `/checkpoints/cc3m/models`에는 이미지·텍스트 SAE 가중치를 둡니다. 가중치와 캐시의 식별값은 [실행 기록](../baselines-2026-11-07/provenance.json)에 있습니다.
+Docker와 NVIDIA GPU를 준비합니다. [평가 설정](../../configs/coco_val2017_top16.yaml)의 상대 경로에 맞춰 [원본 이미지와 주석](../benchmarks.md)을 배치합니다. 호스트의 `/datasets/mm-sae`에는 원본 자료를, `/cache/mm-sae/cc3m`에는 기존 CC3M 임베딩 캐시를, `/checkpoints/cc3m/models`에는 이미지·텍스트 SAE 가중치를 둡니다. 기존 SAE와 캐시 식별값은 [기준 실험 기록](../baselines-2026-11-07/provenance.json)에, 추가 대응 행렬과 두 공유 SAE의 가중치 식별값은 [추가 실험 기록](extended-provenance.json)에 저장했습니다.
 
 ```bash
 make build TARGET=gpu IMAGE=mm-sae:gpu
