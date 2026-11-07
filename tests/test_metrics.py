@@ -54,3 +54,16 @@ def test_edits_score_the_frozen_original_data_probe():
     assert out["added"]["mean_delta"] > 0
     assert out["retained"]["mean_absolute_delta"] == 0
     assert out["retained"]["missing_probe"] == 1 and len(details) == 3
+
+
+def test_support_counts_distinct_final_images_without_a_training_frequency_cutoff():
+    rows = []
+    for split in ("train", "val"):
+        for i, labels in enumerate((["eligible", "one_image"], [])):
+            rows.append(dict(group=f"{split}/{i}", split=split, labels=labels))
+    for image, labels in enumerate((["eligible", "one_image"], ["eligible"], [], [])):
+        for _ in range(3):
+            rows.append(dict(group=f"held-out/{image}", split="test", labels=labels))
+    scores = np.arange(len(rows), dtype=float)[:, None]
+    result, _ = evaluate(scores, rows, min_count=1, diagnostics=False, min_test_images=2)
+    assert set(result["concepts"]) == {"eligible"}

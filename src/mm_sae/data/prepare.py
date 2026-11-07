@@ -15,13 +15,13 @@ from .edits import edited_pairs
 from .paired_embeddings import _write_npy
 
 
-def records(kind, files, seed):
+def records(kind, files, seed, regions=None):
     if kind in ("coco", "stuff"):
         return coco(files, seed, stuff=kind == "stuff")
     if kind == "cub":
         return cub(files, seed)
     if kind == "visual_genome":
-        return visual_genome(files, seed)
+        return visual_genome(files, seed, regions)
     if kind in ("syncoco", "syncub"):
         return edited_pairs(kind, files)
     return retrieval(kind, files)
@@ -29,6 +29,18 @@ def records(kind, files, seed):
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def benchmark_contract(spec, root, encoder, seed):
+    contract = {
+        "dataset": spec.dataset,
+        "files": {k: str((root / v).resolve()) for k, v in spec.files.items()},
+        "split_seed": seed,
+        "encoder": encoder.model_dump(exclude={"device", "batch_size"}),
+    }
+    if spec.regions is not None:
+        contract["regions"] = spec.regions.model_dump(mode="json")
+    return contract
 
 
 def prepare(spec, root, dest, encoder, seed):
@@ -47,12 +59,7 @@ def prepare(spec, root, dest, encoder, seed):
                     stat = f.stat()
                     h.update(f"{f.relative_to(path)}:{stat.st_size}:{stat.st_mtime_ns}\n".encode())
             sources[k] = h.hexdigest()
-    contract = {
-        "dataset": spec.dataset,
-        "files": {k: str(v) for k, v in files.items()},
-        "split_seed": seed,
-        "encoder": encoder.config.model_dump(exclude={"device", "batch_size"}),
-    }
+    contract = benchmark_contract(spec, root, encoder.config, seed)
     readers = sorted(Path(__file__).parent.glob("*.py"))
     signature = digest([contract, sources, [sha256(p) for p in readers]])
     with file_lock(dest.parent / (dest.name + ".lock")):
@@ -97,7 +104,7 @@ def prepare(spec, root, dest, encoder, seed):
                 counts[side] += len(batch)
                 batch.clear()
 
-            for row in records(spec.dataset, files, seed):
+            for row in records(spec.dataset, files, seed, spec.regions):
                 key = (row.side, row.id)
                 if key in seen:
                     raise ValueError(f"Duplicate sample {key}")

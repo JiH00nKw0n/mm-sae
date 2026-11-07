@@ -46,6 +46,12 @@ class Mapping(Settings):
     seed: int = 0
 
 
+class RegionSelection(Settings):
+    images: Literal["all", "coco_trainval"] = "all"
+    label_types: tuple[Literal["object", "attribute", "relation"], ...] = ("object", "attribute", "relation")
+    annotated_only: bool = False
+
+
 class Benchmark(Settings):
     dataset: Literal[
         "coco",
@@ -63,7 +69,18 @@ class Benchmark(Settings):
     probe: str | None = None
     files: dict[str, str]
     min_train_positives: int = Field(2, ge=1)
+    regions: RegionSelection | None = None
+    min_test_images: int = Field(0, ge=0)
     diagnostics: bool = False
+
+    @model_validator(mode="after")
+    def check_region_selection(self):
+        if self.regions is not None:
+            if self.dataset != "visual_genome" or not self.regions.label_types:
+                raise ValueError("Region selection requires Visual Genome and at least one label type")
+            if self.regions.images == "coco_trainval" and "coco_train_instances" not in self.files:
+                raise ValueError("Specify the COCO training annotation file for a trainval intersection")
+        return self
 
 
 class Recipe(Settings):

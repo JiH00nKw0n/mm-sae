@@ -47,11 +47,12 @@ def fit_columns(x, y, iterations=80):
     return w, b
 
 
-def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=False):
+def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=False, min_test_images=0):
     row_ids = {key: array("q") for key in ("train", "val", "test")}
     positives = defaultdict(lambda: array("q"))
     train_counts = defaultdict(int)
     group_split = {}
+    test_images_by_label = defaultdict(set)
     n_rows = 0
     for i, row in enumerate(records):
         group, split = row["group"], row["split"]
@@ -60,6 +61,8 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
         row_ids[split].append(i)
         for label in set(row["labels"]):
             positives[label].append(i)
+            if min_test_images and split == "test":
+                test_images_by_label[label].add(group)
             if split == "train":
                 train_counts[label] += 1
         n_rows += 1
@@ -69,6 +72,15 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
     if any(not len(values) for values in ids.values()):
         raise ValueError("Concept probes require nonempty train, val and test splits")
     names = sorted(train_counts) if allowed is None else sorted(set(allowed))
+    if min_test_images:
+        test_groups = sum(split == "test" for split in group_split.values())
+        candidates = sorted(test_images_by_label) if allowed is None else names
+        names = [
+            name
+            for name in candidates
+            if min(len(test_images_by_label[name]), test_groups - len(test_images_by_label[name]))
+            >= min_test_images
+        ]
     if use_cuda:
         from scipy.sparse import csc_matrix
         from . import concepts_cuda

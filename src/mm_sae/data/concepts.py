@@ -5,6 +5,7 @@ from collections import defaultdict
 from pathlib import Path
 import numpy as np
 from PIL import Image
+from mm_sae.config import RegionSelection
 from .records import Record, fold, json_array
 
 
@@ -42,12 +43,20 @@ def coco(files, seed, *, stuff=False):
             )
 
 
-def visual_genome(files, seed):
+def visual_genome(files, seed, selection=None):
+    selection = selection or RegionSelection()
+    prefixes = tuple(kind + "/" for kind in selection.label_types)
     meta = {int(x["image_id"]): x.get("coco_id") for x in json_array(files["metadata"])}
     test_ids = {x["id"] for x in json.loads(files["coco_test_instances"].read_text())["images"]}
+    overlap = None
+    if selection.images == "coco_trainval":
+        with files["coco_train_instances"].open() as f:
+            overlap = test_ids | {row["id"] for row in json.load(f)["images"]}
     for image in json_array(files["graphs"]):
         idx = image["image_id"]
         coco_id = meta[idx]
+        if overlap is not None and coco_id not in overlap:
+            continue
         key = f"coco/{coco_id}" if coco_id is not None else f"vg/{idx}"
         split = (
             ("test" if coco_id in test_ids else ("val" if fold(key, seed) == "val" else "train"))
@@ -68,6 +77,9 @@ def visual_genome(files, seed):
             terms.update(
                 "relation/" + x["predicate"].lower() for x in r.get("relationships", []) if x.get("predicate")
             )
+            terms = {name for name in terms if name.startswith(prefixes)}
+            if selection.annotated_only and not terms:
+                continue
             yield Record(f"vg/{idx}/{r['region_id']}", key, "text", r["phrase"], split, tuple(sorted(terms)))
 
 

@@ -84,13 +84,9 @@
       "max_absolute_validation_loss_error": 2.1839112462895827e-10
     }
   },
-  "data_revisions_at_verification": {
-    "jokl/syncoco": "61ec39e676af44a7a33146f78f54019b8a0f97fc",
-    "jokl/syncub": "9d4a42db1807f685c3222e26f64e998c79de5a8a",
-    "clip-benchmark/wds_flickr30k": "f8af3ceee1b944bf761340682621dfafd23974d2",
-    "nlphuji/flickr30k": "2b239befc81b6e3f035ce6bd52f5f4d60f5625f7",
-    "not-lain/docci": "c16644a7fc921512164aa22e9179d7172f70575f",
-    "Jaszczurix7652/CUB-200-2011": "ecc431bb99dd6ec05d0c1098dd94d669da916a7a",
-    "bentrevett/caltech-ucsd-birds-200-2011": "1ef09e021b0b65b40337f6f285909656f407f6e0"
-  }
+  "data_files_sha256": {
+    "vg/image_data.json": "93d0053d7e8f451497646fa513e8fb9b1a889df6e757010b88e51e2e21803487"
+  },
+  "evaluation_recipe": "configs/coco_val2017.yaml",
+  "aggregation_recipe": "configs/report/coco_val2017.yaml"
 }

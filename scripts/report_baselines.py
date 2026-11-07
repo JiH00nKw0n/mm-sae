@@ -1,283 +1,277 @@
-"""Render the baseline tables and measured Pareto diagram from completed results."""
+"""Build the configured concept tables and retrieval diagram from held-out measurements."""
 
-from pathlib import Path
 import argparse
 import csv
+import hashlib
 import json
-import numpy as np
+import sys
+from pathlib import Path
+
 import matplotlib
+import numpy as np
+import yaml
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-methods = {"hungarian": "Hungarian", "pls": "PLS-SVD", "cca": "CCA (λ=1)"}
-benchmarks = {
-    "coco": "COCO",
-    "stuff": "COCO-Stuff",
-    "visual_genome": "Visual Genome",
-    "cub": "CUB",
-    "coco_retrieval": "COCO",
-    "flickr30k": "Flickr30k",
-    "docci": "DOCCI",
-    "iiw": "IIW-400",
-    "syncoco": "synCOCO",
-    "syncub": "synCUB",
-}
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_CONFIG = ROOT / "configs/report/coco_val2017.yaml"
 
 
-def main(root, dest):
-    dest.mkdir(parents=True, exist_ok=True)
-    if root.is_file():
-        data = json.loads(root.read_text())
-    else:
-        data = {
-            m: {p.parent.name: json.loads(p.read_text()) for p in (root / m).glob("*/result.json")}
-            for m in methods
+def load_definition(path):
+    definition = yaml.safe_load(path.read_text())
+    for dataset in definition["concepts"].values():
+        for rule in dataset["groups"].values():
+            if "vocabulary" in rule:
+                rule["names"] = (path.parent / rule.pop("vocabulary")).read_text().splitlines()
+    return definition
+
+
+def summarize_groups(result, probe_file, rules):
+    # Import the suite only when computing new summaries. Plotting a snapshot needs no model packages.
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from mm_sae.evaluation.concepts import entropy_scores
+
+    with np.load(probe_file, allow_pickle=False) as probes:
+        names = probes["concepts"].astype(str)
+        gains = probes["importance"]
+    if len(set(names)) != len(names) or set(names) != set(result["concepts"]) or gains.shape[1] != len(names):
+        raise ValueError(f"Concepts differ between {probe_file} and its measured losses")
+    losses = np.array([result["concepts"][name]["test_loss"] for name in names])
+    groups = {}
+    for label, rule in rules.items():
+        mask = np.ones(len(names), dtype=bool)
+        if "names" in rule:
+            mask &= np.isin(names, rule["names"])
+        if "prefix" in rule:
+            mask &= np.char.startswith(names, rule["prefix"])
+        if rule.get("complement"):
+            mask = ~mask
+        if not mask.any():
+            raise ValueError(f"No concepts matched {label} in {probe_file}")
+        groups[label] = {
+            "count": int(mask.sum()),
+            "loss": float(losses[mask].mean()),
+            **entropy_scores(gains[:, mask]),
         }
-    # Accept both collected server results and the repository's native run tree.
-    for fit_path in root.glob("**/mappings/*/fit.json"):
-        receipt = json.loads(fit_path.read_text())
-        cfg = receipt["config"]
-        if cfg["method"] not in data or cfg.get("rotation", "none") != "none" or cfg.get("prune") is not None:
-            continue
-        if cfg["rank"] != 256 or (cfg["method"] == "cca" and cfg["ridge"] != 1):
-            continue
-        for filename in fit_path.parent.glob("evaluation/*/results.json"):
-            report = json.loads(filename.read_text())
-            if report.get("synthetic"):
-                continue
-            for name, result in report["datasets"].items():
-                previous = data[cfg["method"]].get(name)
-                if previous is not None and previous != result:
-                    raise ValueError(f"Multiple measurements for {name}. Select one run directory.")
-                data[cfg["method"]][name] = result
-    if not any(data.values()):
-        raise ValueError("No measured baselines found")
-    summary = {
-        m: {
-            ds: {k: v for k, v in result.items() if k not in ("concepts", "excluded")}
-            for ds, result in measurements.items()
-        }
-        for m, measurements in data.items()
-    }
-    (dest / "measurements.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
+    return {"groups": groups, "split_sizes": result["split_sizes"]}
 
-    def table(cols, rows):
-        return "\n".join(
-            [
-                "| " + " | ".join(cols) + " |",
-                "|" + "---|" * len(cols),
-                *["| " + " | ".join(map(str, r)) + " |" for r in rows],
-            ]
-        )
 
-    def save_csv(file, cols, rows):
-        with (dest / file).open("w", newline="") as f:
-            writer = csv.writer(f, lineterminator="\n")
-            writer.writerow(cols)
-            writer.writerows(rows)
-
-    rows = []
-    cr = []
-    rr = []
-    er = []
-    for name, label in benchmarks.items():
-        for m, method in methods.items():
-            if name not in data[m]:
-                continue
-            j = data[m][name]
-            if "macro_test_loss" in j:
-                d = j["diagnostics"]
-                cr.append(
-                    [
-                        label,
-                        method,
-                        j["eligible"],
-                        round(j["macro_test_loss"], 6),
-                        round(d["mixing"], 6),
-                        round(d["dispersion"], 6),
-                    ]
-                )
-            elif "image_to_text" in j:
-                rr.append(
-                    [
-                        label,
-                        method,
-                        *[
-                            round(100 * j[s][f"R@{k}"], 3)
-                            for s in ("image_to_text", "text_to_image")
-                            for k in (1, 5, 10)
-                        ],
-                        round(100 * j["truncated_fraction"], 3),
-                    ]
-                )
+def load_measurements(source, definition):
+    signature = hashlib.sha256(json.dumps(definition, sort_keys=True).encode()).hexdigest()
+    if source.is_file():
+        snapshot = json.loads(source.read_text())
+        if snapshot.get("definition_sha256") != signature:
+            raise ValueError("The summary was generated with a different report definition")
+        return snapshot
+    results = {}
+    for method, criteria in definition["methods"].items():
+        native = []
+        for path in source.glob("**/mappings/*/fit.json"):
+            cfg = json.loads(path.read_text())["config"]
+            if cfg["method"] == method and all(cfg.get(k) == v for k, v in criteria.items() if k != "label"):
+                for filename in path.parent.glob("evaluation/*/results.json"):
+                    run = json.loads(filename.read_text())
+                    if not run["synthetic"]:
+                        native.append((filename.parent, run["datasets"]))
+        results[method] = {}
+        for name in [*definition["concepts"], *definition["retrieval"]]:
+            collected = source / method / name
+            if (collected / "result.json").exists():
+                result = json.loads((collected / "result.json").read_text())
+                path = collected / "probes.npz"
             else:
-                for role, sub in j.items():
-                    if not isinstance(sub, dict) or "mean_delta" not in sub:
-                        continue
-                    er.append(
-                        [
-                            label,
-                            method,
-                            role,
-                            sub["count"],
-                            sub["missing_probe"],
-                            sub["mean_delta"],
-                            sub["mean_absolute_delta"],
-                        ]
+                candidates = []
+                for folder, datasets in native:
+                    if name in datasets:
+                        candidates.append((datasets[name], folder / f"{name}-probes.npz"))
+                if len(candidates) != 1:
+                    raise ValueError(
+                        f"Expected one measured run for {method}/{name}, found {len(candidates)}"
                     )
-    ccols = ["자료", "대응 방법", "개념 수", "개념 예측 손실", "개념 혼합도", "표현 분산도"]
-    rcols = [
-        "자료",
-        "대응 방법",
-        "이미지 R@1 (%)",
-        "이미지 R@5 (%)",
-        "이미지 R@10 (%)",
-        "텍스트 R@1 (%)",
-        "텍스트 R@5 (%)",
-        "텍스트 R@10 (%)",
-        "잘린 캡션 (%)",
-    ]
-    ecols = [
-        "자료",
-        "대응 방법",
-        "편집 역할",
-        "평가 건수",
-        "분류기 없는 건수",
-        "평균 확률 변화",
-        "평균 절대 확률 변화",
-    ]
-    for file, cols, result in [
-        ("concepts.csv", ccols, cr),
-        ("retrieval.csv", rcols, rr),
-        ("edits.csv", ecols, er),
-    ]:
-        save_csv(file, cols, result)
-    populations = []
-    for key, label in benchmarks.items():
-        completed = [data[m][key] for m in methods if key in data[m]]
-        if not completed:
-            continue
-        if "split_sizes" in completed[0]:
-            for split, count in completed[0]["split_sizes"].items():
-                assert all(r["split_sizes"][split] == count for r in completed)
-                populations.append([label, "concept", split, count])
-        if "images" in completed[0]:
-            for side in ("images", "captions"):
-                assert all(r[side] == completed[0][side] for r in completed)
-                populations.append([label, "retrieval", side, completed[0][side]])
-    save_csv("populations.csv", ["dataset", "evaluation", "split_or_modality", "samples"], populations)
-    common = set.intersection(*(set(b) for b in data.values()))
-    final = {"coco", "stuff", "visual_genome", "coco_retrieval", "flickr30k", "docci", "iiw"} <= common
-    im = [k for k in ("coco", "stuff") if k in common]
-    text = ["visual_genome"] if "visual_genome" in common else []
-    ret = [k for k in ("coco_retrieval", "flickr30k", "docci", "iiw") if k in common]
-    caption = ""
-    if im and ret:
-        f, ax = plt.subplots(figsize=(7.6, 4.8), layout="constrained")
-        for m, method in methods.items():
-            als = [np.mean([data[m][ds]["macro_test_loss"] for ds in im])]
-            if text:
-                als.append(data[m][text[0]]["macro_test_loss"])
-            x = float(np.mean(als))
-            y = float(
+                result, path = candidates[0]
+            if name in definition["concepts"]:
+                results[method][name] = summarize_groups(result, path, definition["concepts"][name]["groups"])
+            else:
+                results[method][name] = {
+                    k: result[k]
+                    for k in ("images", "captions", "image_to_text", "text_to_image", "truncated_fraction")
+                }
+    return {"definition_sha256": signature, "methods": results}
+
+
+def write_table(dest, name, headers, rows):
+    with (dest / name).open("w", newline="") as f:
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(headers)
+        writer.writerows(rows)
+
+    def cell(value):
+        if value is None:
+            return "해당 없음"
+        if isinstance(value, float):
+            return f"{value:.5f}"
+        return str(value)
+
+    table = [headers, ["---"] * len(headers), *rows]
+    return "\n".join("| " + " | ".join(cell(v) for v in row) + " |" for row in table)
+
+
+def figure(definition, data, dest):
+    layout = definition["figure"]
+    panels = layout["panels"]
+    fig, axes = plt.subplots(
+        1, len(panels), figsize=(4.2 * len(panels), 4.2), sharey=True, squeeze=False, layout="constrained"
+    )
+    artists = []
+    rows = []
+    for ax, (group, title) in zip(axes[0], panels.items()):
+        coordinates = []
+        for idx, (method, style) in enumerate(definition["methods"].items()):
+            measurements = data[method]
+            image_loss = float(np.mean([measurements[ds]["groups"][g]["loss"] for ds, g in layout["image"]]))
+            text_loss = measurements[layout["text_dataset"]]["groups"][group]["loss"]
+            x = (image_loss + text_loss) / 2
+            y = 100 * float(
                 np.mean(
-                    [100 * data[m][ds][s]["R@5"] for ds in ret for s in ("image_to_text", "text_to_image")]
+                    [
+                        measurements[ds][s]["R@5"]
+                        for ds in definition["retrieval"]
+                        for s in ("image_to_text", "text_to_image")
+                    ]
                 )
             )
-            rows.append([method, x, y])
-        front = sorted(
-            [
-                (x, y)
-                for _, x, y in rows
-                if not any((a <= x and b >= y and (a < x or b > y)) for _, a, b in rows)
-            ]
-        )
-        if len(front) > 1:
-            ax.plot(*zip(*front), color="#777", linestyle="--", linewidth=1)
-        for i, (method, x, y) in enumerate(rows):
-            color = ["#606875", "#146b83", "#a03f1c"][i]
-            ax.scatter(
-                x, y, s=100, color=color, marker=["s", "o", "D"][i], label=method, zorder=3, edgecolor="white"
+            rows.append([group, style["label"], image_loss, text_loss, x, y])
+            coordinates.append((x, y))
+            point = ax.scatter(
+                x,
+                y,
+                s=92,
+                color=plt.get_cmap("tab10")(idx % 10),
+                marker=["o", "s", "D", "^"][idx % 4],
+                edgecolors="white",
+                zorder=3,
+                label=style["label"],
             )
+            if len(artists) < len(definition["methods"]):
+                artists.append(point)
+        frontier = sorted(
+            (x, y)
+            for x, y in coordinates
+            if not any(a <= x and b >= y and (a < x or b > y) for a, b in coordinates)
+        )
+        if len(frontier) > 1:
+            ax.plot(*zip(*frontier), linewidth=1.3, linestyle="--", color="#6b7278")
+        ax.set_title(title)
+        ax.margins(x=0.18, y=0.17)
+        ax.grid(alpha=0.16)
         ax.invert_xaxis()
-        ax.margins(0.18, 0.17)
-        ax.set(
-            xlabel="Single-coordinate concept loss (lower is better →)",
-            ylabel="Mean bidirectional Recall@5 (%)",
-            title="Concept prediction and cross-modal retrieval",
-        )
-        ax.grid(alpha=0.17)
-        ax.legend(loc="best")
-        f.savefig(dest / "baseline-frontier.png", dpi=190)
-        plt.close(f)
-        save_csv("figure-points.csv", ["method", "concept_loss", "bidirectional_R5_percent"], rows)
-        caption = (
-            "가로축은 "
-            + ", ".join(benchmarks[k] for k in im)
-            + "의 이미지 개념 예측 손실 평균"
-            + ("과 Visual Genome 텍스트 손실을 같은 비중으로 평균한 값" if text else "")
-            + "입니다. 낮을수록 오른쪽에 표시합니다. 세로축은 "
-            + ", ".join(benchmarks[k] for k in ret)
-            + "에서 두 방향 R@5를 같은 비중으로 평균한 값입니다."
-        )
-    pending = [benchmarks[x] for x in benchmarks if x not in common]
-    heading = "# CC3M SAE 대응 방법의 실제 데이터 평가\n\n"
-    status = (
-        "세 방법 모두 완료한 자료로 표와 그림을 작성했습니다. 남은 자료는 " + ", ".join(pending) + "입니다."
-        if pending
-        else "세 방법에 대해 슬라이드 11–16쪽의 평가를 마쳤습니다."
+    axes[0, 0].set_ylabel("Mean bidirectional Recall@5 (%)")
+    fig.supxlabel("Mean image and text concept loss (lower toward the right)")
+    fig.legend(handles=artists, loc="outside upper center", ncols=len(artists), frameon=False)
+    fig.savefig(dest / "baseline-frontier.png", dpi=190)
+    plt.close(fig)
+    return rows
+
+
+def render(snapshot, definition, dest):
+    data = snapshot["methods"]
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / "measurements.json").write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n")
+    concept_rows, retrieval_rows = [], []
+    for key, spec in definition["concepts"].items():
+        for group in spec["groups"]:
+            for method, style in definition["methods"].items():
+                s = data[method][key]["groups"][group]
+                concept_rows.append(
+                    [
+                        spec["label"],
+                        group,
+                        style["label"],
+                        s["count"],
+                        s["loss"],
+                        s["mixing"],
+                        s["dispersion"],
+                    ]
+                )
+    for key, label in definition["retrieval"].items():
+        for method, style in definition["methods"].items():
+            s = data[method][key]
+            retrieval_rows.append(
+                [
+                    label,
+                    style["label"],
+                    s["images"],
+                    s["captions"],
+                    *[
+                        round(100 * s[d][f"R@{k}"], 3)
+                        for d in ("image_to_text", "text_to_image")
+                        for k in (1, 5, 10)
+                    ],
+                ]
+            )
+    coords = figure(definition, data, dest)
+    coord_cols = [
+        "텍스트 개념",
+        "방법",
+        "이미지 평균 손실",
+        "텍스트 평균 손실",
+        "모달리티 평균 손실",
+        "양방향 평균 R@5 (%)",
+    ]
+    write_table(dest, "figure-points.csv", coord_cols, coords)
+    main_rows = [r[1:] for r in coords if r[0] == definition["figure"]["primary"]]
+    main = write_table(dest, "baseline.csv", coord_cols[1:], main_rows)
+    concepts = write_table(
+        dest,
+        "concepts.csv",
+        ["자료", "개념 범위", "방법", "개념 수", "시험 손실", "혼합도", "분산도"],
+        concept_rows,
     )
-    status += "\n\n2,905,954개의 CC3M 학습 쌍과 기존 이미지·텍스트 SAE를 사용했습니다. 헝가리안은 전체 일대일 할당에서 상관계수가 큰 256쌍을 사용했습니다. PLS-SVD와 규제 CCA는 각각 256개 조합을 사용했고, CCA의 규제 값은 1입니다. 세 방법 모두 후속 회전과 계수 절삭을 적용하지 않았습니다."
-    if final:
-        caption += " 이미지와 텍스트에 각각 50%를 배정했습니다. 세 방법 중 어떤 다른 방법도 예측 손실과 검색 성능을 동시에 개선하지 못하는 점을 점선으로 연결했습니다."
-    plotsection = "\n\n![세 대응 방법의 측정 결과](baseline-frontier.png)\n\n" + caption if rows else ""
-    if rows:
-        plotsection += "\n\n" + table(
-            ["대응 방법", "그림의 개념 예측 손실", "그림의 양방향 평균 R@5 (%)"],
-            [[name, f"{x:.6f}", f"{y:.3f}"] for name, x, y in rows],
-        )
-    if final:
-        status += " 그림에서 비교한 세 점의 좌표는 [CSV](figure-points.csv)에 있습니다."
-    body = (
-        heading
-        + status
-        + plotsection
-        + "\n\n## 개념 예측\n\n손실, 혼합도, 분산도는 모두 낮을수록 좋습니다. CUB의 원본 속성 평가는 synCUB 편집 쌍에 사용할 분류기를 정하기 위해 별도로 측정했습니다.\n\n"
-        + table(ccols, cr)
-        + "\n\n## 이미지·캡션 검색\n\n"
-        + table(rcols, rr)
+    retrieval = write_table(
+        dest,
+        "retrieval.csv",
+        [
+            "자료",
+            "방법",
+            "이미지 수",
+            "캡션 수",
+            *[f"{side} R@{k} (%)" for side in ("이미지", "텍스트") for k in (1, 5, 10)],
+        ],
+        retrieval_rows,
     )
-    body += "\n\n이미지 R@5는 이미지로 정답 캡션을 상위 5개 안에서 찾은 비율입니다. 텍스트 R@5는 캡션으로 정답 이미지를 찾은 비율입니다."
-    if er:
-        roles = {"removed": "제거", "added": "추가", "retained": "유지"}
-        edit_rows = [
-            [
-                dataset,
-                method,
-                roles[role],
-                count,
-                missing,
-                f"{change:.5f}" if change is not None else "해당 없음",
-                f"{abs_change:.5f}" if abs_change is not None else "해당 없음",
-            ]
-            for dataset, method, role, count, missing, change, abs_change in er
-            if count or missing
-        ]
-        body += (
-            "\n\n## 편집 전후의 개념 예측 확률\n\n"
-            "한 건은 편집 전후의 이미지 한 쌍에서 개념 하나를 비교한 값입니다. "
-            "평균 확률 변화는 편집 후 확률에서 편집 전 확률을 뺀 값입니다. "
-            "예를 들어 −0.17이면 해당 개념의 예측 확률이 평균 17%p 낮아졌다는 뜻입니다.\n\n"
-            + table(ecols, edit_rows)
-        )
-    body += "\n\n## 재현 방법\n\n" + (dest / "REPRODUCE.md").read_text() + "\n"
-    (dest / "README.md").write_text(body.rstrip() + "\n")
+    populations = []
+    for key, spec in definition["concepts"].items():
+        sizes = [measurements[key]["split_sizes"] for measurements in data.values()]
+        if any(size != sizes[0] for size in sizes):
+            raise ValueError(f"Methods evaluated on different populations for {key}")
+        populations.extend([spec["label"], split, n] for split, n in sizes[0].items())
+    write_table(dest, "populations.csv", ["자료", "분할", "표본 수"], populations)
+    best_loss = min(main_rows, key=lambda r: r[-2])
+    best_recall = max(main_rows, key=lambda r: r[-1])
+    lead = f"텍스트의 {definition['figure']['primary']} 범위에서 이미지·텍스트 평균 개념 예측 손실이 가장 낮은 방법은 **{best_loss[0]}** ({best_loss[-2]:.5f})이고, 양방향 평균 R@5가 가장 높은 방법은 **{best_recall[0]}** ({best_recall[-1]:.2f}%)입니다."
+    body = [
+        f"# {definition['title']}",
+        lead,
+        main,
+        "![개념 예측과 이미지·텍스트 검색](baseline-frontier.png)",
+        (dest / "PROTOCOL.md").read_text().strip(),
+        "## 범주별 개념 예측",
+        concepts,
+        "## 이미지·텍스트 검색",
+        retrieval,
+        "## 재현 방법",
+        (dest / "REPRODUCE.md").read_text().strip(),
+    ]
+    (dest / "README.md").write_text("\n\n".join(body) + "\n")
 
 
 if __name__ == "__main__":
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("results", type=Path)
     p.add_argument("docs", type=Path)
-    a = p.parse_args()
-    main(a.results, a.docs)
+    p.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    args = p.parse_args()
+    definition = load_definition(args.config)
+    render(load_measurements(args.results, definition), definition, args.docs)

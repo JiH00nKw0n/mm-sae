@@ -1,0 +1,45 @@
+extends: paper.yaml
+output: ../runs/coco-val2017
+benchmarks:
+  coco:
+    dataset: coco
+    files:
+      train_instances: coco/annotations/instances_train2017.json
+      test_instances: coco/annotations/instances_val2017.json
+      train_images: coco/train2017
+      test_images: coco/val2017
+    min_train_positives: 20
+    diagnostics: true
+  stuff:
+    dataset: stuff
+    files:
+      train_instances: coco/annotations/instances_train2017.json
+      test_instances: coco/annotations/instances_val2017.json
+      train_images: coco/train2017
+      test_images: coco/val2017
+      stuff_names: stuff/labels.txt
+      train_masks: stuff/train2017
+      test_masks: stuff/val2017
+    min_train_positives: 20
+    diagnostics: true
+  visual_genome:
+    dataset: visual_genome
+    files:
+      metadata: vg/image_data.json
+      graphs: vg/region_graphs.json
+      coco_test_instances: coco/annotations/instances_val2017.json
+      coco_train_instances: coco/annotations/instances_train2017.json
+    min_train_positives: 1
+    diagnostics: true
+    min_test_images: 50
+    regions:
+      images: coco_trainval
+      label_types:
+      - object
+      - relation
+      annotated_only: true
+  coco_retrieval:
+    dataset: coco_retrieval
+    files:
+      captions: coco/annotations/captions_val2017.json
+      images: coco/val2017

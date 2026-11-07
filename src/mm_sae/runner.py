@@ -9,7 +9,7 @@ import numpy as np
 from mm_sae.data import fixture
 from mm_sae.data.paired import _manifest, _verified_identity
 from mm_sae.data.paired_embeddings import extract
-from mm_sae.data.prepare import prepare, digest
+from mm_sae.data.prepare import benchmark_contract, prepare, digest
 from mm_sae.data.records import jsonlines
 from mm_sae.encoders.clip import CLIPEncoder
 from mm_sae.encoders.fixture import FixtureEncoder
@@ -146,12 +146,7 @@ def evaluate(cfg, tables, saes, mapping, out):
     manifests = {k: json.loads((v / "manifest.json").read_text()) for k, v in tables.items()}
     for name, manifest in manifests.items():
         spec = cfg.benchmarks[name]
-        expected = {
-            "dataset": spec.dataset,
-            "files": {k: str((cfg.data_root / v).resolve()) for k, v in spec.files.items()},
-            "split_seed": cfg.split_seed,
-            "encoder": cfg.encoder.model_dump(exclude={"device", "batch_size"}),
-        }
+        expected = benchmark_contract(spec, cfg.data_root, cfg.encoder, cfg.split_seed)
         if expected != manifest["contract"]:
             raise ValueError(f"Prepared benchmark differs from evaluation recipe: {name}")
     eval_id = digest([implementation(), manifests, {k: v.model_dump() for k, v in cfg.benchmarks.items()}])
@@ -212,6 +207,7 @@ def evaluate(cfg, tables, saes, mapping, out):
                     spec.min_train_positives,
                     spec.diagnostics,
                     use_cuda=cfg.encoder.device == "cuda",
+                    min_test_images=spec.min_test_images,
                 )
                 save_arrays(work / (name + "-probes.npz"), details)
             summary[name] = result

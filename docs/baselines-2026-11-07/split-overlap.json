@@ -1,0 +1,14 @@
+{
+  "val2017": {
+    "images": 5000,
+    "with_visual_genome_id": 2170
+  },
+  "train2017": {
+    "images": 118287,
+    "with_visual_genome_id": 49038
+  },
+  "test2017": {
+    "images": 40670,
+    "with_visual_genome_id": 0
+  }
+}

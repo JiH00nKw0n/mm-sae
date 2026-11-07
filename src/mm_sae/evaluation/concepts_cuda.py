@@ -118,12 +118,14 @@ def fit_logistic(model, rate, xy):
         dw = (bb * gw - wb * gb) / det
         db = (ww * gb - wb * gw) / det
         scale = torch.ones_like(w)
-        for _ in range(24):
+        attempts = 0
+        while True:
             nw = w - scale * dw
             nb = b - scale * db
             new = model.calc(nw, nb, False)[0] - nw * xy - nb * rate
             reject = new > f + 1e-14
-            if not reject.any():
+            attempts += 1
+            if not reject.any() or attempts == 24:
                 break
             scale[reject] *= 0.5
         w = torch.where(reject, w, nw)
@@ -145,7 +147,7 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
     )
     excluded = {str(c): "insufficient train or validation support" for c in np.asarray(concepts)[~keep]}
     concepts = np.asarray(concepts)[keep]
-    labels = labels[:, keep]
+    labels = sparse.csr_matrix(labels[:, keep])
     counts = [v[keep] for v in counts]
     rates = [v / len(ix) for v, ix in zip(counts, (train_idx, val_idx, test_idx))]
     if not len(concepts):
@@ -185,7 +187,7 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
         raise ValueError("Nonfinite validation loss in CUDA probe evaluation")
     best = loss.argmin(0)
     probes = {}
-    test_y = labels[test_idx].tocsc()
+    test_y = sparse.csc_matrix(labels[test_idx])
     for c, (name, j) in enumerate(zip(concepts, best)):
         positives = test_y.indices[test_y.indptr[c] : test_y.indptr[c + 1]]
         z = scores[test_idx, j].astype(float) * w[j, c] + b[j, c]

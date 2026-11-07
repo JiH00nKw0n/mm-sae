@@ -1,524 +1,305 @@
 {
-  "hungarian": {
-    "syncoco": {
-      "removed": {
-        "count": 2504,
-        "missing_probe": 0,
-        "mean_delta": -0.1733338837509693,
-        "mean_absolute_delta": 0.18880725349445235
+  "definition_sha256": "4260cebea1ad929b28e0482962dd54e084cc0d4ec4bd1a7efdf8ea0fe3c359df",
+  "methods": {
+    "hungarian": {
+      "coco": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.10185475845126031,
+            "mixing": 0.5755650482410781,
+            "dispersion": 0.5618504303884321,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
       },
-      "added": {
-        "count": 0,
-        "missing_probe": 0,
-        "mean_delta": null,
-        "mean_absolute_delta": null
+      "stuff": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09984190662676763,
+            "mixing": 0.5767068011698102,
+            "dispersion": 0.563475748599046,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "배경": {
+            "count": 91,
+            "loss": 0.1838319140168982,
+            "mixing": 0.7178083059774237,
+            "dispersion": 0.6638841439758083,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+배경": {
+            "count": 171,
+            "loss": 0.1445383433080652,
+            "mixing": 0.6871055251203874,
+            "dispersion": 0.616909456080247,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
       },
-      "retained": {
-        "count": 4691,
-        "missing_probe": 0,
-        "mean_delta": -0.008455140350323315,
-        "mean_absolute_delta": 0.0445456389074732
+      "visual_genome": {
+        "groups": {
+          "물체": {
+            "count": 170,
+            "loss": 0.024990307066818786,
+            "mixing": 0.4783213386841978,
+            "dispersion": 0.5856229620083764,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "관계": {
+            "count": 42,
+            "loss": 0.04559642621190957,
+            "mixing": 0.593289057833503,
+            "dispersion": 0.6668086564472534,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+관계": {
+            "count": 212,
+            "loss": 0.029072651425751866,
+            "mixing": 0.5010667760744455,
+            "dispersion": 0.6017069203406068,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 1337144,
+          "val": 337693,
+          "test": 74895
+        }
       },
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "syncoco"
+      "coco_retrieval": {
+        "images": 5000,
+        "captions": 25014,
+        "image_to_text": {
+          "R@1": 0.0536,
+          "R@5": 0.1328,
+          "R@10": 0.196
+        },
+        "text_to_image": {
+          "R@1": 0.04081714240025586,
+          "R@5": 0.11069800911489566,
+          "R@10": 0.16318861437594948
+        },
+        "truncated_fraction": 0.0
+      }
     },
-    "cub": {
-      "macro_test_loss": 0.26432379084859386,
-      "eligible": 296,
-      "split_sizes": {
-        "train": 4729,
-        "val": 1265,
-        "test": 5794
+    "pls": {
+      "coco": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09998371064462769,
+            "mixing": 0.7465216456247384,
+            "dispersion": 0.8380605071275025,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
       },
-      "diagnostics": {
-        "mixing": 0.7801328700059444,
-        "dispersion": 0.5143485495675806,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
+      "stuff": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09778630932256589,
+            "mixing": 0.7440333671217787,
+            "dispersion": 0.8380346621349462,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "배경": {
+            "count": 91,
+            "loss": 0.1726915116478697,
+            "mixing": 0.7468433699953667,
+            "dispersion": 0.8228288555978907,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+배경": {
+            "count": 171,
+            "loss": 0.13764814213895563,
+            "mixing": 0.7645081002466962,
+            "dispersion": 0.8299426832175657,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
       },
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "cub"
+      "visual_genome": {
+        "groups": {
+          "물체": {
+            "count": 170,
+            "loss": 0.022776523856673222,
+            "mixing": 0.7517872138697078,
+            "dispersion": 0.8437085907334767,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "관계": {
+            "count": 42,
+            "loss": 0.04355513558609821,
+            "mixing": 0.6005200159028238,
+            "dispersion": 0.8310687988640223,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+관계": {
+            "count": 212,
+            "loss": 0.02689304127476685,
+            "mixing": 0.7414589537971198,
+            "dispersion": 0.8412044810234903,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 1337144,
+          "val": 337693,
+          "test": 74895
+        }
+      },
+      "coco_retrieval": {
+        "images": 5000,
+        "captions": 25014,
+        "image_to_text": {
+          "R@1": 0.205,
+          "R@5": 0.4124,
+          "R@10": 0.5172
+        },
+        "text_to_image": {
+          "R@1": 0.1430798752698489,
+          "R@5": 0.3154633405293036,
+          "R@10": 0.42096426001439197
+        },
+        "truncated_fraction": 0.0
+      }
     },
-    "docci": {
-      "image_to_text": {
-        "R@1": 0.0356,
-        "R@5": 0.1106,
-        "R@10": 0.1716
+    "cca": {
+      "coco": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09670989239146702,
+            "mixing": 0.7175700736187607,
+            "dispersion": 0.8196597256264553,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
       },
-      "text_to_image": {
-        "R@1": 0.0376,
-        "R@5": 0.114,
-        "R@10": 0.169
+      "stuff": {
+        "groups": {
+          "물체": {
+            "count": 80,
+            "loss": 0.09461196778625965,
+            "mixing": 0.7166838184733753,
+            "dispersion": 0.8198391008731714,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "배경": {
+            "count": 91,
+            "loss": 0.1709114820074113,
+            "mixing": 0.7309180289790019,
+            "dispersion": 0.812695671123468,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+배경": {
+            "count": 171,
+            "loss": 0.13521580283962106,
+            "mixing": 0.742648659938121,
+            "dispersion": 0.8160376265619257,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 94674,
+          "val": 23613,
+          "test": 5000
+        }
       },
-      "images": 5000,
-      "captions": 5000,
-      "truncated_fraction": 0.944,
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "docci"
-    },
-    "iiw": {
-      "image_to_text": {
-        "R@1": 0.175,
-        "R@5": 0.3725,
-        "R@10": 0.4575
+      "visual_genome": {
+        "groups": {
+          "물체": {
+            "count": 170,
+            "loss": 0.02282720090203671,
+            "mixing": 0.7384186340758073,
+            "dispersion": 0.83520088866927,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "관계": {
+            "count": 42,
+            "loss": 0.044500676929517,
+            "mixing": 0.6013260101351843,
+            "dispersion": 0.82785028731416,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          },
+          "물체+관계": {
+            "count": 212,
+            "loss": 0.02712100275653753,
+            "mixing": 0.72805688997642,
+            "dispersion": 0.8337446374574086,
+            "zero_importance_concepts": 0,
+            "zero_importance_axes": 0
+          }
+        },
+        "split_sizes": {
+          "train": 1337144,
+          "val": 337693,
+          "test": 74895
+        }
       },
-      "text_to_image": {
-        "R@1": 0.1725,
-        "R@5": 0.3625,
-        "R@10": 0.4825
-      },
-      "images": 400,
-      "captions": 400,
-      "truncated_fraction": 0.99,
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "iiw"
-    },
-    "stuff": {
-      "macro_test_loss": 0.1445383433080652,
-      "eligible": 171,
-      "split_sizes": {
-        "train": 94674,
-        "val": 23613,
-        "test": 5000
-      },
-      "diagnostics": {
-        "mixing": 0.6871055251203874,
-        "dispersion": 0.6169094560802469,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "stuff"
-    },
-    "coco": {
-      "macro_test_loss": 0.10185475845126031,
-      "eligible": 80,
-      "split_sizes": {
-        "train": 94674,
-        "val": 23613,
-        "test": 5000
-      },
-      "diagnostics": {
-        "mixing": 0.5755650482410781,
-        "dispersion": 0.5618504303884322,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "coco"
-    },
-    "syncub": {
-      "removed": {
-        "count": 2933,
-        "missing_probe": 0,
-        "mean_delta": -0.008807107204762063,
-        "mean_absolute_delta": 0.015482577118491145
-      },
-      "added": {
-        "count": 2933,
-        "missing_probe": 0,
-        "mean_delta": 0.0018068031729692408,
-        "mean_absolute_delta": 0.004076166903845341
-      },
-      "retained": {
-        "count": 92495,
-        "missing_probe": 32,
-        "mean_delta": -0.002418602029816248,
-        "mean_absolute_delta": 0.008907228685072302
-      },
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "syncub"
-    },
-    "coco_retrieval": {
-      "image_to_text": {
-        "R@1": 0.0536,
-        "R@5": 0.1328,
-        "R@10": 0.196
-      },
-      "text_to_image": {
-        "R@1": 0.04081714240025586,
-        "R@5": 0.11069800911489566,
-        "R@10": 0.16318861437594948
-      },
-      "images": 5000,
-      "captions": 25014,
-      "truncated_fraction": 0.0,
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "coco_retrieval"
-    },
-    "flickr30k": {
-      "image_to_text": {
-        "R@1": 0.119,
-        "R@5": 0.256,
-        "R@10": 0.334
-      },
-      "text_to_image": {
-        "R@1": 0.095,
-        "R@5": 0.2414,
-        "R@10": 0.3236
-      },
-      "images": 1000,
-      "captions": 5000,
-      "truncated_fraction": 0.0002,
-      "fit": "acd64094c0944395e191d373ec06f0763d19b99c1c26119b89d16cefda27c1a6",
-      "method": "hungarian",
-      "dataset": "flickr30k"
-    }
-  },
-  "pls": {
-    "syncoco": {
-      "removed": {
-        "count": 2504,
-        "missing_probe": 0,
-        "mean_delta": -0.14087642798385738,
-        "mean_absolute_delta": 0.16286345565836668
-      },
-      "added": {
-        "count": 0,
-        "missing_probe": 0,
-        "mean_delta": null,
-        "mean_absolute_delta": null
-      },
-      "retained": {
-        "count": 4691,
-        "missing_probe": 0,
-        "mean_delta": -0.010992481863204792,
-        "mean_absolute_delta": 0.050056495474593496
-      },
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "syncoco"
-    },
-    "cub": {
-      "macro_test_loss": 0.25414597992055676,
-      "eligible": 296,
-      "split_sizes": {
-        "train": 4729,
-        "val": 1265,
-        "test": 5794
-      },
-      "diagnostics": {
-        "mixing": 0.7853044716146294,
-        "dispersion": 0.845260414946283,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "cub"
-    },
-    "docci": {
-      "image_to_text": {
-        "R@1": 0.166,
-        "R@5": 0.3874,
-        "R@10": 0.5062
-      },
-      "text_to_image": {
-        "R@1": 0.1822,
-        "R@5": 0.4162,
-        "R@10": 0.5344
-      },
-      "images": 5000,
-      "captions": 5000,
-      "truncated_fraction": 0.944,
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "docci"
-    },
-    "iiw": {
-      "image_to_text": {
-        "R@1": 0.5025,
-        "R@5": 0.8,
-        "R@10": 0.9075
-      },
-      "text_to_image": {
-        "R@1": 0.53,
-        "R@5": 0.8425,
-        "R@10": 0.9
-      },
-      "images": 400,
-      "captions": 400,
-      "truncated_fraction": 0.99,
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "iiw"
-    },
-    "stuff": {
-      "macro_test_loss": 0.13764814213895563,
-      "eligible": 171,
-      "split_sizes": {
-        "train": 94674,
-        "val": 23613,
-        "test": 5000
-      },
-      "diagnostics": {
-        "mixing": 0.7645081002466961,
-        "dispersion": 0.8299426832175658,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "stuff"
-    },
-    "coco": {
-      "macro_test_loss": 0.09998371064462769,
-      "eligible": 80,
-      "split_sizes": {
-        "train": 94674,
-        "val": 23613,
-        "test": 5000
-      },
-      "diagnostics": {
-        "mixing": 0.7465216456247384,
-        "dispersion": 0.8380605071275025,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "coco"
-    },
-    "syncub": {
-      "removed": {
-        "count": 2933,
-        "missing_probe": 0,
-        "mean_delta": -0.04069655030601644,
-        "mean_absolute_delta": 0.0819373141580973
-      },
-      "added": {
-        "count": 2933,
-        "missing_probe": 0,
-        "mean_delta": 0.04571445913114889,
-        "mean_absolute_delta": 0.053642646910339986
-      },
-      "retained": {
-        "count": 92495,
-        "missing_probe": 32,
-        "mean_delta": -0.012831242174233851,
-        "mean_absolute_delta": 0.05123121645493255
-      },
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "syncub"
-    },
-    "coco_retrieval": {
-      "image_to_text": {
-        "R@1": 0.205,
-        "R@5": 0.4124,
-        "R@10": 0.5172
-      },
-      "text_to_image": {
-        "R@1": 0.1430798752698489,
-        "R@5": 0.3154633405293036,
-        "R@10": 0.42096426001439197
-      },
-      "images": 5000,
-      "captions": 25014,
-      "truncated_fraction": 0.0,
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "coco_retrieval"
-    },
-    "flickr30k": {
-      "image_to_text": {
-        "R@1": 0.376,
-        "R@5": 0.642,
-        "R@10": 0.743
-      },
-      "text_to_image": {
-        "R@1": 0.3162,
-        "R@5": 0.6002,
-        "R@10": 0.7118
-      },
-      "images": 1000,
-      "captions": 5000,
-      "truncated_fraction": 0.0002,
-      "fit": "25702c487b3be43a79d6f48af5bf6f128e7be726ccdd7ffbdd77ff11d61baefb",
-      "method": "pls",
-      "dataset": "flickr30k"
-    }
-  },
-  "cca": {
-    "syncoco": {
-      "removed": {
-        "count": 2504,
-        "missing_probe": 0,
-        "mean_delta": -0.1629792271217957,
-        "mean_absolute_delta": 0.18378344171742286
-      },
-      "added": {
-        "count": 0,
-        "missing_probe": 0,
-        "mean_delta": null,
-        "mean_absolute_delta": null
-      },
-      "retained": {
-        "count": 4691,
-        "missing_probe": 0,
-        "mean_delta": -0.01195070115834655,
-        "mean_absolute_delta": 0.05735686005458255
-      },
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "syncoco"
-    },
-    "cub": {
-      "macro_test_loss": 0.25478951303314484,
-      "eligible": 296,
-      "split_sizes": {
-        "train": 4729,
-        "val": 1265,
-        "test": 5794
-      },
-      "diagnostics": {
-        "mixing": 0.7757225630250459,
-        "dispersion": 0.8420632156503697,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "cub"
-    },
-    "docci": {
-      "image_to_text": {
-        "R@1": 0.1642,
-        "R@5": 0.377,
-        "R@10": 0.493
-      },
-      "text_to_image": {
-        "R@1": 0.1872,
-        "R@5": 0.3978,
-        "R@10": 0.5052
-      },
-      "images": 5000,
-      "captions": 5000,
-      "truncated_fraction": 0.944,
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "docci"
-    },
-    "iiw": {
-      "image_to_text": {
-        "R@1": 0.49,
-        "R@5": 0.7775,
-        "R@10": 0.8825
-      },
-      "text_to_image": {
-        "R@1": 0.5125,
-        "R@5": 0.8125,
-        "R@10": 0.9
-      },
-      "images": 400,
-      "captions": 400,
-      "truncated_fraction": 0.99,
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "iiw"
-    },
-    "stuff": {
-      "macro_test_loss": 0.13521580283962106,
-      "eligible": 171,
-      "split_sizes": {
-        "train": 94674,
-        "val": 23613,
-        "test": 5000
-      },
-      "diagnostics": {
-        "mixing": 0.742648659938121,
-        "dispersion": 0.8160376265619255,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "stuff"
-    },
-    "coco": {
-      "macro_test_loss": 0.09670989239146702,
-      "eligible": 80,
-      "split_sizes": {
-        "train": 94674,
-        "val": 23613,
-        "test": 5000
-      },
-      "diagnostics": {
-        "mixing": 0.7175700736187607,
-        "dispersion": 0.8196597256264553,
-        "zero_importance_concepts": 0,
-        "zero_importance_axes": 0
-      },
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "coco"
-    },
-    "syncub": {
-      "removed": {
-        "count": 2933,
-        "missing_probe": 0,
-        "mean_delta": -0.05261920660749605,
-        "mean_absolute_delta": 0.09065987032291892
-      },
-      "added": {
-        "count": 2933,
-        "missing_probe": 0,
-        "mean_delta": 0.047919847033348596,
-        "mean_absolute_delta": 0.05876436829939769
-      },
-      "retained": {
-        "count": 92495,
-        "missing_probe": 32,
-        "mean_delta": -0.01552897086977337,
-        "mean_absolute_delta": 0.053582173137219136
-      },
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "syncub"
-    },
-    "coco_retrieval": {
-      "image_to_text": {
-        "R@1": 0.2066,
-        "R@5": 0.4122,
-        "R@10": 0.5218
-      },
-      "text_to_image": {
-        "R@1": 0.1401215319421124,
-        "R@5": 0.3066282881586312,
-        "R@10": 0.4067722075637643
-      },
-      "images": 5000,
-      "captions": 25014,
-      "truncated_fraction": 0.0,
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "coco_retrieval"
-    },
-    "flickr30k": {
-      "image_to_text": {
-        "R@1": 0.402,
-        "R@5": 0.651,
-        "R@10": 0.746
-      },
-      "text_to_image": {
-        "R@1": 0.3204,
-        "R@5": 0.598,
-        "R@10": 0.7084
-      },
-      "images": 1000,
-      "captions": 5000,
-      "truncated_fraction": 0.0002,
-      "fit": "7511555ecd80e694f4b55c2ad00ba5a28a7b4a23704f4cc454e7067d7d7647fe",
-      "method": "cca",
-      "dataset": "flickr30k"
+      "coco_retrieval": {
+        "images": 5000,
+        "captions": 25014,
+        "image_to_text": {
+          "R@1": 0.2066,
+          "R@5": 0.4122,
+          "R@10": 0.5218
+        },
+        "text_to_image": {
+          "R@1": 0.1401215319421124,
+          "R@5": 0.3066282881586312,
+          "R@10": 0.4067722075637643
+        },
+        "truncated_fraction": 0.0
+      }
     }
   }
 }

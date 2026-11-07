@@ -1,17 +1,31 @@
 {
-  "samples": {
-    "val": 1073329,
-    "train": 3664602,
-    "test": 668661
+  "scope": "COCO train2017 and val2017 image IDs; test = val2017 only",
+  "total_source_regions": 5406592,
+  "minimum_distinct_positive_and_other_images": {
+    "test": 50
   },
-  "image_groups": 107786,
-  "rows_without_region_labels": 1779173,
-  "positive_annotations_by_type": {
-    "object": 5824982,
-    "relation": 1991887
+  "overlap_images": {
+    "train": 39129,
+    "val": 9908,
+    "test": 2170
+  },
+  "annotated_images": {
+    "train": 38792,
+    "val": 9843,
+    "test": 2147
+  },
+  "overlap_regions": {
+    "train": 1952390,
+    "val": 493161,
+    "test": 107984
+  },
+  "regions_with_object_or_relation": {
+    "train": 1337144,
+    "val": 337693,
+    "test": 74895
   },
   "eligible_by_type": {
-    "object": 5430,
-    "relation": 1179
+    "object": 170,
+    "relation": 42
   }
 }
