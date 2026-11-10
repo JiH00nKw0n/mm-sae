@@ -32,7 +32,8 @@ def test_sparse_scores_preserve_probe_losses_and_retrieval_ties(monkeypatch):
     gen = np.random.default_rng(5)
     x = gen.normal(size=(300, 8)).clip(0, None)
     x[gen.random(x.shape) < 0.87] = 0
-    x[:, 0] = 0
+    x[:170, 0] = 0
+    x[:170, 1] = 0.123
     y = gen.random((300, 3)) < 0.1
     ids = dict(train=np.arange(170), val=np.arange(170, 230), test=np.arange(230, 300))
     rows = [
@@ -46,6 +47,8 @@ def test_sparse_scores_preserve_probe_losses_and_retrieval_ties(monkeypatch):
     assert result["macro_test_loss"] == pytest.approx(reference["macro_test_loss"])
     monkeypatch.setattr(concepts_cuda, "as_gpu", lambda value: torch.as_tensor(value, dtype=torch.float64))
     _, details = concepts_cuda.evaluate(csr, y, ["0", "1", "2"], ids, 2, True)
+    np.testing.assert_array_equal(original["importance"][:2], 0)
+    np.testing.assert_array_equal(details["importance"][:2], 0)
     np.testing.assert_allclose(details["validation_loss"], original["validation_loss"], atol=1e-6)
     labels = [str(i) for i in range(300)]
     assert retrieval.direction(csr, csr, labels, labels) == retrieval.direction(x, x, labels, labels)

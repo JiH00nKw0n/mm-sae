@@ -2,7 +2,7 @@
 
 Train separate sparse autoencoders for image and text embeddings, learn correspondences from paired training data, and evaluate the frozen coordinates on concept prediction and cross-modal retrieval. The suite implements the November 4 meeting protocols on slides 11–16.
 
-The [latest COCO val2017 comparison](docs/baselines-2026-11-11/README.md) reports concept loss, precision, recall, F1 and retrieval for 11 methods, including Hungarian, Sinkhorn and Procrustes on all 4,096 coordinates. Each concept axis uses at most 32 SAE features.
+The [latest COCO val2017 comparison](docs/baselines-2026-11-11/README.md) reports concept loss, precision, recall, F1 and retrieval for 11 methods, including Hungarian, Sinkhorn and Procrustes on all 4,096 coordinates. Each concept axis uses at most 32 SAE features. The [additional evaluation tables](docs/baselines-2026-11-11/additional/README.md) report mixing and dispersion, synCOCO and synCUB edits, and bidirectional retrieval on four benchmarks.
 
 The [COCO val2017 results with at most 16 SAE features per concept axis](docs/baselines-2026-11-08/README.md) include the comparison diagram, measured tables and reproduction commands. The [earlier uncapped evaluation](docs/baselines-2026-11-07/README.md) is also available.
 

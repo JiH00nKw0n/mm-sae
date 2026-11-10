@@ -125,10 +125,15 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
     it, iv, ie = ids["train"], ids["val"], ids["test"]
     total = np.zeros(scores.shape[1])
     squares = np.zeros_like(total)
+    lowest = np.full_like(total, np.inf)
+    highest = np.full_like(total, -np.inf)
     for start in range(0, len(it), 8192):
         block = np.asarray(values(it[start : start + 8192], slice(None)), dtype=np.float64)
+        lowest = np.minimum(lowest, block.min(0))
+        highest = np.maximum(highest, block.max(0))
         total += block.sum(0)
         squares += np.einsum("ij,ij->j", block, block)
+    constant = lowest == highest
     mean = total / len(it)
     scale = np.sqrt(np.maximum(squares / len(it) - mean**2, 0))
     scale[scale < 1e-10] = 1.0
@@ -147,6 +152,10 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
         if min(y[it].sum(), len(it) - y[it].sum()) < min_count or min(y[iv].sum(), len(iv) - y[iv].sum()) < 1:
             excluded[name] = "insufficient train or validation support"
             continue
+        prior = y[it].mean()
+        prior_bias = np.log(prior) - np.log1p(-prior)
+        fraction = y[iv].mean()
+        null = -fraction * np.log(prior) - (1 - fraction) * np.log1p(-prior)
         weights = []
         intercepts = []
         valid = []
@@ -156,15 +165,17 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
             w, b = fit_columns(x, y[it])
             w = w / scale[block]
             b = b - w * mean[block]
+            w[constant[block]] = 0
+            b[constant[block]] = prior_bias
+            validation_loss = losses(values(iv, block), y[iv], w, b)
+            validation_loss[constant[block]] = null
             weights.extend(w)
             intercepts.extend(b)
-            valid.extend(losses(values(iv, block), y[iv], w, b))
+            valid.extend(validation_loss)
         j = int(np.argmin(valid))
         w, b = weights[j], intercepts[j]
         logits = values(ie, slice(j, j + 1)).ravel().astype(float) * w + b
         test_loss = float(np.mean(np.logaddexp(0.0, np.where(y[ie], -logits, logits))))
-        prior = y[it].mean()
-        null = -np.mean(y[iv] * np.log(prior) + (1 - y[iv]) * np.log1p(-prior))
         importance.append(np.maximum(0.0, null - np.asarray(valid)))
         val_losses.append(valid)
         result[name] = {

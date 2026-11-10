@@ -16,7 +16,7 @@ SAE는 이미지 한 장이나 캡션 하나를 입력받으면 원래 활성값
 | Group-Sparse | 8192 | 0.06813 | 59.07 | 32.59 | 39.25 | 12.97 |
 | Iso-Energy | 8192 | 0.06429 | 53.69 | 32.65 | 37.94 | 12.91 |
 
-[11개 방법의 결과표](comparison.csv) · [개념별 판정 건수](per-concept.csv)
+[11개 방법의 결과표](comparison.csv) · [개념별 판정 건수](per-concept.csv) · [혼합도·분산도, 편집 반응, 네 자료의 양방향 검색](additional/README.md)
 
 ![개념 예측 손실 및 F1과 양방향 검색 R@5](loss-and-f1.png)
 

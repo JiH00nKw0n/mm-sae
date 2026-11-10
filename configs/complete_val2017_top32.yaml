@@ -1,0 +1,83 @@
+# Full evaluation with the COCO-overlap Visual Genome eligibility used in the 11-method comparison.
+extends: coco_val2017_top32.yaml
+output: ../runs/complete-val2017-top32
+benchmarks:
+  coco:
+    dataset: coco
+    files:
+      train_instances: coco/annotations/instances_train2017.json
+      test_instances: coco/annotations/instances_val2017.json
+      train_images: coco/train2017
+      test_images: coco/val2017
+    min_train_positives: 20
+    diagnostics: true
+  stuff:
+    dataset: stuff
+    files:
+      train_instances: coco/annotations/instances_train2017.json
+      test_instances: coco/annotations/instances_val2017.json
+      train_images: coco/train2017
+      test_images: coco/val2017
+      stuff_names: stuff/labels.txt
+      train_masks: stuff/train2017
+      test_masks: stuff/val2017
+    min_train_positives: 20
+    diagnostics: true
+  visual_genome:
+    dataset: visual_genome
+    files:
+      metadata: vg/image_data.json
+      graphs: vg/region_graphs.json
+      coco_test_instances: coco/annotations/instances_val2017.json
+      coco_train_instances: coco/annotations/instances_train2017.json
+    min_train_positives: 1
+    diagnostics: true
+    min_test_images: 50
+    regions:
+      images: coco_trainval
+      label_types:
+      - object
+      - relation
+      annotated_only: true
+  cub:
+    dataset: cub
+    files:
+      attribute_names: cub/attributes.txt
+      partition: cub/train_test_split.txt
+      images_list: cub/images.txt
+      attributes: cub/attributes/image_attribute_labels.txt
+      images: cub/images
+    min_train_positives: 20
+    diagnostics: false
+  syncoco:
+    dataset: syncoco
+    files:
+      instances: coco/annotations/instances_train2017.json
+      metadata: syncoco/metadata.csv
+      images_root: syncoco
+  syncub:
+    dataset: syncub
+    files:
+      attribute_names: syncub/attributes.txt
+      metadata: syncub/metadata.csv
+      images_root: syncub
+  coco_retrieval:
+    dataset: coco_retrieval
+    files:
+      captions: coco/annotations/captions_val2017.json
+      images: coco/val2017
+  flickr30k:
+    dataset: flickr30k
+    files:
+      karpathy: flickr30k/dataset_flickr30k.json
+      images: flickr30k/images
+  docci:
+    dataset: docci
+    files:
+      captions: docci/docci_descriptions.jsonlines
+      images: docci/images
+  iiw:
+    dataset: iiw
+    files:
+      captions: iiw/data.jsonl
+      images: iiw/images_aar

@@ -192,19 +192,27 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
     split_scores = None
     if sparse.issparse(scores):
         split_scores = [sparse.csc_matrix(scores[idx]) for idx in (train_idx, val_idx, test_idx)]
+        split_scores[0].sum_duplicates()
+        split_scores[0].eliminate_zeros()
     train_rate, val_rate = rates[:2]
     prior_bias = np.log(train_rate) - np.log1p(-train_rate)
     prior_loss = -val_rate * np.log(train_rate) - (1 - val_rate) * np.log1p(-train_rate)
     for j in range(rank):
-        if split_scores is not None and split_scores[0].indptr[j] == split_scores[0].indptr[j + 1]:
-            w[j], b[j], loss[j] = 0, prior_bias, prior_loss
-            continue
         if split_scores is not None:
+            train = split_scores[0]
+            column = train.data[train.indptr[j] : train.indptr[j + 1]]
+            if len(column) == 0 or (len(column) == len(train_idx) and np.ptp(column) == 0):
+                w[j], b[j], loss[j] = 0, prior_bias, prior_loss
+                continue
             mean, sd, tr, va = _sparse_distributions(split_scores[0], split_scores[1], j)
         else:
             raw = scores[:, j].astype(float)
-            mean = raw[train_idx].mean()
-            sd = raw[train_idx].std()
+            train_column = raw[train_idx]
+            if np.ptp(train_column) == 0:
+                w[j], b[j], loss[j] = 0, prior_bias, prior_loss
+                continue
+            mean = train_column.mean()
+            sd = train_column.std()
             if sd < 1e-10:
                 sd = 1.0
             x = (raw - mean) / sd
