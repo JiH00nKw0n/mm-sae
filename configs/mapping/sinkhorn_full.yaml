@@ -1,0 +1,6 @@
+method: sinkhorn
+rank: 4096
+feature_scope: all_coordinates
+transport_epsilon: 0.05
+max_iter: 50000
+tolerance: 1.0e-7

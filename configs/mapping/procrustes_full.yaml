@@ -1,0 +1,3 @@
+method: procrustes
+rank: 4096
+feature_scope: all_coordinates

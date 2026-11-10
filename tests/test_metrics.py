@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from scipy.special import expit
-from mm_sae.evaluation.concepts import evaluate, entropy_scores
+from mm_sae.evaluation.concepts import detection_metrics, evaluate, entropy_scores
 from mm_sae.evaluation import retrieval, edits
 
 
@@ -67,3 +67,10 @@ def test_support_counts_distinct_final_images_without_a_training_frequency_cutof
     scores = np.arange(len(rows), dtype=float)[:, None]
     result, _ = evaluate(scores, rows, min_count=1, diagnostics=False, min_test_images=2)
     assert set(result["concepts"]) == {"eligible"}
+
+def test_detection_counts_include_probability_half_as_positive():
+    metrics = detection_metrics(np.array([0., 3., -2., 1., -1.]), np.array([0, 2]))
+    assert (metrics["tp"], metrics["fp"], metrics["fn"], metrics["tn"]) == (1, 2, 1, 1)
+    assert metrics["precision"] == pytest.approx(1 / 3)
+    assert metrics["recall"] == 0.5
+    assert metrics["f1"] == 0.4

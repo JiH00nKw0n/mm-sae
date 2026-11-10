@@ -1,0 +1,3 @@
+rank: 4096
+method: hungarian
+feature_scope: all_coordinates

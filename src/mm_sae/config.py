@@ -48,7 +48,7 @@ class Mapping(Settings):
     rank: int = Field(256, ge=1)
     ridge: float = Field(1.0, ge=0)
     support: int = Field(16, ge=1)
-    feature_scope: Literal["matched_pairs", "all_active"] = "matched_pairs"
+    feature_scope: Literal["matched_pairs", "all_active", "all_coordinates"] = "matched_pairs"
     transport_epsilon: float = Field(0.05, gt=0)
     rotation: Literal["none", "covariance", "squared_score_covariance"] = "none"
     prune: int | None = Field(None, ge=1)

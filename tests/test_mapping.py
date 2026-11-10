@@ -64,3 +64,23 @@ def test_direct_maps_in_matched_image_coordinates():
             np.testing.assert_allclose(t @ t.T, np.eye(2), atol=1e-12)
             u, _, vt = np.linalg.svd(cross[np.ix_([0, 1], [1, 0])])
             np.testing.assert_allclose(t, u @ vt, atol=1e-12)
+
+
+def test_full_direct_coordinates_keep_constant_features_and_original_image_order():
+    from mm_sae.config import Mapping
+    from mm_sae.mapping.model import fit
+    from pytest import raises
+
+    stats = dict(xy=np.array([[0.0, 0.7, 0.0], [0.0, 0.0, 0.0], [0.8, 0.0, 0.0]]),
+                 xx=np.diag([1, 0, 1]), yy=np.diag([1, 1, 0]),
+                 image_inv=np.array([1, 0, 1]), text_inv=np.array([1, 1, 0]),
+                 image_mean=np.zeros(3), text_mean=np.zeros(3))
+    for method in ("hungarian", "procrustes", "sinkhorn"):
+        cfg = Mapping(method=method, rank=3, feature_scope="all_coordinates", transport_epsilon=0.4)
+        arrays, _ = fit(stats, cfg, None, None, 1)
+        np.testing.assert_array_equal(arrays["image"], np.eye(3))
+        assert arrays["text"].shape == (3, 3)
+        if method == "hungarian":
+            np.testing.assert_array_equal(arrays["text"].argmax(0), [1, 2, 0])
+        with raises(ValueError, match="widths"):
+            fit(stats, cfg.model_copy(update={"rank":2}), None, None, 1)

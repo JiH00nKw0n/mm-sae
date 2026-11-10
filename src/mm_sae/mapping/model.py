@@ -24,8 +24,14 @@ def prune(weights, k):
 
 
 def fit(stats, cfg, cache, saes, batch):
-    # Exclude constant features from assignment and eigenproblems, retaining original row IDs.
-    ix, iy = [np.flatnonzero(stats[k + "_inv"]) for k in ("image", "text")]
+    if cfg.feature_scope == "all_coordinates":
+        if cfg.method not in ("hungarian", "procrustes", "sinkhorn"):
+            raise ValueError("Only direct coordinate mappings support all_coordinates")
+        if stats["xy"].shape != (cfg.rank, cfg.rank):
+            raise ValueError("Full coordinate alignment requires equal image, text and output widths")
+        ix = iy = np.arange(cfg.rank)
+    else:
+        ix, iy = [np.flatnonzero(stats[k + "_inv"]) for k in ("image", "text")]
     xx = stats["xx"][np.ix_(ix, ix)]
     yy = stats["yy"][np.ix_(iy, iy)]
     cross = stats["xy"][np.ix_(ix, iy)]
@@ -37,13 +43,20 @@ def fit(stats, cfg, cache, saes, batch):
     meta = {"method": cfg.method}
     if cfg.method == "hungarian":
         i, j = matched_features(cross, r)
+        if cfg.feature_scope == "all_coordinates":
+            order = np.argsort(i)
+            i, j = i[order], j[order]
         a, b = np.zeros((len(ix), r)), np.zeros((len(iy), r))
         a[i, np.arange(r)] = 1
         b[j, np.arange(r)] = 1
         meta.update(
             image_ids=ix[i].tolist(),
             text_ids=iy[j].tolist(),
-            selection="top correlations in full assignment",
+            selection=(
+                "full permutation"
+                if cfg.feature_scope == "all_coordinates"
+                else "top correlations in full assignment"
+            ),
         )
     elif cfg.method in ("sinkhorn", "procrustes"):
         a, b, meta["solver"] = fit_in_image_coordinates(cross, cfg)
@@ -108,7 +121,7 @@ def fit(stats, cfg, cache, saes, batch):
         full = np.zeros((len(arrays[side + "_mean"]), r))
         full[idx] = coeff
         arrays[side + "_base"] = full
-        rotated = full @ rot
+        rotated = full @ rot if cfg.rotation != "none" else full
         arrays[side] = prune(rotated, cfg.prune) if cfg.prune else rotated
     return arrays, meta
 

@@ -7,7 +7,7 @@ values in the affected bins. Final selected test losses always use the original 
 import numpy as np
 import torch
 from scipy import sparse
-from mm_sae.evaluation.concepts import entropy_scores
+from mm_sae.evaluation.concepts import detection_metrics, entropy_scores, macro_detection
 
 
 def as_gpu(x):
@@ -236,11 +236,13 @@ def evaluate(scores, labels, concepts, split_ids, minimum, diagnostics):
             bias=b[j, c],
             val_loss=loss[j, c],
             test_loss=v,
+            **detection_metrics(z, positives),
             positives={name: int(count[c]) for name, count in zip(("train", "val", "test"), counts)},
         )
     gain = np.maximum(0, prior_loss - loss)
     result = dict(
         macro_test_loss=float(np.mean([v["test_loss"] for v in probes.values()])),
+        **macro_detection(probes),
         eligible=k,
         excluded=excluded,
         split_sizes={name: len(ids) for name, ids in split_ids.items()},

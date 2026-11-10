@@ -13,6 +13,27 @@ def losses(scores, y, w, b):
     return np.mean(np.logaddexp(0.0, logits) - y[:, None] * logits, axis=0)
 
 
+def detection_metrics(logits, positive_rows):
+    """Compute held-out concept detection counts at probability >= 0.5."""
+    predicted = logits >= 0.0
+    tp = int(np.count_nonzero(predicted[positive_rows]))
+    fp = int(np.count_nonzero(predicted)) - tp
+    fn = len(positive_rows) - tp
+    return {
+        "tp": tp, "fp": fp, "fn": fn, "tn": len(logits) - tp - fp - fn,
+        "precision": tp / max(tp + fp, 1),
+        "recall": tp / max(tp + fn, 1),
+        "f1": 2 * tp / max(2 * tp + fp + fn, 1),
+    }
+
+
+def macro_detection(probes):
+    return {
+        "macro_" + metric: float(np.mean([p[metric] for p in probes.values()]))
+        for metric in ("precision", "recall", "f1")
+    }
+
+
 def fit_columns(x, y, iterations=80):
     # Every column has its own 2x2 Newton system and backtracking line search.
     y = np.asarray(y, np.float64)
@@ -140,7 +161,8 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
             valid.extend(losses(values(iv, block), y[iv], w, b))
         j = int(np.argmin(valid))
         w, b = weights[j], intercepts[j]
-        test_loss = losses(values(ie, slice(j, j + 1)), y[ie], w, b).item()
+        logits = values(ie, slice(j, j + 1)).ravel().astype(float) * w + b
+        test_loss = float(np.mean(np.logaddexp(0.0, np.where(y[ie], -logits, logits))))
         prior = y[it].mean()
         null = -np.mean(y[iv] * np.log(prior) + (1 - y[iv]) * np.log1p(-prior))
         importance.append(np.maximum(0.0, null - np.asarray(valid)))
@@ -151,6 +173,7 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
             "bias": b,
             "val_loss": valid[j],
             "test_loss": test_loss,
+            **detection_metrics(logits, np.flatnonzero(y[ie])),
             "positives": {k: int(y[v].sum()) for k, v in ids.items()},
         }
     if not result:
@@ -158,6 +181,7 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
     g = np.array(importance).T
     summary = {
         "macro_test_loss": float(np.mean([x["test_loss"] for x in result.values()])),
+        **macro_detection(result),
         "eligible": len(result),
         "excluded": excluded,
         "split_sizes": {k: len(v) for k, v in ids.items()},
