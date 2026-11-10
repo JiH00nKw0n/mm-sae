@@ -1,0 +1,24 @@
+{
+  "state": "verified_with_warnings",
+  "errors": [],
+  "warnings": [
+    "original benchmark does not reproduce the 2026-11-08 table: max error 0.012999999999999956"
+  ],
+  "expected_summary_rows": 2169,
+  "observed_summary_rows": 2169,
+  "duplicate_max_rank_difference": 0,
+  "k1_control_max_rank_difference": 0,
+  "bootstrap_draws": 2000,
+  "published_anchor_max_absolute_error": 0.012999999999999956,
+  "published_anchor_method_max_error_pp": {
+    "hungarian": 0.07999999999999952,
+    "pls": 0.10000000000000009,
+    "cca": 0.039999999999995595,
+    "sparse_pls": 0.4599999999999993,
+    "sparse_cca": 1.2999999999999956,
+    "cca_cov": 0.040000000000001146,
+    "cca_cov64": 0.4400000000000015,
+    "sinkhorn": 0.07999999999999952,
+    "procrustes": 0.040000000000001146
+  }
+}
