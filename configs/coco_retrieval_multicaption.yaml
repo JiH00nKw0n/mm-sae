@@ -1,0 +1,11 @@
+extends: paper.yaml
+output: ../runs/multicaption/coco_retrieval
+data_root: ../data
+paired_cache: ../cache/cc3m
+source: null
+benchmarks:
+  coco_retrieval:
+    dataset: coco_retrieval
+    files:
+      captions: coco/annotations/captions_val2017.json
+      images: coco/val2017
