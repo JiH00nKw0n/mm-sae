@@ -103,9 +103,9 @@ k\in\{1,2,3,5\}.
 
 같은 캡션을 반복하면 per-query rank까지 정확히 같았다. 다른 이미지의 캡션을 섞으면 성능이 크게 악화됐다. 따라서 개선은 단순 averaging이나 smoothing이 아니라, 같은 장면에 대한 complementary observation을 추가한 효과다.
 
-![Caption-count curves](figures/caption_count_curves.png)
+![Caption-count curves](https://raw.githubusercontent.com/JiH00nKw0n/mm-sae/04841a9b0844445e800407d3774082b6fa6f7583/experiments/multicaption_observation/figures/caption_count_curves.png)
 
-![Control comparison](figures/control_comparison.png)
+![Control comparison](https://raw.githubusercontent.com/JiH00nKw0n/mm-sae/04841a9b0844445e800407d3774082b6fa6f7583/experiments/multicaption_observation/figures/control_comparison.png)
 
 ## 4. 방법별 차이
 
@@ -125,7 +125,7 @@ k\in\{1,2,3,5\}.
 \text{dense}.
 \]
 
-![Method-specific effects](figures/k1_to_k5_effects.png)
+![Method-specific effects](https://raw.githubusercontent.com/JiH00nKw0n/mm-sae/04841a9b0844445e800407d3774082b6fa6f7583/experiments/multicaption_observation/figures/k1_to_k5_effects.png)
 
 부분 관측은 모든 방법에 영향을 주지만, 추가 evidence를 retrieval 개선으로 바꾸는 능력도 mapping 구조에 따라 다르다.
 
