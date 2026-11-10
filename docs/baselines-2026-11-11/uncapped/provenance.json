@@ -1,0 +1,134 @@
+[
+  {
+    "method": "hungarian",
+    "dataset": "stuff",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "hungarian",
+    "dataset": "visual_genome",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "pls",
+    "dataset": "stuff",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "pls",
+    "dataset": "visual_genome",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "cca",
+    "dataset": "stuff",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "cca",
+    "dataset": "visual_genome",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "sparse_pls",
+    "dataset": "stuff",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "sparse_pls",
+    "dataset": "visual_genome",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "sparse_cca",
+    "dataset": "stuff",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "sparse_cca",
+    "dataset": "visual_genome",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "cca_cov",
+    "dataset": "stuff",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "cca_cov",
+    "dataset": "visual_genome",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "cca_cov64",
+    "dataset": "stuff",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "cca_cov64",
+    "dataset": "visual_genome",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "sinkhorn",
+    "dataset": "stuff",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "sinkhorn",
+    "dataset": "visual_genome",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "procrustes",
+    "dataset": "stuff",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "procrustes",
+    "dataset": "visual_genome",
+    "source": "reevaluated without coefficient cap",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "group_sparse",
+    "dataset": "stuff",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "group_sparse",
+    "dataset": "visual_genome",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "iso_align",
+    "dataset": "stuff",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  },
+  {
+    "method": "iso_align",
+    "dataset": "visual_genome",
+    "source": "same frozen coefficients; reused",
+    "additional_coefficient_cap": null
+  }
+]

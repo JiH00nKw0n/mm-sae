@@ -1,0 +1,489 @@
+<svg class="results-chart" role="img" aria-label="11개 방법의 이미지·텍스트 평균 손실과 양방향 검색 R@5" xmlns:xlink="http://www.w3.org/1999/xlink" width="835.2pt" height="306pt" viewBox="0 0 835.2 306" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="pooled-figure_1">
+  <g id="pooled-patch_1">
+   <path d="M 0 306
+L 835.2 306
+L 835.2 0
+L 0 0
+L 0 306
+z
+" style="fill: none; opacity: 0"/>
+  </g>
+  <g id="pooled-axes_1">
+   <g id="pooled-patch_2">
+    <path d="M 66.816 257.04
+L 814.32 257.04
+L 814.32 10.71
+L 66.816 10.71
+L 66.816 257.04
+z
+" style="fill: none"/>
+   </g>
+   <g id="pooled-matplotlib.axis_1">
+    <g id="pooled-xtick_1">
+     <g id="pooled-line2d_1">
+      <path d="M 789.193815 257.04
+L 789.193815 10.71
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_2"/>
+     <g id="pooled-text_1">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="789.193815" y="269.04" transform="rotate(-0 789.193815 269.04)">0.070</text>
+     </g>
+    </g>
+    <g id="pooled-xtick_2">
+     <g id="pooled-line2d_3">
+      <path d="M 663.562891 257.04
+L 663.562891 10.71
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_4"/>
+     <g id="pooled-text_2">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="663.562891" y="269.04" transform="rotate(-0 663.562891 269.04)">0.072</text>
+     </g>
+    </g>
+    <g id="pooled-xtick_3">
+     <g id="pooled-line2d_5">
+      <path d="M 537.931966 257.04
+L 537.931966 10.71
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_6"/>
+     <g id="pooled-text_3">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="537.931966" y="269.04" transform="rotate(-0 537.931966 269.04)">0.074</text>
+     </g>
+    </g>
+    <g id="pooled-xtick_4">
+     <g id="pooled-line2d_7">
+      <path d="M 412.301042 257.04
+L 412.301042 10.71
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_8"/>
+     <g id="pooled-text_4">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="412.301042" y="269.04" transform="rotate(-0 412.301042 269.04)">0.076</text>
+     </g>
+    </g>
+    <g id="pooled-xtick_5">
+     <g id="pooled-line2d_9">
+      <path d="M 286.670118 257.04
+L 286.670118 10.71
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_10"/>
+     <g id="pooled-text_5">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="286.670118" y="269.04" transform="rotate(-0 286.670118 269.04)">0.078</text>
+     </g>
+    </g>
+    <g id="pooled-xtick_6">
+     <g id="pooled-line2d_11">
+      <path d="M 161.039193 257.04
+L 161.039193 10.71
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_12"/>
+     <g id="pooled-text_6">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="161.039193" y="269.04" transform="rotate(-0 161.039193 269.04)">0.080</text>
+     </g>
+    </g>
+    <g id="pooled-text_7">
+     <text style="font-size: 14px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle" x="440.568" y="288.64" transform="rotate(-0 440.568 288.64)">개념 예측 손실 (오른쪽일수록 낮음)</text>
+    </g>
+   </g>
+   <g id="pooled-matplotlib.axis_2">
+    <g id="pooled-ytick_1">
+     <g id="pooled-line2d_13">
+      <path d="M 66.816 250.002
+L 814.32 250.002
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_14"/>
+     <g id="pooled-text_8">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="254.502" transform="rotate(-0 63.816 254.502)">25</text>
+     </g>
+    </g>
+    <g id="pooled-ytick_2">
+     <g id="pooled-line2d_15">
+      <path d="M 66.816 214.812
+L 814.32 214.812
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_16"/>
+     <g id="pooled-text_9">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="219.312" transform="rotate(-0 63.816 219.312)">30</text>
+     </g>
+    </g>
+    <g id="pooled-ytick_3">
+     <g id="pooled-line2d_17">
+      <path d="M 66.816 179.622
+L 814.32 179.622
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_18"/>
+     <g id="pooled-text_10">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="184.122" transform="rotate(-0 63.816 184.122)">35</text>
+     </g>
+    </g>
+    <g id="pooled-ytick_4">
+     <g id="pooled-line2d_19">
+      <path d="M 66.816 144.432
+L 814.32 144.432
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_20"/>
+     <g id="pooled-text_11">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="148.932" transform="rotate(-0 63.816 148.932)">40</text>
+     </g>
+    </g>
+    <g id="pooled-ytick_5">
+     <g id="pooled-line2d_21">
+      <path d="M 66.816 109.242
+L 814.32 109.242
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_22"/>
+     <g id="pooled-text_12">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="113.742" transform="rotate(-0 63.816 113.742)">45</text>
+     </g>
+    </g>
+    <g id="pooled-ytick_6">
+     <g id="pooled-line2d_23">
+      <path d="M 66.816 74.052
+L 814.32 74.052
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_24"/>
+     <g id="pooled-text_13">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="78.552" transform="rotate(-0 63.816 78.552)">50</text>
+     </g>
+    </g>
+    <g id="pooled-ytick_7">
+     <g id="pooled-line2d_25">
+      <path d="M 66.816 38.862
+L 814.32 38.862
+" clip-path="url(#pooled-p4f5ad99adb)" style="fill: none; stroke: #e0e4e7; stroke-width: 0.65; stroke-linecap: square"/>
+     </g>
+     <g id="pooled-line2d_26"/>
+     <g id="pooled-text_14">
+      <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #535d64" x="63.816" y="43.362" transform="rotate(-0 63.816 43.362)">55</text>
+     </g>
+    </g>
+    <g id="pooled-text_15">
+     <text style="font-size: 14px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle" x="43.766" y="133.875" transform="rotate(-90 43.766 133.875)">양방향 평균 R@5 (%)</text>
+    </g>
+   </g>
+   <g id="pooled-patch_3">
+    <path d="M 154.485932 39.167345
+Q 235.207144 61.137174 265.696606 137.477944
+" style="fill: none; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 266.070355 133.021453
+L 265.696606 137.477944
+L 262.355663 134.50505
+z
+" style="fill: #7c8187; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_4">
+    <path d="M 218.718476 50.673623
+Q 194.892657 90.232669 212.008674 131.554371
+" style="fill: none; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 212.325699 127.093486
+L 212.008674 131.554371
+L 208.630181 128.624221
+z
+" style="fill: #7c8187; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_5">
+    <path d="M 229.452317 45.624461
+Q 247.113259 47.398877 263.328038 45.769708
+" style="fill: none; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 259.148135 44.179611
+L 263.328038 45.769708
+L 259.548019 48.159573
+z
+" style="fill: #7c8187; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_6">
+    <path d="M 277.628583 48.540692
+Q 297.472344 61.88169 310.36263 80.271783
+" style="fill: none; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 309.704466 75.848344
+L 310.36263 80.271783
+L 306.42898 78.144251
+z
+" style="fill: #7c8187; stroke-dasharray: 2.6,2.6; stroke-dashoffset: 0; stroke: #7c8187; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_7">
+    <path d="M 66.816 257.04
+L 66.816 10.71
+" style="fill: none; stroke: #9ba2a8; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="pooled-patch_8">
+    <path d="M 66.816 257.04
+L 814.32 257.04
+" style="fill: none; stroke: #9ba2a8; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="pooled-text_16">
+    <g id="pooled-patch_9">
+     <path d="M 222.638257 93.005522
+L 249.788257 93.005522
+L 249.788257 79.805522
+L 222.638257 79.805522
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="236.213257" y="89.405522" transform="rotate(-0 236.213257 89.405522)">희소화</text>
+   </g>
+   <g id="pooled-text_17">
+    <g id="pooled-patch_10">
+     <path d="M 180.393415 102.634829
+L 207.543415 102.634829
+L 207.543415 89.434829
+L 180.393415 89.434829
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="193.968415" y="99.034829" transform="rotate(-0 193.968415 99.034829)">희소화</text>
+   </g>
+   <g id="pooled-text_18">
+    <g id="pooled-patch_11">
+     <path d="M 240.862985 43.389026
+L 259.362985 43.389026
+L 259.362985 30.189026
+L 240.862985 30.189026
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="250.112985" y="39.789026" transform="rotate(-0 250.112985 39.789026)">회전</text>
+   </g>
+   <g id="pooled-text_19">
+    <g id="pooled-patch_12">
+     <path d="M 297.818544 72.643629
+L 324.968544 72.643629
+L 324.968544 59.443629
+L 297.818544 59.443629
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 10px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: middle; fill: #535d64" x="311.393544" y="69.043629" transform="rotate(-0 311.393544 69.043629)">희소화</text>
+   </g>
+   <g id="pooled-label-hungarian">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end" x="626.265291" y="165.692931" transform="rotate(-0 626.265291 165.692931)">Hungarian</text>
+   </g>
+   <g id="pooled-label-pls">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: start" x="151.701398" y="28.83003" transform="rotate(-0 151.701398 28.83003)">PLS-SVD (256)</text>
+   </g>
+   <g id="pooled-label-cca">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: start" x="228.504005" y="59.179026" transform="rotate(-0 228.504005 59.179026)">CCA (256)</text>
+   </g>
+   <g id="pooled-label-sparse_pls">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: start" x="281.725117" y="158.761013" transform="rotate(-0 281.725117 158.761013)">Sparse PLS-SVD</text>
+   </g>
+   <g id="pooled-label-sparse_cca">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end" x="205.432826" y="142.670631" transform="rotate(-0 205.432826 142.670631)">Sparse CCA</text>
+   </g>
+   <g id="pooled-label-cca_cov">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: start" x="275.721965" y="35.179026" transform="rotate(-0 275.721965 35.179026)">CCA + 공분산 회전</text>
+   </g>
+   <g id="pooled-label-cca_cov64">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: start" x="327.065123" y="92.688232" transform="rotate(-0 327.065123 92.688232)">CCA + 회전 + 희소화</text>
+   </g>
+   <g id="pooled-label-sinkhorn">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end" x="724.338447" y="117.700242" transform="rotate(-0 724.338447 117.700242)">Sinkhorn</text>
+   </g>
+   <g id="pooled-label-procrustes">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end" x="521.618396" y="59.141204" transform="rotate(-0 521.618396 59.141204)">Procrustes</text>
+   </g>
+   <g id="pooled-label-group_sparse">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end" x="380.448027" y="195.546692" transform="rotate(-0 380.448027 195.546692)">Group-Sparse</text>
+   </g>
+   <g id="pooled-text_20">
+    <a target="_blank" rel="noopener" xlink:href="https://arxiv.org/abs/2601.20028" target="_blank">
+     <text style="font-size: 9.4px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #48596b" x="380.448027" y="205.976692" transform="rotate(-0 380.448027 205.976692)">(Kaushik et al., 2026)</text>
+    </a>
+   </g>
+   <g id="pooled-label-iso_align">
+    <text style="font-size: 11.3px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end" x="626.821433" y="214.235375" transform="rotate(-0 626.821433 214.235375)">Iso-Energy</text>
+   </g>
+   <g id="pooled-text_21">
+    <a target="_blank" rel="noopener" xlink:href="https://arxiv.org/abs/2602.06218" target="_blank">
+     <text style="font-size: 9.4px; font-family: 'Apple SD Gothic Neo', 'DejaVu Sans'; text-anchor: end; fill: #48596b" x="626.821433" y="224.665375" transform="rotate(-0 626.821433 224.665375)">(Dhimoïla et al., 2026)</text>
+    </a>
+   </g>
+   <g id="pooled-point-hungarian">
+    <defs>
+     <path id="pooled-m17d5ec9ea1" d="M -6.123724 6.123724
+L 6.123724 6.123724
+L 6.123724 -6.123724
+L -6.123724 -6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-m17d5ec9ea1" x="635.265291" y="152.302931" style="fill: #9bf6ff; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-pls">
+    <defs>
+     <path id="pooled-mb48aa43e44" d="M 0 6.123724
+C 1.624031 6.123724 3.181764 5.47849 4.330127 4.330127
+C 5.47849 3.181764 6.123724 1.624031 6.123724 0
+C 6.123724 -1.624031 5.47849 -3.181764 4.330127 -4.330127
+C 3.181764 -5.47849 1.624031 -6.123724 0 -6.123724
+C -1.624031 -6.123724 -3.181764 -5.47849 -4.330127 -4.330127
+C -5.47849 -3.181764 -6.123724 -1.624031 -6.123724 0
+C -6.123724 1.624031 -5.47849 3.181764 -4.330127 4.330127
+C -3.181764 5.47849 -1.624031 6.123724 0 6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mb48aa43e44" x="147.701398" y="37.44003" style="fill: #ffadad; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-cca">
+    <defs>
+     <path id="pooled-mf6129336e1" d="M 0 6.123724
+C 1.624031 6.123724 3.181764 5.47849 4.330127 4.330127
+C 5.47849 3.181764 6.123724 1.624031 6.123724 0
+C 6.123724 -1.624031 5.47849 -3.181764 4.330127 -4.330127
+C 3.181764 -5.47849 1.624031 -6.123724 0 -6.123724
+C -1.624031 -6.123724 -3.181764 -5.47849 -4.330127 -4.330127
+C -5.47849 -3.181764 -6.123724 -1.624031 -6.123724 0
+C -6.123724 1.624031 -5.47849 3.181764 -4.330127 4.330127
+C -3.181764 5.47849 -1.624031 6.123724 0 6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mf6129336e1" x="222.504005" y="44.789026" style="fill: #ffd6a5; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-sparse_pls">
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mb48aa43e44" x="268.725117" y="145.371013" style="fill: #ffadad; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-sparse_cca">
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mf6129336e1" x="215.432826" y="139.280631" style="fill: #ffd6a5; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-cca_cov">
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mf6129336e1" x="271.721965" y="44.789026" style="fill: #ffd6a5; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-cca_cov64">
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mf6129336e1" x="315.065123" y="87.298232" style="fill: #ffd6a5; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-sinkhorn">
+    <defs>
+     <path id="pooled-mc8518a6905" d="M 0 6.123724
+C 1.624031 6.123724 3.181764 5.47849 4.330127 4.330127
+C 5.47849 3.181764 6.123724 1.624031 6.123724 0
+C 6.123724 -1.624031 5.47849 -3.181764 4.330127 -4.330127
+C 3.181764 -5.47849 1.624031 -6.123724 0 -6.123724
+C -1.624031 -6.123724 -3.181764 -5.47849 -4.330127 -4.330127
+C -5.47849 -3.181764 -6.123724 -1.624031 -6.123724 0
+C -6.123724 1.624031 -5.47849 3.181764 -4.330127 4.330127
+C -3.181764 5.47849 -1.624031 6.123724 0 6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mc8518a6905" x="736.338447" y="115.310242" style="fill: #caffbf; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-procrustes">
+    <defs>
+     <path id="pooled-m7c1fed2897" d="M 0 6.123724
+C 1.624031 6.123724 3.181764 5.47849 4.330127 4.330127
+C 5.47849 3.181764 6.123724 1.624031 6.123724 0
+C 6.123724 -1.624031 5.47849 -3.181764 4.330127 -4.330127
+C 3.181764 -5.47849 1.624031 -6.123724 0 -6.123724
+C -1.624031 -6.123724 -3.181764 -5.47849 -4.330127 -4.330127
+C -5.47849 -3.181764 -6.123724 -1.624031 -6.123724 0
+C -6.123724 1.624031 -5.47849 3.181764 -4.330127 4.330127
+C -3.181764 5.47849 -1.624031 6.123724 0 6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-m7c1fed2897" x="533.618396" y="55.751204" style="fill: #a0c4ff; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-group_sparse">
+    <defs>
+     <path id="pooled-mf2e1e6e776" d="M 0 -6.123724
+L -6.123724 6.123724
+L 6.123724 6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-mf2e1e6e776" x="392.448027" y="192.156692" style="fill: #bdb2ff; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-point-iso_align">
+    <defs>
+     <path id="pooled-m95856601cb" d="M 0 -6.123724
+L -6.123724 6.123724
+L 6.123724 6.123724
+z
+" style="stroke: #414b54; stroke-width: 0.85"/>
+    </defs>
+    <g clip-path="url(#pooled-p4f5ad99adb)">
+     <use xlink:href="#pooled-m95856601cb" x="634.821433" y="214.845375" style="fill: #ffc6ff; stroke: #414b54; stroke-width: 0.85"/>
+    </g>
+   </g>
+   <g id="pooled-patch_13">
+    <path d="M 264.725117 149.371013
+Q 268.725117 145.371013 272.725117 141.371013
+" style="fill: none; stroke: #ffffff; stroke-width: 2.25; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_14">
+    <path d="M 211.432826 143.280631
+Q 215.432826 139.280631 219.432826 135.280631
+" style="fill: none; stroke: #ffffff; stroke-width: 2.25; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_15">
+    <path d="M 267.721965 40.789026
+Q 271.721965 44.789026 275.721965 48.789026
+" style="fill: none; stroke: #202020; stroke-width: 2.25; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_16">
+    <path d="M 311.065123 83.298232
+Q 315.065123 87.298232 319.065123 91.298232
+" style="fill: none; stroke: #202020; stroke-width: 2.25; stroke-linecap: round"/>
+   </g>
+   <g id="pooled-patch_17">
+    <path d="M 311.065123 91.298232
+Q 315.065123 87.298232 319.065123 83.298232
+" style="fill: none; stroke: #ffffff; stroke-width: 2.25; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pooled-p4f5ad99adb">
+   <rect x="66.816" y="10.71" width="747.504" height="246.33"/>
+  </clipPath>
+ </defs>
+</svg>

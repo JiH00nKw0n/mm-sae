@@ -1,0 +1,105 @@
+{
+  "primary_methods": 11,
+  "table_only_reference_conditions": 2,
+  "image_concepts": 171,
+  "text_concepts": 170,
+  "threshold": 0.5,
+  "evaluation_coefficient_cap": null,
+  "reused_models": {
+    "hungarian": {
+      "rank": 4096,
+      "max_inputs_per_axis": 1,
+      "permutation_sha256": "9454046e2478d36b74dbc6c61ccdc538d7bd7deb4b6810a2266e94adb0e3fde6"
+    },
+    "sparse_pls": {
+      "image_max_inputs_per_axis": 16,
+      "text_max_inputs_per_axis": 16,
+      "fit_id": "583b714c35a0f87f4889b7c64c4dfcb0a5723dd42bd77810b5ce02800e942f51"
+    },
+    "sparse_cca": {
+      "image_max_inputs_per_axis": 16,
+      "text_max_inputs_per_axis": 16,
+      "fit_id": "060d346b95dd2511ca959240c553af4463de65f36b54742737eaa193830161d6"
+    },
+    "iso_align": {
+      "concept_coordinate": "direct shared SAE output; no mapping coefficient matrix",
+      "earlier_capped_and_original_image_result_sha256": "d550bf6669aefbf211bb3940d852b174e55e6d8f35a9d21453496f0ee4b38504"
+    },
+    "group_sparse": {
+      "concept_coordinate": "direct shared SAE output; no mapping coefficient matrix",
+      "earlier_capped_and_original_image_result_sha256": "dbc70b2714f58e4162c1802365b6f7ba58cecf16386862d2e66c273b5aa61334"
+    }
+  },
+  "maximum_validation_minimum_disagreement": 1.5597680091961053e-10,
+  "independent_scalar_checks": [
+    {
+      "method": "cca_full",
+      "dataset": "visual_genome",
+      "axes": [
+        0,
+        7,
+        129,
+        255
+      ],
+      "concepts": [
+        "object/arm",
+        "object/frame",
+        "object/lights",
+        "object/writing"
+      ],
+      "maximum_absolute_validation_loss_error": 8.731853781696053e-12
+    },
+    {
+      "method": "pls_full",
+      "dataset": "visual_genome",
+      "axes": [
+        0,
+        7,
+        129,
+        255
+      ],
+      "concepts": [
+        "object/arm",
+        "object/frame",
+        "object/lights",
+        "object/writing"
+      ],
+      "maximum_absolute_validation_loss_error": 8.121258873727832e-12
+    },
+    {
+      "method": "procrustes",
+      "dataset": "visual_genome",
+      "axes": [
+        0,
+        7,
+        129,
+        255
+      ],
+      "concepts": [
+        "object/arm",
+        "object/frame",
+        "object/lights",
+        "object/writing"
+      ],
+      "maximum_absolute_validation_loss_error": 6.241714783916663e-11
+    },
+    {
+      "method": "sinkhorn",
+      "dataset": "visual_genome",
+      "axes": [
+        0,
+        7,
+        129,
+        255
+      ],
+      "concepts": [
+        "object/arm",
+        "object/frame",
+        "object/lights",
+        "object/writing"
+      ],
+      "maximum_absolute_validation_loss_error": 3.0042933418794604e-11
+    }
+  ],
+  "training_data_and_retrieval_unchanged": true
+}

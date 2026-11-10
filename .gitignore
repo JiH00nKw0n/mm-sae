@@ -47,3 +47,6 @@ id_ed25519
 *.safetensors
 *.ckpt
 .DS_Store
+
+# Local documentation retained for comparisons with superseded evaluations.
+/docs/local-comparisons/

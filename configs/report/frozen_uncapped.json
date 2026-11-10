@@ -1,0 +1,50 @@
+{
+  "concept_feature_budget": null,
+  "datasets": {
+    "stuff": {
+      "prefix": null,
+      "concepts": 171,
+      "split_sha256": "b709e207148ce96535538198149465aa90cc487bdfba180b2bd469ed37d92726",
+      "side": "image"
+    },
+    "visual_genome": {
+      "prefix": "object/",
+      "concepts": 170,
+      "split_sha256": "ad97e1b344c6b8e6d075cf7fef39ebb02a2c6fb83731934598b18a1b72c74999",
+      "side": "text"
+    }
+  },
+  "reuse_methods": [
+    "hungarian",
+    "sparse_pls",
+    "sparse_cca",
+    "group_sparse",
+    "iso_align"
+  ],
+  "methods": {
+    "cca_cov64": {
+      "image": "b015c396e9dc8e94878e3e5050d6de5e2235c9576cd35378c8418d2a0214645b",
+      "text": "beca78337fb263f7a5e226076ed0d07f83e15a1b9888605594a8cfd1dcb30677"
+    },
+    "cca_cov": {
+      "image": "f1e3c17c8bafceaadad16aa29ffcc55e3a22dcaf659c449cc0f7f39687099f1b",
+      "text": "bb85890be2f1301d5766f5d5886b3963fa6ff598a26784e2d81787605ee1379b"
+    },
+    "cca": {
+      "image": "a10a4b552187fd78814770206e4a996c5b4e1dfadc8cbea7ffa9cad45efee853",
+      "text": "a1d399cfe9ba513ba729f0864d940ab49f8e5121410440f04df66479b8e345e8"
+    },
+    "pls": {
+      "image": "202e9098dfc6add93972e9aef1587d212997b82315c3594f966c9dde20aaf1d6",
+      "text": "09c5b02a37d5e2f375060228a5994a329f78ad03a4ff584050b1d6c75ce7fdff"
+    },
+    "sinkhorn": {
+      "image": "af9e53f6ab9a057cdcfa393bd689f404204355d473ba235140f781f22298a8e1",
+      "text": "b2be7fe95fe797d7b9afc5b004d584692a7681c8fc40b63a4aff791035510738"
+    },
+    "procrustes": {
+      "image": "51951f5249e6fb253bc150cd93a3c1fc3a306388250e98a1b846e772681a1d9c",
+      "text": "ff3556f94bb5dd90633a2c282154df11d1a8c1062568cb379cb549d3bcc2c3ce"
+    }
+  }
+}

@@ -78,6 +78,7 @@ class Benchmark(Settings):
         "iiw",
     ]
     # Probe name referenced by edited pairs; defaults to coco or cub.
+    evaluation_label_prefix: str | None = None
     probe: str | None = None
     files: dict[str, str]
     min_train_positives: int = Field(2, ge=1)
@@ -96,6 +97,7 @@ class Benchmark(Settings):
 
 
 class Recipe(Settings):
+    opposite_direct_concept_coordinates: bool = False
     concept_feature_budget: int | None = Field(None, ge=1)
     output: Path
     data_root: Path

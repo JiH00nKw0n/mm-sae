@@ -20,7 +20,10 @@ def detection_metrics(logits, positive_rows):
     fp = int(np.count_nonzero(predicted)) - tp
     fn = len(positive_rows) - tp
     return {
-        "tp": tp, "fp": fp, "fn": fn, "tn": len(logits) - tp - fp - fn,
+        "tp": tp,
+        "fp": fp,
+        "fn": fn,
+        "tn": len(logits) - tp - fp - fn,
         "precision": tp / max(tp + fp, 1),
         "recall": tp / max(tp + fn, 1),
         "f1": 2 * tp / max(2 * tp + fp + fn, 1),
@@ -69,7 +72,16 @@ def fit_columns(x, y, iterations=80):
     return w, b
 
 
-def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=False, min_test_images=0):
+def evaluate(
+    scores,
+    records,
+    min_count,
+    diagnostics,
+    allowed=None,
+    use_cuda=False,
+    min_test_images=0,
+    label_prefix=None,
+):
     row_ids = {key: array("q") for key in ("train", "val", "test")}
     positives = defaultdict(lambda: array("q"))
     train_counts = defaultdict(int)
@@ -103,6 +115,8 @@ def evaluate(scores, records, min_count, diagnostics, allowed=None, use_cuda=Fal
             if min(len(test_images_by_label[name]), test_groups - len(test_images_by_label[name]))
             >= min_test_images
         ]
+    if label_prefix is not None:
+        names = [name for name in names if name.startswith(label_prefix)]
     if use_cuda:
         from scipy.sparse import csc_matrix
         from . import concepts_cuda

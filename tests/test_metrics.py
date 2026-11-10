@@ -74,3 +74,15 @@ def test_detection_counts_include_probability_half_as_positive():
     assert metrics["precision"] == pytest.approx(1 / 3)
     assert metrics["recall"] == 0.5
     assert metrics["f1"] == 0.4
+
+
+def test_object_scope_keeps_relation_only_regions_as_negatives():
+    rows = [
+        dict(group=f"{split}/{j}", split=split, labels=[label])
+        for split in ("train", "val", "test")
+        for j, label in enumerate(("object/car", "relation/on"))
+    ]
+    scores = np.array([[1.], [-1.]] * 3)
+    result, _ = evaluate(scores, rows, min_count=1, diagnostics=False, label_prefix="object/")
+    assert set(result["concepts"]) == {"object/car"}
+    assert result["split_sizes"] == {"train": 2, "val": 2, "test": 2}

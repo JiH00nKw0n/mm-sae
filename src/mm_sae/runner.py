@@ -177,6 +177,7 @@ def evaluate(cfg, tables, saes, mapping, out):
             implementation(),
             manifests,
             cfg.concept_feature_budget,
+            cfg.opposite_direct_concept_coordinates,
             {k: v.model_dump() for k, v in cfg.benchmarks.items()},
         ]
     )
@@ -209,6 +210,13 @@ def evaluate(cfg, tables, saes, mapping, out):
                     cfg.encoder.batch_size,
                     Path(tmp) / (side + ".npy"),
                     feature_budget=feature_budget,
+                    opposite_image=(
+                        single_modality
+                        and side == "image"
+                        and cfg.opposite_direct_concept_coordinates
+                        and cfg.mapping.method in ("hungarian", "sinkhorn", "procrustes")
+                        and cfg.mapping.feature_scope == "all_coordinates"
+                    ),
                 )
                 rows[side] = jsonlines(tables_dir / (side + ".jsonl"))
                 if spec.dataset not in ("coco", "stuff", "visual_genome", "cub"):
@@ -246,6 +254,7 @@ def evaluate(cfg, tables, saes, mapping, out):
                     spec.diagnostics,
                     use_cuda=cfg.encoder.device == "cuda",
                     min_test_images=spec.min_test_images,
+                    label_prefix=spec.evaluation_label_prefix,
                 )
                 save_arrays(work / (name + "-probes.npz"), details)
             summary[name] = result

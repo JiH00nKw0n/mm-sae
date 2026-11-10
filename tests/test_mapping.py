@@ -84,3 +84,19 @@ def test_full_direct_coordinates_keep_constant_features_and_original_image_order
             np.testing.assert_array_equal(arrays["text"].argmax(0), [1, 2, 0])
         with raises(ValueError, match="widths"):
             fit(stats, cfg.model_copy(update={"rank":2}), None, None, 1)
+
+
+def test_image_concept_probe_uses_transposed_direct_map_and_image_scaling():
+    from mm_sae.mapping.model import scores
+
+    class Identity:
+        def activations(self, side, x):
+            return csr_matrix(x)
+
+    text_matrix = np.array([[0.2, 0.8], [0.3, 0.7]])
+    mapping = dict(image=np.eye(2), text=text_matrix, image_inv=np.array([2.0, 1.0]),
+                   image_mean=np.array([1.0, 2.0]))
+    x = np.array([[2.0, 4.0], [1.0, 5.0]])
+    scaled = (x - mapping["image_mean"]) * mapping["image_inv"]
+    np.testing.assert_allclose(scores(Identity(), mapping, "image", x, 2, opposite_image=True), scaled @ text_matrix.T)
+    np.testing.assert_allclose(scores(Identity(), mapping, "image", x, 2), scaled)

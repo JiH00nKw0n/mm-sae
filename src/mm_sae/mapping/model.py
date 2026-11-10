@@ -126,7 +126,7 @@ def fit(stats, cfg, cache, saes, batch):
     return arrays, meta
 
 
-def scores(saes, mapping, side, embeddings, batch_size, path=None, *, feature_budget=None):
+def scores(saes, mapping, side, embeddings, batch_size, path=None, *, feature_budget=None, opposite_image=False):
     shared = "shared_width" in mapping
     if shared:
         from scipy import sparse
@@ -138,14 +138,16 @@ def scores(saes, mapping, side, embeddings, batch_size, path=None, *, feature_bu
             ],
             format="csr",
         )
-    width = mapping[side].shape[1]
+    weights = mapping["text"].T if opposite_image else mapping[side]
+    width = weights.shape[1]
     shape = (len(embeddings), width)
     result = (
         np.empty(shape, dtype=np.float32)
         if path is None
         else np.lib.format.open_memmap(path, mode="w+", dtype=np.float32, shape=shape)
     )
-    weights = prune(mapping[side], feature_budget) if feature_budget is not None else mapping[side]
+    if feature_budget is not None:
+        weights = prune(weights, feature_budget)
     coeff = mapping[side + "_inv"][:, None] * weights
     offset = mapping[side + "_mean"] @ coeff
     for start in range(0, len(embeddings), batch_size):
