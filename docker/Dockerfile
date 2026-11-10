@@ -26,6 +26,7 @@ CMD ["--help"]
 
 FROM cpu AS test
 RUN pip install --no-cache-dir pytest==8.3.5
+COPY scripts ./scripts
 COPY tests ./tests
 ENTRYPOINT ["python", "-m", "pytest"]
 CMD ["-q", "tests"]
